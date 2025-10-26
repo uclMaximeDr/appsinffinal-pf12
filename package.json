@@ -1,0 +1,20 @@
+{
+  "name": "find-my-party",
+  "version": "1.0.0",
+  "description": "Find a party in LLN with your friends",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "jest": "^30.2.0",
+    "mongodb": "^6.20.0"
+  }
+}

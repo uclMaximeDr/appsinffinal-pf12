@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Se connecter | Find My Party</title>
+
+    <link rel="stylesheet" href="/styles/global.css" />
+    <link rel="stylesheet" href="/styles/login.css" />
+  </head>
+  <body>
+    <section class="pageContainer flex">
+      <div class="loginContainer">
+        <img src="/icons/leftarrow.svg" alt="Back icon" id="back">
+        <img src="/images/casa.jpeg" alt="Illustration image of Casa" />
+        <div class="menu">
+          <div class="selectorContainer" id="actionSelector">
+            <div class="selector left"></div>
+            <div class="options">
+              <p>Se connecter</p>
+              <p>S'inscrire</p>
+            </div>
+          </div>
+          <div class="menu-item" style="display: none" id="full-name-container">
+            <label for="full-name">Nom complet</label>
+            <input type="text" id="full-name" />
+          </div>
+          <div class="menu-item">
+            <label for="email">Adresse email</label>
+            <input type="email" id="email" />
+          </div>
+          <div class="menu-item">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" />
+          </div>
+          <div class="menu-item">
+            <button id="submit">Se connecter</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.js"
+      integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+      crossorigin="anonymous"
+    ></script>
+    <script src="/scripts/login.js"></script>
+  </body>
+</html>
