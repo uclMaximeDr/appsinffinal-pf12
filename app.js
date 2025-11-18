@@ -3,6 +3,8 @@ const session = require('express-session');
 const dotenv = require('dotenv');
 const path = require('path');
 
+const { MongoClient } = require('mongodb');
+
 const pageRenderer = require('./routes/pageRenderer');
 const apiRouter = require('./routes/api');
 
@@ -38,8 +40,29 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500).json({ error: 'Internal Server Error' });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server listening on http://localhost:${PORT}`);
-});
+// Database variable to be set in tests
+let database;
+let client;
 
-module.exports = app;
+function setDatabase(db) {
+  database = db;
+}
+
+// Start the server
+if (process.env.NODE_ENV !== "test") {
+  (async () => {
+    if (!database) {
+        const mongoUrl = process.env.MONGO_URL || "mongodb://localhost:27017";
+        client = new MongoClient(mongoUrl);
+        await client.connect();
+        database = client.db(process.env.DB_NAME || "prod_db");
+    }
+
+    app.listen(PORT, '0.0.0.0', async () => {
+        console.log(`Example app listening on port ${PORT}`)
+        await client.connect();
+    });
+  })();
+}
+
+module.exports = {app, setDatabase};
