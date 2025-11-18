@@ -1,0 +1,70 @@
+body {
+    width: 100vw;
+    height: 100vh;
+}
+
+.leftPanel {
+    display: block;
+    position:static;
+
+    width: 25%;
+    height: 100%;
+
+    color: red;
+
+    background-color: green;
+}
+
+.rightPanel {
+    display: block;
+    position: absolute;
+
+    left: 25%;
+    bottom: 0;
+    width: 75%;
+    height: 100%;
+}
+
+.partyElement {
+    position: relative;
+
+    width: 85%;
+    height: 30%;
+
+    padding: 20px;
+
+    margin: 25px;
+
+    border-radius: 20px;
+
+    background-color: red;
+}
+
+.partyElement h1 {
+    
+    font-size: x-large;
+    
+    margin: 0;
+}
+
+.partyElement .imgContainer {
+    display: flex;
+
+    flex-direction: row;
+    justify-content: left;
+
+    flex-grow: 0;
+    overflow-x: sc;
+}
+
+.partyElement .imgContainer .elem {
+    
+    width: 120px;
+    height: 120px;
+
+    aspect-ratio: 1;
+
+    margin: 10px;
+
+    background-color: aqua;
+}
