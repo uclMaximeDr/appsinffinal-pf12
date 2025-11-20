@@ -15,32 +15,45 @@
         <div class="partyContainer">
             <nav>
                 <a href="/">
-                    <img src="/icons/leftarrow.svg" alt="Back icon" width="35px">
+                    <img src="/icons/home.svg" alt="Home icon">
+                    <span>Home</span>
                 </a>
                 <a href="/party/create">
                     <img src="/icons/add.svg" alt="Add icon" />
+                    <span>See all my parties</span>
                 </a>
                 <a href="/edit">
                     <img src="/icons/edit.svg" alt="Edit icon">
+                     <span>Edit post</span>
                 </a>
             </nav>
         </div>
     </div>
 
 
-        
+    
     <div class="rightPanel">
-        <h1>On va crée une soirée ensemble !</h1>
+        
         <div class="data-box">
-
+            <h1>On va crée une soirée ensemble !</h1>
             <p>Où se passe ta soirée ? :</p>
-            <input id="party_address" type="text" placeholder="Veuillez saisir l'adresse">
+            <input class="party_line" id="party_address" type="text" placeholder="Adresse*">
+            <input class="party_line" id="party_title" type="text" placeholder="Titre*">
+            <textarea class="party_input" id="party_description" name="data_party" placeholder="Donne nous une description de ta soirée !*" rows="10" cols="60"></textarea>
 
-            
-            <p>Donne nous une description de ta soirée ! :</p>
-            <input id="party_title" type="text" placeholder="Titre">
-            <textarea id="party_description" name="data_party" placeholder="Donne nous une description de ta soirée !" rows="10" cols="60"></textarea>
-            <div class="rules"></div>
+            <button id="party_submit">Soumettre</button>
+
+        </div>
+
+        <div class = "rules">
+            <h2>FindMyParty - Règles</h2>
+            <p>1. Ne postez pas de soirée qui ne sont pas les votres.</p>
+            <p>2. Soyez courtois et polis.</p>
+            <p>3. Évitez tous débat politique. </p>
+            <p>4. Pas de pub perso ou quelconques. </p>
+            <p>5. Merci de ne pas perturber la discussion en organisant des raids, en propageant la haine ou en votant négativement sur tout le monde.</p>
+            <p>6. Amusez-vous un maximum !</p>
+
         </div>
     </div>
 
