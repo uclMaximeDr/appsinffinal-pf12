@@ -1,0 +1,60 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    
+    
+
+}
+
+.leftPanel {
+    display: flex;
+    justify-content: center;
+    width: 3%;
+    height: 100%;
+    background-color: hsl(228, 42%, 18%);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+
+}
+
+.partyContainer nav {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
+.partyContainer nav img {
+    width: 40px;
+    padding: 10px;
+    margin-top: 5px;
+
+}
+
+.partyContainer nav a :hover{
+        background-color: hsl(231, 40%, 10%);
+        border-radius: 50%;
+}
+
+.rightPanel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+
+
+}
+
+.data-box{
+    width: 730px;
+    height: 1250px;
+     
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+
+
+

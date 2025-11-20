@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/global.css">
+    <link rel="stylesheet" href="/styles/create.css">
+    <title>Création de soirée</title>
+    
+</head>
+<body>
+    
+
+    <div class="leftPanel">
+        <div class="partyContainer">
+            <nav>
+                <a href="/">
+                    <img src="/icons/leftarrow.svg" alt="Back icon" width="35px">
+                </a>
+                <a href="/party/create">
+                    <img src="/icons/add.svg" alt="Add icon" />
+                </a>
+                <a href="/edit">
+                    <img src="/icons/edit.svg" alt="Edit icon">
+                </a>
+            </nav>
+        </div>
+    </div>
+
+
+        
+    <div class="rightPanel">
+        <h1>On va crée une soirée ensemble !</h1>
+        <div class="data-box">
+
+            <p>Où se passe ta soirée ? :</p>
+            <input id="party_address" type="text" placeholder="Veuillez saisir l'adresse">
+
+            
+            <p>Donne nous une description de ta soirée ! :</p>
+            <input id="party_title" type="text" placeholder="Titre">
+            <textarea id="party_description" name="data_party" placeholder="Donne nous une description de ta soirée !" rows="10" cols="60"></textarea>
+            <div class="rules"></div>
+        </div>
+    </div>
+
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.js"
+      integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+      crossorigin="anonymous"
+    ></script>
+    <script src="/scripts/create.js"></script>
+</body>
+</html>
