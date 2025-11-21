@@ -6,6 +6,10 @@ router.get('/', (req, res) => {
     res.render("index");
 });
 
+router.get('/camera', (req, res) => {
+    res.render("camera");
+});
+
 router.get('/user/login', (req, res) => {
     
     if(req.session && req.session.email) {
