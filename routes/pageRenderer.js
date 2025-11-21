@@ -68,9 +68,13 @@ router.get('/user/profile', (req, res) => {
     res.render("user/profile", { email: req.session.email, username: req.session.username, rating : 3.5 });
 })
 
-// Create a party
+// Party
 router.get('/party/create', (req, res) => {
     res.render("party/create");
+});
+
+router.get('/party/myposts', (req, res) => {
+    res.render("party/myposts");
 });
 
 
