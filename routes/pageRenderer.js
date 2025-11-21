@@ -10,6 +10,10 @@ router.get('/camera', (req, res) => {
     res.render("camera");
 });
 
+router.get('/captcha', (req, res) => {
+    res.render("captcha");
+});
+
 router.get('/user/login', (req, res) => {
     
     if(req.session && req.session.email) {
