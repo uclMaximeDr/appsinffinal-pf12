@@ -1,15 +1,15 @@
 // create marker
 async function createCustomMarker(lat, lng, imageUrl) {
   const imageBase64 = await fetch(imageUrl)
-        .then(res => res.blob())
-        .then(
-            blob =>
-                new Promise(resolve => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.readAsDataURL(blob);
-                })
-        );
+    .then((res) => res.blob())
+    .then(
+      (blob) =>
+        new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        })
+    );
 
   const svgTemplate = `
         <svg width="650" height="883" viewBox="0 0 650 883" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -44,7 +44,7 @@ const map = L.map("map", {
   attributionControl: false,
 }).setView([50.6689126, 4.6150577], 15);
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+L.tileLayer("https://tile.openstreetmap.bzh/ca/{z}/{x}/{y}.png", {
   maxZoom: 19,
 }).addTo(map);
 
@@ -52,4 +52,17 @@ const markers = [{ lat: 50.667639, lng: 4.6191022, img: "/images/casa.jpeg" }];
 
 markers.forEach(async (m) => {
   (await createCustomMarker(m.lat, m.lng, m.img)).addTo(map);
+});
+
+$("#searchSelector p").click((event) => {
+  var target = event.target;
+  var container = target.parentElement;
+  var selector = container.parentElement.querySelector(".selector");
+  if (target == container.querySelector("p:first-child")) {
+    selector.classList.remove("right");
+    selector.classList.add("left");
+  } else {
+    selector.classList.remove("left");
+    selector.classList.add("right");
+  }
 });
