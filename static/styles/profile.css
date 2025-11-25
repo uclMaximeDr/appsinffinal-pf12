@@ -95,6 +95,34 @@ body {
 
 }
 
+#collapseMenu {
+
+    position: relative;
+
+    left: 50px;
+
+    transition: 0.3s;
+    transform-origin: top;  
+
+}
+
+.leftPanel .rotate {
+    
+    transform: rotate(180deg);
+
+}
+
+.leftPanel .collapsed {
+
+    transform: scaleY(0);
+
+}
+
+.leftPanel .star {
+    
+    width: 30px;
+    margin-right: 10px;
+}
 
 .leftPanel #disconnect {
     position: absolute;
@@ -103,6 +131,7 @@ body {
 
     bottom: 0;
 }
+
 
 /* ### RIGHT PANEL ###*/
 
