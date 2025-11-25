@@ -109,6 +109,8 @@ textarea {
 }
 
 #back {
+
+  z-index: 1000;
   position: absolute;
   left: 10px;
   top: 10px;

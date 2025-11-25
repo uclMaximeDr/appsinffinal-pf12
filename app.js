@@ -2,7 +2,6 @@ const express = require('express');
 const session = require('express-session');
 const dotenv = require('dotenv');
 const path = require('path');
-const router = express.Router();
 
 const { MongoClient } = require('mongodb');
 
@@ -35,6 +34,11 @@ app.use(express.static(path.join(__dirname, 'static')));
 app.use('/', pageRenderer);
 app.use('/api', apiRouter);
 
+// 404 handler
+app.use((req, res) => {
+    res.status(404).render("404");
+});
+
 // Error handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
@@ -66,10 +70,5 @@ if (process.env.NODE_ENV !== "test") {
     });
   })();
 }
-
-// 404 handler
-router.use((req, res) => {
-    res.status(404).render("404");
-});
 
 module.exports = {app, setDatabase};

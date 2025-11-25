@@ -3,7 +3,11 @@ $('#back').click(() => {
 })
 
 $('#editButton').click(() => {
-    window.location.href = "/";
+    alert("Changing name functionality in progress ^^")
+})
+
+$('#addFriend').click(() => {
+    alert("You don't have any stop pretending")
 })
 
 $('#disconnect').click(() => {
