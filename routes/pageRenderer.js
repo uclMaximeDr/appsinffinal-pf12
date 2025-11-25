@@ -45,7 +45,7 @@ router.get('/user/profile', (req, res) => {
         return;
     }
 
-    res.render("user/profile", { email: req.session.email });
+    res.render("user/profile", { email: req.session.email, username: req.session.username });
 })
 
 

@@ -13,6 +13,7 @@ router.post('/login', async function (req, res, next) {
     const user = await database.collection('users').findOne({ email, password });
     if (user) {
         req.session.email = user.email;
+        req.session.username = user.fullname;
         res.send({ success: true });
     } else {
         res.send({ success: false, message: "Nom d'utilisateur ou mot de passe incorrect." });
@@ -40,7 +41,26 @@ router.post('/register', async function (req, res, next) {
     else {
         res.send({ success: false, message: "Couldn't create user."})
     }
+
 })
+
+router.post('/disconnect', async function (req, res, next) {
+    
+    console.log(req.session);
+
+    if (req.session.email != null)
+        {
+            req.session.email = null;
+            req.session.username = null;
+
+            res.send({success: true})
+        }
+        else {
+            res.send({success: false, message: "Couldn't disconnect!"})
+        }
+
+})
+
 
 // ### CAPTCHA ###
 router.post('/request-captcha', function (req, res, next) {

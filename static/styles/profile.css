@@ -3,9 +3,12 @@ body {
     height: 100vh;
 }
 
+
+/* ### LEFT PANEL ###*/
+
 .leftPanel {
     display: block;
-    position:static;
+    position:relative;
 
     width: 25%;
     height: 100%;
@@ -15,12 +18,25 @@ body {
     background-color: rgb(0, 0, 0, 50%);
 }
 
-.leftPanel .profilePicture {
+.leftPanel .profile {
+    
+    display: flex;
+    position: relative;
+
+    align-content: center;
+
+    left: 10px;
+    top: 60px;
+
+    gap: 20px;
+}
+
+.leftPanel .profile .profilePicture {
 
     position: relative;
     
-    width: 50px;
-    height: 50px;
+    width: 75px;
+    height: 75px;
 
     background-color: red;
 
@@ -29,9 +45,42 @@ body {
 
 }
 
+.leftPanel .profile .username {
+
+    font-size: 2rem;
+
+    margin: 0px;
+    align-self: center;
+
+}
+
+.leftPanel .profile svg {
+    
+    align-self: center;
+
+}
+
+.leftPanel .profile svg:hover {
+    
+    color: grey;
+
+}
+
+.leftPanel #disconnect {
+    position: absolute;
+
+    margin: 20px;
+
+    bottom: 0;
+}
+
+/* ### RIGHT PANEL ###*/
+
 .rightPanel {
     display: block;
     position: absolute;
+
+    overflow-y: scroll;
 
     left: 25%;
     bottom: 0;
