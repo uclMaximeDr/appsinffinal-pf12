@@ -39,7 +39,7 @@ router.post('/register', async function (req, res, next) {
         res.send({ success: true })
     }
     else {
-        res.send({ success: false, message: "Couldn't create user."})
+        res.send({ success: false, message: "Un utilisateur avec cet email existe déjà."})
     }
 
 })

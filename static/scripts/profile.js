@@ -1,5 +1,5 @@
 $('#back').click(() => {
-    window.history.back()
+    window.location.href = '/';
 })
 
 $('#editButton').click(() => {
