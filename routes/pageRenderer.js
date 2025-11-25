@@ -1,6 +1,16 @@
 const express = require('express');
 const router = express.Router();
 
+// Check if first visit middleware
+router.use((req, res, next) => {
+    if(!req.session.visited) {
+        req.session.visited = true;
+        res.redirect('/start');
+    } else {
+        next();
+    }
+});
+
 // Chech if need captcha middleware
 router.use((req, res, next) => {
     if(req.originalUrl.startsWith('/captcha') || req.originalUrl.startsWith('/api/')) {
@@ -18,6 +28,10 @@ router.use((req, res, next) => {
 // Routes
 router.get('/', (req, res) => {
     res.render("index");
+});
+
+router.get('/start', (req, res) => {
+    res.render("start");
 });
 
 router.get('/camera', (req, res) => {
