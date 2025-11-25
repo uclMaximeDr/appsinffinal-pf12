@@ -40,6 +40,37 @@ router.post('/register', async function (req, res, next) {
     else {
         res.send({ success: false, message: "Couldn't create user."})
     }
-    })
+})
+
+// ### CAPTCHA ###
+router.post('/request-captcha', function (req, res, next) {
+    if (req.session) {
+        req.session.needCaptcha = true;
+    }
+    res.send({
+        url: '/images/captcha.jpg'
+    });
+});
+
+router.post('/validate-captcha', function (req, res, next) {
+    const parts = JSON.parse(req.body.parts);
+    const correctParts = ['1-1'];
+    console.log(parts);
+    
+    let isValid = true;
+    if(parts.length !== correctParts.length) isValid = false;
+    for(const part of correctParts) {
+        if(!parts.includes(part)) {
+            isValid = false;
+            break;
+        }
+    }
+
+    if(req.session && isValid) {
+        req.session.needCaptcha = false;
+    }
+    
+    res.send({ success: isValid });
+});
 
 module.exports = router;

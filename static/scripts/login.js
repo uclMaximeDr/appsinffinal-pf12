@@ -1,5 +1,3 @@
-//const router = require("../../routes/api");
-
 let action = "login";
 
 $('#back').click(() => {
@@ -32,8 +30,6 @@ $('#submit').click(() => {
     
     if (action == "login") {
 
-        console.log("Trying to login")
-
         const email = $('#email').val();
         const password = $('#password').val();
 
@@ -42,11 +38,10 @@ $('#submit').click(() => {
             return;
         }
 
-        console.log(email + " " + password)
-
         $.post('/api/login', { email: email, password: password }, function(data) {
             if(data.success) {
-                window.location.href = "/";
+                const nextURL = "/user/profile";
+                window.location.href = "/captcha?next=" + encodeURIComponent(nextURL);
             } else {
                 alert(data.message);
             }
@@ -55,8 +50,6 @@ $('#submit').click(() => {
     }
     else {
         
-        console.log("Trying to register")
-
         const fullname = $('#full-name').val();
         const email = $('#email').val();
         const password = $('#password').val();
@@ -66,12 +59,10 @@ $('#submit').click(() => {
             return;
         }
 
-        console.log(fullname + " " + email + " " + password)
-
         $.post('/api/register', { fullname: fullname, email: email, password: password}, function(data) {
             if(data.success) {
-                $('input').val('');
-                alert("user succesfully created!");
+                const nextURL = "/user/profile";
+                window.location.href = "/captcha?next=" + encodeURIComponent(nextURL);
             }
             else
             {

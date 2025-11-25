@@ -1,6 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
+// Chech if need captcha middleware
+router.use((req, res, next) => {
+    if(req.originalUrl.startsWith('/captcha') || req.originalUrl.startsWith('/api/')) {
+        next();
+        return;
+    }
+
+    if(req.session && req.session.needCaptcha) {
+        res.redirect(`/captcha?next=${encodeURIComponent(req.originalUrl)}`);
+    } else {
+        next();
+    }
+});
+
 // Routes
 router.get('/', (req, res) => {
     res.render("index");
