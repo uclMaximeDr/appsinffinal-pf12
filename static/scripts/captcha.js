@@ -4,36 +4,33 @@ const imagePartContainer = document.getElementById('imagePartContainer');
 
 let selectedParts = [];
 
-async function loadCaptcha() {
-    $.post('/api/request-captcha', function(data) {
-        const url = data.url;
+function loadCaptcha() {
+    const url = document.getElementById('templateImage').src;
+    for(let i = 0; i < 4; i++) {
+        for(let j = 0; j < 4; j++) {
+            const frame = document.createElement('div');
+            frame.classList.add('frame');
+            frame.style.gridArea = `${i + 1} / ${j + 1} / ${i + 2} / ${j + 2}`;
+            imagePartContainer.appendChild(frame);
 
-        for(let i = 0; i < 4; i++) {
-            for(let j = 0; j < 4; j++) {
-                const frame = document.createElement('div');
-                frame.classList.add('frame');
-                frame.style.gridArea = `${i + 1} / ${j + 1} / ${i + 2} / ${j + 2}`;
-                imagePartContainer.appendChild(frame);
-    
-                const img = document.createElement('img');
-                img.src = url;
-                img.style.objectPosition = `-${j * 100}px -${i * 100}px`;
-                img.dataset.row = i;
-                img.dataset.col = j;
-                frame.appendChild(img);
-    
-                frame.addEventListener('click', () => {
-                    frame.classList.toggle('selected');
-                    const partKey = `${i}-${j}`;
-                    if(selectedParts.includes(partKey)) {
-                        selectedParts = selectedParts.filter(part => part !== partKey);
-                    } else {
-                        selectedParts.push(partKey);
-                    }
-                });
-            }
+            const img = document.createElement('img');
+            img.src = url;
+            img.style.objectPosition = `-${j * 100}px -${i * 100}px`;
+            img.dataset.row = i;
+            img.dataset.col = j;
+            frame.appendChild(img);
+
+            frame.addEventListener('click', () => {
+                frame.classList.toggle('selected');
+                const partKey = `${i}-${j}`;
+                if(selectedParts.includes(partKey)) {
+                    selectedParts = selectedParts.filter(part => part !== partKey);
+                } else {
+                    selectedParts.push(partKey);
+                }
+            });
         }
-    });
+    }
 }
 
 document.getElementById('validate').addEventListener('click', async () => {

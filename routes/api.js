@@ -63,18 +63,9 @@ router.post('/disconnect', async function (req, res, next) {
 
 
 // ### CAPTCHA ###
-router.post('/request-captcha', function (req, res, next) {
-    if (req.session) {
-        req.session.needCaptcha = true;
-    }
-    res.send({
-        url: '/images/captcha.jpg'
-    });
-});
-
 router.post('/validate-captcha', function (req, res, next) {
     const parts = JSON.parse(req.body.parts);
-    const correctParts = ['1-1'];
+    const correctParts = ['1-1', '2-2', '2-3', '1-3', '2-1'];
     console.log(parts);
     
     let isValid = true;

@@ -25,7 +25,13 @@ router.get('/camera', (req, res) => {
 });
 
 router.get('/captcha', (req, res) => {
-    res.render("captcha");
+    if (req.session) {
+        req.session.needCaptcha = true;
+    }
+    res.render("captcha", {
+        url: '/images/captcha.jpg',
+        object: 'une bière'
+    });
 });
 
 router.get('/user/login', (req, res) => {
