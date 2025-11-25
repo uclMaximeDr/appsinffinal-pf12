@@ -1,44 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find My Party</title>
+<% styles=`
+<link rel="stylesheet" href="styles/captcha.css">
+` %>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="styles/global.css">
-    <link rel="stylesheet" href="styles/captcha.css">
-</head>
-<body>
-    <section class="pageContainer flex">
-        <div class="container">
-            <div class="captchaContainer">
-                <div class="header">
-                    <h3>Veuillez sélectionner toutes les cases contenants :</h3>
-                    <h2><%= object %></h2>
-                </div>
-                <img src="<%= url %>" alt="" id="templateImage">
-                <div class="imagePartContainer" id="imagePartContainer"></div>
-                <button id="validate">Valider</button>
+<section class="pageContainer flex">
+    <div class="container">
+        <div class="captchaContainer">
+            <div class="header">
+                <h3>Veuillez sélectionner toutes les cases contenants :</h3>
+                <h2><%= object %></h2>
             </div>
-            <div class="success hide">
-                <img src="/images/captcha-success.svg">
-                <p>Bravo, tu as mérité ta bierre !</p>
-                <button id="next">Continue</button>
-            </div>
-            <div class="fail hide">
-                <img src="/images/captcha-fail.svg">
-                <p>Vous avez échoué, pas de bierre !</p>
-                <button id="retry">Réessayer</button>
-            </div>
+            <img src="<%= url %>" alt="" id="templateImage">
+            <div class="imagePartContainer" id="imagePartContainer"></div>
+            <button id="validate">Valider</button>
         </div>
-    </section>
+        <div class="success hide">
+            <img src="/images/captcha-success.svg">
+            <p>Bravo, tu as mérité ta bierre !</p>
+            <button id="next">Continue</button>
+        </div>
+        <div class="fail hide">
+            <img src="/images/captcha-fail.svg">
+            <p>Vous avez échoué, pas de bierre !</p>
+            <button id="retry">Réessayer</button>
+        </div>
+    </div>
+</section>
 
-    <script
-      src="https://code.jquery.com/jquery-3.7.1.js"
-      integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-      crossorigin="anonymous"
-    ></script>
-    <script src="/scripts/captcha.js"></script>
-</body>
-</html>
+<script src="/scripts/captcha.js"></script>

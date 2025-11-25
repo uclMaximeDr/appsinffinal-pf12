@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const expressLayouts = require('express-ejs-layouts');
 const dotenv = require('dotenv');
 const path = require('path');
 
@@ -21,6 +22,12 @@ app.use(express.urlencoded({ extended: false }));
 // Views and template engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+// Layouts
+app.use(expressLayouts);
+app.set('view options', { layout:'layout.ejs' });
+
+// Session management
 app.use(session({
     secret: process.env.SESSION_SECRET || 'a-default-secret',
     resave: false,
