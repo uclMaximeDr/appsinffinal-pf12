@@ -1,3 +1,5 @@
+//const router = require("../../routes/api");
+
 let action = "login";
 
 $('#back').click(() => {
@@ -27,6 +29,55 @@ $('#actionSelector p').click((event) => {
 })
 
 $('#submit').click(() => {
-    // Temporary redirect to profile without check
-    window.location.href = "/user/profile";
+    
+    if (action == "login") {
+
+        console.log("Trying to login")
+
+        const email = $('#email').val();
+        const password = $('#password').val();
+
+        if(email === "" || password === "") {
+            alert("Veuillez remplir tous les champs.");
+            return;
+        }
+
+        console.log(email + " " + password)
+
+        $.post('/api/login', { email: email, password: password }, function(data) {
+            if(data.success) {
+                window.location.href = "/";
+            } else {
+                alert(data.message);
+            }
+        })
+
+    }
+    else {
+        
+        console.log("Trying to register")
+
+        const fullname = $('#full-name').val();
+        const email = $('#email').val();
+        const password = $('#password').val();
+
+        if(fullname === "" || email === "" || password === "") {
+            alert("Veuillez remplir tous les champs.");
+            return;
+        }
+
+        console.log(fullname + " " + email + " " + password)
+
+        $.post('/api/register', { fullname: fullname, email: email, password: password}, function(data) {
+            if(data.success) {
+                $('input').val('');
+                alert("user succesfully created!");
+            }
+            else
+            {
+                alert(data.message);
+            }
+        })
+
+    }
 })

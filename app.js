@@ -2,6 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const dotenv = require('dotenv');
 const path = require('path');
+const router = express.Router();
 
 const { MongoClient } = require('mongodb');
 
@@ -56,6 +57,7 @@ if (process.env.NODE_ENV !== "test") {
         client = new MongoClient(mongoUrl);
         await client.connect();
         database = client.db(process.env.DB_NAME || "prod_db");
+        app.locals.db = database;
     }
 
     app.listen(PORT, '0.0.0.0', async () => {
@@ -64,5 +66,10 @@ if (process.env.NODE_ENV !== "test") {
     });
   })();
 }
+
+// 404 handler
+router.use((req, res) => {
+    res.status(404).render("404");
+});
 
 module.exports = {app, setDatabase};

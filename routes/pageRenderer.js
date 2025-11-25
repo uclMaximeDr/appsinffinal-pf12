@@ -7,22 +7,24 @@ router.get('/', (req, res) => {
 });
 
 router.get('/user/login', (req, res) => {
-    // Disabled while testing
-    // if(req.session && req.session.email) res.redirect("/user/profile");
+    
+    if(req.session && req.session.email) {
+        res.redirect("/user/profile");
+        return;
+    }
 
     res.render("user/login");
 })
 
 router.get('/user/profile', (req, res) => {
-    // Disabled while testing
-    // if(!req.session || !req.session.email) return res.redirect("/user/login");
+
+    if(!req.session || !req.session.email) {
+        res.redirect("/user/login");
+        return;
+    }
 
     res.render("user/profile", { email: req.session.email });
 })
 
-// 404 handler
-router.use((req, res) => {
-    res.status(404).render("404");
-});
 
 module.exports = router;
