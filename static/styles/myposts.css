@@ -74,7 +74,7 @@ body {
     flex-direction: row;
     align-items: center;
 
-    padding-left: 35%;
+    padding-left: 25%;
     
 
 }
@@ -91,6 +91,26 @@ body {
 }
 
 
+/*W3school tableau*/
+table {
+  border-collapse: collapse;
+  margin-bottom: 120px;
+  width: 100%;
+}
 
+th,
+td {
+  text-align: left;
+  
+  padding: 15px;
+}
 
+th {
+  text-align: center;
+  background-color: rgb(21, 65, 126);
+  color: white;
+}
+
+tr:nth-child(even) {
+    background-color: hsl(231, 40%, 10%);}
 
