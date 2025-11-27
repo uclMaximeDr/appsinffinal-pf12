@@ -128,3 +128,19 @@ router.post("/uploadPhoto", (req, res) => {
 });
 
 module.exports = router;
+
+// ### PARTY ###
+// WORK IN PROGRESS
+router.post('/create', async function (req, res, next) {
+
+    const {address, title, description} = req.body;
+
+    if (req.session.email != null){
+        await database.collection('party').insertOne({address, title, description, email: req.session.email, date: renderDate() });
+        res.send({success : true, message : "Soirée crée !"});
+    }
+    else{
+        res.send({success : false, message : "Soirée non crée, pas de compte connecté."});
+    }
+})
+

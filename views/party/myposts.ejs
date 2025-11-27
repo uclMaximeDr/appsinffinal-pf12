@@ -37,29 +37,30 @@
         <div class="data-tab">
             <h1>Vos posts</h1>
             <section>
+                <% if (parties && parties.length !=0) { %>
                 <table>
                     <thead>
                         <tr>
+                            <th>Titre</th>
                             <th>Description</th>
                             <th>Adresse</th>
                             <th>Posté par</th>
-                            <th>Date</th>
-                            <th>Détails</th>
                         </tr>
                     </thead>
                     <tbody>
-
+                        <%parties.forEach(party =>{%>
                         <tr>
-                            <td>Hello</td>
-                            <td>Hello</td>
-                            <td>Hello</td>
-                            <td>Hello</td>
-                            <td>Hello</td>
-                        
+                            <td><%= party.title %></td>
+                            <td><%= party.description %></td>
+                            <td><%= party.address %></td>
+                            <td><%= party.userFullname %></td>
                         </tr>
-
+                        <%})%>
                     </tbody>
                 </table>
+                <%} else { %>
+                    <p>Pas de soirée en cours.</p>
+                <%} %>
             </section>
 
 

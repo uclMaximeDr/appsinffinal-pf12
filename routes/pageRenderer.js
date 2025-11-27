@@ -68,13 +68,24 @@ router.get('/user/profile', (req, res) => {
     res.render("user/profile", { email: req.session.email, username: req.session.username, rating : 3.5 });
 })
 
-// Party
+// ### PARTY ###
 router.get('/party/create', (req, res) => {
-    res.render("party/create");
+    res.render("party/create", { email: req.session.email, username: req.session.username});
+    
 });
 
-router.get('/party/myposts', (req, res) => {
-    res.render("party/myposts");
+router.get('/party/myposts', async function(req, res){
+    const database = req.app.locals.db;
+
+    const parties = await database.collection('party').find().toArray();
+    const partiesNames = await Promise.all(parties.map(async party => {
+        return {
+            ...party,
+            userFullname: await getFullname(database, party.email)
+        };
+    }));
+    
+    res.render("party/myposts", {email: req.session.email, username: req.session.username, parties : partiesNames});
 });
 
 
