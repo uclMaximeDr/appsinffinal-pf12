@@ -16,16 +16,31 @@ $('#party_submit').click(function(){
         window.location.href = "/";
     } else {
         alert(data.message);
-    } 
+    }
  })
 })
 
 
-$('#party-delete').click(function(){
-    const party_id = $(this).data("delete");
+$('#party_edit').click(function(){
+    const edit_id = $(this).data("edit");
+
+ $.post("/api/edit", {edit_id: edit_id}, function(data) {
+    if(data.success) {
+      window.location.href = "/party/myposts";
+    } else {
+      alert(data.message);
+    }
+    
+ })
+
+})
+
+
+$('#party_delete').click(function(){
+    const delete_id = $(this).data("delete");
     
 
- $.post("/api/delete", {party_id : party_id}, function(data) {
+ $.post("/api/delete", {delete_id : delete_id}, function(data) {
     if(data.success) {
       alert(data.message);
       window.location.href = "/party/myposts";

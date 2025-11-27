@@ -34,11 +34,18 @@
     <div class="rightPanel">
         
         <div class="data-box">
-            <h1>On va crée une soirée ensemble !</h1>
-   
-            <input class="party_line" id="party_address" type="text" placeholder="Adresse*">
-            <input class="party_line" id="party_title" type="text" placeholder="Titre*">
-            <textarea class="party_input" id="party_description" name="data_party" placeholder="Donne nous une description de ta soirée !*" rows="10" cols="60"></textarea>
+            <% if (!id_saved && !data_party) {%>
+                <h1>On va crée une soirée ensemble !</h1>
+                <input class="party_line" id="party_address" type="text" placeholder="Adresse*">
+                <input class="party_line" id="party_title" type="text" placeholder="Titre*">
+                <textarea class="party_input" id="party_description" name="data_party" placeholder="Donne nous une description de ta soirée !*" rows="10" cols="60"></textarea>
+            <%} else {%>
+                <h1>Tu souhaites modifier ta soirée ? Pas de problème !</h1>
+                <input class="party_line" id="party_address" type="text" placeholder="Adresse*" value="<%= data_party.address%>">
+                <input class="party_line" id="party_title" type="text" placeholder="Titre*" value="<%= data_party.title%>">
+                <textarea class="party_input" id="party_description" name="data_party" placeholder="Donne nous une description de ta soirée !*" rows="10" cols="60"><%= data_party.description %></textarea>
+
+            <%}%>
 
             <button id="party_submit">Poster</button>
 

@@ -70,8 +70,7 @@ router.get('/user/profile', (req, res) => {
 
 // ### PARTY ###
 router.get('/party/create', (req, res) => {
-    res.render("party/create", { email: req.session.email, username: req.session.username});
-    
+    res.render("party/create", {email: req.session.email, username: req.session.username, data_party : req.session.data_party, id_saved : req.session.id_saved});
 });
 
 router.get('/party/myposts', async function(req, res){

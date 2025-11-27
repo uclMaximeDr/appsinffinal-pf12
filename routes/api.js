@@ -130,30 +130,51 @@ router.post("/uploadPhoto", (req, res) => {
 
 module.exports = router;
 
-// ### PARTY ###
 
+// ### PARTY ###
 router.post('/create', async function (req, res, next) {
     const database = req.app.locals.db;
 
     const {address, title, description} = req.body;
 
-    if (req.session.email != null){
+    if (req.session.email != null && req.session.id_saved == null){
         await database.collection('party').insertOne({address, title, description, email: req.session.email });
         res.send({success : true, message : "Soirée crée !"});
     }
+    else if (req.session.email != null && req.session.id_saved){
+        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id), email: req.session.email},{$set: {address, title, description}});
+        req.session.id_saved = null; 
+        res.send({success : true,  message : "Accident modified"});
+    }
+
     else{
         res.send({success : false, message : "Soirée non crée, pas de compte connecté."});
     }
 })
 
+
+router.post('/edit', async function (req, res, next) {
+    const database = req.app.locals.db;
+    const edit_id = req.body.edit_id;
+    req.session.data_party = await database.collection('party').findOne({ _id: new ObjectId(edit_id) });
+    req.session.id_saved = new ObjectId(edit_id);
+
+    if (req.session.email != null && req.session.id_saved != null){
+        res.send({success : true,  message : "Soirée modifiée !"});
+    }
+    else{
+        res.send({success : false, message : "Soirée non modifiée, pas de compte connecté."});
+    }
+})
+
 router.post('/delete', async function (req, res, next) {
     const database = req.app.locals.db;
-    const party_id = req.body.party_id;
+    const delete_id = req.body.party_id;
 
 
-    if (req.session.email != null && party_id != null){
-        await database.collection('party').deleteOne({email: req.session.email, _id: new ObjectId(party_id)});
-        res.send({success : true, message : "Soirée supprimer !"});
+    if (req.session.email != null && delete_id != null){
+        await database.collection('party').deleteOne({email: req.session.email, _id: new ObjectId(delete_id)});
+        res.send({success : true, message : "Soirée supprimée !"});
     }
     else{
         res.send({success : false, message : "Soirée non supprimée, pas de compte connecté."});
