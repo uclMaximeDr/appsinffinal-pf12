@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const { ObjectId } = require("mongodb");
 
 // Routes
 
@@ -130,7 +131,7 @@ router.post("/uploadPhoto", (req, res) => {
 module.exports = router;
 
 // ### PARTY ###
-// WORK IN PROGRESS
+
 router.post('/create', async function (req, res, next) {
     const database = req.app.locals.db;
 
@@ -142,6 +143,20 @@ router.post('/create', async function (req, res, next) {
     }
     else{
         res.send({success : false, message : "Soirée non crée, pas de compte connecté."});
+    }
+})
+
+router.post('/delete', async function (req, res, next) {
+    const database = req.app.locals.db;
+    const party_id = req.body.party_id;
+
+
+    if (req.session.email != null && party_id != null){
+        await database.collection('party').deleteOne({email: req.session.email, _id: new ObjectId(party_id)});
+        res.send({success : true, message : "Soirée supprimer !"});
+    }
+    else{
+        res.send({success : false, message : "Soirée non supprimée, pas de compte connecté."});
     }
 })
 

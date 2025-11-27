@@ -33,7 +33,7 @@
     
     <div class="rightPanel">
     
-        
+        <!-- TODO - Si compte ou pas -->
         <div class="data-tab">
             <h1>Vos soirée</h1>
             <section>
@@ -44,7 +44,8 @@
                             <th>Titre</th>
                             <th>Description</th>
                             <th>Adresse</th>
-                            <th>Posté par</th>
+                            <th></th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -53,9 +54,11 @@
                             <td><%= party.title %></td>
                             <td><%= party.description %></td>
                             <td><%= party.address %></td>
-                            <td><%= party.userFullname %></td>
+                            <td><button id="party-delete" data-delete = "<%= party._id%>" > X </button></td>
+
                         </tr>
                         <%})%>
+                        
                     </tbody>
                 </table>
                 <%} else { %>
@@ -74,6 +77,6 @@
       integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
       crossorigin="anonymous"
     ></script>
-    <script src="/scripts/myposts.js"></script>
+    <script src="/scripts/party.js"></script>
 </body>
 </html>

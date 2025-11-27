@@ -19,3 +19,21 @@ $('#party_submit').click(function(){
     } 
  })
 })
+
+
+$('#party-delete').click(function(){
+    const party_id = $(this).data("delete");
+    
+
+ $.post("/api/delete", {party_id : party_id}, function(data) {
+    if(data.success) {
+      alert(data.message);
+      window.location.href = "/party/myposts";
+    } else {
+        alert(data.message);
+    }
+    
+ })
+
+})
+
