@@ -16,7 +16,7 @@ body {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start; 
-    width: 190px;
+    flex: 0 0 170px; /*Gardera la taille min car sinon bug sûr d'autres écrans*/
     height: 100%;
     background-color: hsl(228, 42%, 18%);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
@@ -33,12 +33,12 @@ body {
     align-items: left;
 
     margin-top: 80px;
-    margin-left: 20px;
+    margin-left: 15%;;
     gap: 40px;
 }
 
 .partyContainer nav img {
-    width: 30px;
+    width: 20%;
     padding: 10px;
     margin-top: 5px;
 
@@ -73,86 +73,24 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: 100%;
+
+    padding-left: 35%;
     
 
 }
 
-.data-tab{
-    width: 730px;
-    height: 1250px;
+.data-box{
+    width: 45%;
+    height: 80%;
+    
     
     display: flex;
-    flex-direction: column;
-    margin-left: 650px;
-    align-items: left;
+    flex-direction: row;
+    align-items: center;
 
 }
 
-table {
-  border-collapse: collapse;
-  margin-bottom: 120px;
-  width: 100%;
-  border: 3px solid white;
-
-}
-
-th,
-td {
-  text-align: left;
-  padding: 8px;
-  border: 3px solid white;
-}
-
-th {
-  text-align: center;
-  background-color: rgb(21, 65, 126);
-  color: white;
-  
-}
-
-tr:nth-child(even) {background-color: #f2f2f2;}
 
 
-
-.party_line{
-    width: 100%;
-
-    padding: 12px;
-    margin: 10px;
-    margin-left: 0px;
-    box-sizing: border-box;
-    border: 2px solid #ccc;
-    border-radius: 20px;
-    background-color: #f8f8f8;
-    font-size: 16px;
-    resize: none;
-}
-
-.party_input{
-    /*Copied from W3School for test*/
-    width: 100%;
-    height: 200px;
-
-    padding: 12px;
-    margin: 10px;
-    margin-top: 80px;
-    margin-left: 0px;
-    box-sizing: border-box;
-    border: 2px solid #ccc;
-    border-radius: 20px;
-    background-color: #f8f8f8;
-    font-size: 16px;
-    resize: none;
-}
-
-#party_submit {
-    width: 90px;
-    margin: 10px;
-    padding: 10px;
-    margin-left: auto; /*Pas certain que c'est la bonne manière de*/
-    border-radius: 20px;
-
-}
 
 

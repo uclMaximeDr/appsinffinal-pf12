@@ -81,7 +81,7 @@ router.get('/party/myposts', async function(req, res){
     const partiesNames = await Promise.all(parties.map(async party => {
         return {
             ...party,
-            userFullname: await getFullname(database, party.email)
+            userFullname: await database.collection('users').findOne({email : req.session.email})
         };
     }));
     

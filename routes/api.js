@@ -132,11 +132,12 @@ module.exports = router;
 // ### PARTY ###
 // WORK IN PROGRESS
 router.post('/create', async function (req, res, next) {
+    const database = req.app.locals.db;
 
     const {address, title, description} = req.body;
 
     if (req.session.email != null){
-        await database.collection('party').insertOne({address, title, description, email: req.session.email, date: renderDate() });
+        await database.collection('party').insertOne({address, title, description, email: req.session.email });
         res.send({success : true, message : "Soirée crée !"});
     }
     else{
