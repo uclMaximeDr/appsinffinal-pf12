@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { ObjectId } = require('mongodb')
+const { ObjectId } = require("mongodb");
 
 // Middleware to check for first visit and captcha requirement
 router.use((req, res, next) => {
@@ -135,7 +135,19 @@ router.get('/party/myposts', async function(req, res){
 
     const parties = await database.collection('party').find({email : req.session.email}).toArray();
     
-    res.render("party/myposts", {email: req.session.email, username: req.session.username, parties: parties});
+    res.render("party/myposts", {email: req.session.email, username: req.session.username, parties: parties,});
+});
+
+
+//Affichage information de la soirée
+router.get('/party/:id', async function(req, res){
+    const database = req.app.locals.db;
+    const party = await database.collection('party').findOne({ _id: new ObjectId(req.params.id) });
+    const connected = req.session ? (req.session.email == party.email) : false;
+    //const userFullname = await getFullname(database, party.email);
+    //dans res => fullname: await getFullname(database, req.session.email)
+
+    res.render("party/party", { party: { ...party }, connected: connected });
 });
 
 

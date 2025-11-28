@@ -259,7 +259,7 @@ router.post('/create', async function (req, res, next) {
 
     // Soumettre nouvelle soirée
     if (req.session.email != null && !req.session.id_saved){
-        await database.collection('party').insertOne({address, title, description, email: req.session.email });
+        await database.collection('party').insertOne({address, title, description, email: req.session.email, username : req.session.username });
         res.send({success : true, message : "Soirée crée !"});
     }
     // Modifier soirée avec même identifiant

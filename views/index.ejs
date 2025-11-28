@@ -16,13 +16,14 @@
         </div>
 
         <div class = "cardContainer">
-            <%parties.forEach(party =>{%>
-                <div class = "cardParty">
-                    <h3><%= party.title %></h3>
-                    <h4><%= party.address %></h4>
-                    <p><%= party.description %></p>
-                </div>
-            <%})%>
+        <%parties.forEach(party =>{%>
+            <div class = "cardParty">
+                <h3><%= party.title %></h3>
+                <h4>Posté par <%= party.username %></h4>
+                <h5><%= party.address %></h4>
+                <p><%= party.description %></p>
+            </div>
+        <%})%>
         </div>
     </div>
     <div id="map"></div>

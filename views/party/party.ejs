@@ -1,0 +1,38 @@
+<% styles=`
+<link rel="stylesheet" href="/styles/party.css">`
+%>
+<div class="leftPanel">
+
+</div>
+
+<div class="rightPanel">
+
+    <div class="data-box">
+        <div class="user-info">
+            <img src="/images/default_user.png" alt="user">
+            <p><%= party.username %></p>
+
+            <h4><strong><span id="party-address"><%= party.address %></span></strong></h4>
+        </div>
+
+        <h2><strong></strong> <%= party.title %></h2>
+        
+        
+        <p><strong> <%= party.description %></strong></p>
+        <br>
+
+        <textarea class="party_input" id="party_comment" name="data_comment" placeholder="Poster ton avis" rows="2" cols="60"></textarea>
+        <div class = "subbar-input">
+            <td><button class="UpDown" id ="up"> 0 ^ </button></td>
+            <td><button class="UpDown" id ="down">0 v </button></td>
+            <td><button class="button-comment" id ="share"> Share </button></td>
+            <td><button class="button-comment" data-comment = "<%= party._id%>" > Poster </button></td>
+
+        </div>
+
+        
+
+    </div>
+
+
+</div>
