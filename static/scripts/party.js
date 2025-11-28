@@ -1,5 +1,5 @@
-//work in progress
 
+// Soumettre une soirée
 $('#party_submit').click(function () {
   const address = $('#party_address').val();
   const title = $('#party_title').val();
@@ -9,6 +9,7 @@ $('#party_submit').click(function () {
     alert("Veuillez remplir tous les champs pour soumettre");
     return;
   }
+
 
   $.post("/api/create", { address: address, title: title, description: description }, function (data) {
     if (data.success) {
@@ -20,7 +21,7 @@ $('#party_submit').click(function () {
   })
 })
 
-
+// Modifier une soirée
 $('.party_edit').click(function () {
   const edit_id = $(this).data("edit");
 
@@ -37,7 +38,7 @@ $('.party_edit').click(function () {
 
 })
 
-
+// Supprimer une soirée
 $('.party_delete').click(function () {
   const delete_id = $(this).data("delete");
 

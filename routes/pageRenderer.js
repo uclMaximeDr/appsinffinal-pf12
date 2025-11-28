@@ -27,6 +27,8 @@ router.use((req, res, next) => {
 
 // Routes
 router.get('/', async function(req, res){
+
+    //Recherche soirée database avec pseudo
     const database = req.app.locals.db;
 
     const parties = await database.collection('party').find().toArray();
@@ -82,6 +84,8 @@ router.get('/party/create', (req, res) => {
     res.render("party/create", {email: req.session.email, username: req.session.username, data_party : req.session.data_party, id_saved : req.session.id_saved});
 });
 
+
+//Affichage soirée de l'utilisateur
 router.get('/party/myposts', async function(req, res){
 
     const database = req.app.locals.db;
