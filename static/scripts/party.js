@@ -30,7 +30,7 @@ $('#party_edit').click(function(){
     } else {
       alert(data.message);
     }
-    
+
  })
 
 })

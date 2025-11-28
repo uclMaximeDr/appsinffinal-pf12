@@ -26,8 +26,17 @@ router.use((req, res, next) => {
 });
 
 // Routes
-router.get('/', (req, res) => {
-    res.render("index");
+router.get('/', async function(req, res){
+    const database = req.app.locals.db;
+
+    const parties = await database.collection('party').find().toArray();
+    const partiesNames = await Promise.all(parties.map(async party => {
+        return {
+            ...party,
+            userFullname: await database.collection('users').findOne({email : req.session.email})
+        };
+    }));
+    res.render("index", {email: req.session.email, username: req.session.username, parties : partiesNames});
 });
 
 router.get('/start', (req, res) => {
@@ -74,6 +83,8 @@ router.get('/party/create', (req, res) => {
 });
 
 router.get('/party/myposts', async function(req, res){
+
+    // MODIFICATION POUR AFFICHER QUE CEUX DU USER
     const database = req.app.locals.db;
 
     const parties = await database.collection('party').find().toArray();

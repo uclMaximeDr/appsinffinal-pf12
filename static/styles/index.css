@@ -59,3 +59,35 @@
 
     z-index: 1;
 }
+
+
+.cardContainer{
+    display: flex;
+    flex-direction: column;
+
+    overflow-y: scroll;
+    
+    
+    border: 5px solid hsl(229, 41%, 18%) ;
+    border-radius: 20px;
+    height : 85vh;
+    width: 85%;
+    padding: 20px;
+
+
+
+}
+
+.cardParty{
+
+    
+    background-color: hsl(0, 0%, 0%);
+    
+    border: 5px solid hsl(229, 41%, 18%) ;
+    border-radius: 20px;
+    height: 200px;
+    width: 80%;
+    padding: 10px;
+    margin: 10px;
+
+}
