@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getDatabase } = require('../app');
+const multer = require('multer');
 
 // Routes
 
@@ -82,6 +82,49 @@ router.post('/validate-captcha', function (req, res, next) {
     }
     
     res.send({ success: isValid });
+});
+
+
+// ### CAMERA ###
+router.post("/uploadPhoto", (req, res) => {
+    const upload = req.app.locals.upload;
+    const db = req.app.locals.db;
+    const uploadSingle = upload.single("photo");
+
+    uploadSingle(req, res, async function (err) {
+        if (err instanceof multer.MulterError) {
+            return res.status(500).json({ error: err.message });
+        } else if (err) {
+            return res.status(500).json({ error: "Erreur lors du téléchargement du fichier" });
+        }
+
+        if (!req.file) return res.status(400).json({ error: "Aucun fichier reçu" });
+
+        // On récupère l'utilisateur
+        const email = req.session?.email;
+        if (!email) return res.status(401).json({ error: "Utilisateur non connecté" });
+
+        // Coordonnées GPS (optionnelles)
+        let lat = req.body.lat ? parseFloat(req.body.lat) : null;
+        let lng = req.body.lng ? parseFloat(req.body.lng) : null;
+        const location = (lat !== null && lng !== null) ? { type: "Point", coordinates: [lng, lat] } : null;
+
+        // On crée l'objet photo
+        const photoDoc = {
+            filename: req.file.filename,
+            uploadedBy: email,
+            uploadedAt: new Date(),
+            location: location
+        };
+
+        try {
+            await db.collection("photos").insertOne(photoDoc);
+            res.json({ message: "Image enregistrée et ajoutée à la DB", photo: photoDoc });
+        } catch (dbErr) {
+            console.error(dbErr);
+            res.status(500).json({ error: "Erreur lors de l'enregistrement en DB" });
+        }
+    });
 });
 
 module.exports = router;
