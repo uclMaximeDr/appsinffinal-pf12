@@ -4,6 +4,10 @@
     --sidebar-width: 400px;
 }
 
+body{
+    overflow:hidden;
+}
+
 .sidebar {
     position: absolute;
     left: 0;
@@ -64,14 +68,11 @@
 .cardContainer{
     display: flex;
     flex-direction: column;
-
     overflow-y: scroll;
+    overflow-x:hidden;
     
-    
-    border: 5px solid hsl(229, 41%, 18%) ;
-    border-radius: 20px;
-    height : 85vh;
-    width: 85%;
+    height: 100vh;
+    width: 90%;
     padding: 20px;
 
 
@@ -79,15 +80,13 @@
 }
 
 .cardParty{
-
-    
-    background-color: hsl(0, 0%, 0%);
-    
-    border: 5px solid hsl(229, 41%, 18%) ;
+    background-color: hsl(229, 41%, 18%);
+    border: 5px solid hsl(229, 42%, 42%) ;
     border-radius: 20px;
-    height: 200px;
-    width: 80%;
+
+    width: 85%;
+    margin: 15px;
     padding: 10px;
-    margin: 10px;
+
 
 }

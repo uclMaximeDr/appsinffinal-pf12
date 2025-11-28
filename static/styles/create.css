@@ -1,6 +1,6 @@
 body {
-    width: 100vw;
-    height: 100vh;
+
+    min-height: 100vh;
     display: flex;
     font-weight: bold;
     text-decoration:none 
@@ -16,6 +16,7 @@ body {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start; 
+    min-height: 100vh;
     flex: 0 0 170px; /*Gardera la taille min car sinon bug sûr d'autres écrans*/
     height: 100%;
     background-color: hsl(228, 42%, 18%);

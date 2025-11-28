@@ -16,9 +16,10 @@
         <div class = "cardContainer">
         <%parties.forEach(party =>{%>
             <div class = "cardParty">
-                <p><%= party.title %></p>
+                <h3><%= party.title %></h3>
+                <h4><%= party.address %></h4>
                 <p><%= party.description %></p>
-                <p><%= party.address %></p>
+                
             </div>
         <%})%>
         </div>

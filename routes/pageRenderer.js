@@ -84,18 +84,11 @@ router.get('/party/create', (req, res) => {
 
 router.get('/party/myposts', async function(req, res){
 
-    // MODIFICATION POUR AFFICHER QUE CEUX DU USER
     const database = req.app.locals.db;
 
-    const parties = await database.collection('party').find().toArray();
-    const partiesNames = await Promise.all(parties.map(async party => {
-        return {
-            ...party,
-            userFullname: await database.collection('users').findOne({email : req.session.email})
-        };
-    }));
+    const parties = await database.collection('party').find({email : req.session.email}).toArray();
     
-    res.render("party/myposts", {email: req.session.email, username: req.session.username, parties : partiesNames});
+    res.render("party/myposts", {email: req.session.email, username: req.session.username, parties: parties});
 });
 
 
