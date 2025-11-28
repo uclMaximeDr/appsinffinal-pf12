@@ -16,6 +16,18 @@
 .takeOverlay.show {
     display: block;
 }
+.error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.nocamera {
+    display: none;
+}
+.nogps {
+    display: none;
+}
 
 .controls {
     position: absolute;

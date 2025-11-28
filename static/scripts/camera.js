@@ -1,16 +1,53 @@
 const video = document.querySelector("#camera");
 const takeOverlay = document.querySelector(".takeOverlay");
 let camera_stream = null;
+let has_gps = false;
+
+function showError(c) {
+    video.style.display = "none";
+    $('.controls').hide();
+    $("." + c).show();
+}
+
+async function requestAccess() {
+    // Request camera access
+    camera_stream = await navigator.mediaDevices.getUserMedia({ video: true }).catch((err) => {
+        console.warn("Caméra non disponible :", err);
+        showError("nocamera");
+    });
+
+    has_gps = navigator.geolocation ? true : false;
+    if(has_gps) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                console.log("GPS disponible :", position.coords.latitude, position.coords.longitude);
+            },
+            (err) => {
+                console.warn("GPS non disponible ou refusé :", err);
+                has_gps = false;
+                showError("nogps");
+            },
+            { enableHighAccuracy: true }
+        );
+    } else {
+        console.log("GPS non disponible");
+    }
+
+    return new Promise((resolve) => {
+        resolve(camera_stream !== null && has_gps);
+    });
+}
 
 async function startCamera() {
-    camera_stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    if (!camera_stream) return;
+    
     video.srcObject = camera_stream;
 }
 
-async function requestGPS() {
-    return new Promise((resolve, reject) => {
-        if (!navigator.geolocation) return resolve(null); // GPS non disponible
+async function getGPS() {
+    if (!has_gps) return null;
 
+    return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 resolve({
@@ -20,14 +57,22 @@ async function requestGPS() {
             },
             (err) => {
                 console.warn("GPS non disponible ou refusé :", err);
-                resolve(null); // On continue même si GPS refusé
+                resolve(null);
             },
-            { enableHighAccuracy: true, timeout: 5000 }
+            { enableHighAccuracy: true }
         );
     });
 }
 
-startCamera();
+requestAccess().then((granted) => {
+    console.log("Accès caméra et GPS :", granted);
+    if (!granted) {
+        if(camera_stream === null) showError("nocamera");
+        if(!has_gps) showError("nogps");
+        return;
+    }
+    startCamera();
+});
 
 window.addEventListener("beforeunload", () => {
     if (camera_stream) {
@@ -41,7 +86,7 @@ document.querySelector("#takePicture").addEventListener("click", async () => {
 
     takeOverlay.classList.add("show");
 
-    gpsCoords = await requestGPS();
+    gpsCoords = await getGPS();
 
     let canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
