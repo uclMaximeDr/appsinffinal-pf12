@@ -23,22 +23,20 @@ describe("Profile test", () => {
         // Injecter la DB dans l'application
         setDatabase(database);
     });
+
+    it("Test pass captcha", async () => {
+        return true;
+    });
     
-    it("Test register", async () => {
-        return true;
-    })
-
-    it("Test login", async () => {
-        return true;
-    })
-
-    it("Test disconnect", async () => {
+    it("Test fail captcha", async () => {
         return true;
     });
 
-    it("Test delete account //NOT AVAILABLE YET", async () => {
+    it("Test bypass captcha", async () => {
+        // Should redirect to captcha if you try to change page without passing it
+        
         return true;
-    });
+    })
 
     afterAll(async () => {
         // Supprimer la DB de test à la fin

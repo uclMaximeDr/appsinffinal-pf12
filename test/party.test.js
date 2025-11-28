@@ -24,19 +24,15 @@ describe("Profile test", () => {
         setDatabase(database);
     });
     
-    it("Test register", async () => {
+    it("Test add party", async () => {
         return true;
     })
 
-    it("Test login", async () => {
-        return true;
-    })
-
-    it("Test disconnect", async () => {
+    it("Test edit party", async () => {
         return true;
     });
 
-    it("Test delete account //NOT AVAILABLE YET", async () => {
+    it("Test delete party", async () => {
         return true;
     });
 
