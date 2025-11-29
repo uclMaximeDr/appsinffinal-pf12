@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/global.css">
+    <link rel="stylesheet" href="/styles/myposts.css">
+    <title>Création de soirée</title>
+    
+</head>
+<body>
+    
+    <div class="leftPanel">
+        <div class="partyContainer">
+            <nav>
+                <a href="/">
+                    <img src="/icons/home.svg" alt="Home icon">
+                    <span>Home</span>
+                </a>
+                <a href="/party/create">
+                    <img src="/icons/add.svg" alt="Create icon" />
+                    <span>Crée</span>
+                </a>
+                <a href="/edit">
+                    <img src="/icons/edit.svg" alt="Edit icon">
+                     <span>Éditer</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+
+    
+    <div class="rightPanel">
+    
+        <!-- TODO - Si compte ou pas -->
+        <div class="data-tab">
+            <h1>Vos soirée</h1>
+            <section>
+                <% if (parties && parties.length !=0) { %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th>Description</th>
+                            <th>Adresse</th>
+                            <th></th>
+                            <th></th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%parties.forEach(party =>{%>
+                        <tr>
+                            <td><%= party.title %></td>
+                            <td><%= party.description %></td>
+                            <td><%= party.address %></td>
+                            <td><button class="party_edit" data-edit = "<%= party._id%>" > Modifier </button></td>
+                            <td><button class="party_delete" data-delete = "<%= party._id%>" > X </button></td>
+
+                        </tr>
+                        <%})%>
+                        
+                    </tbody>
+                </table>
+                <%} else { %>
+                    <p>Pas de soirée en cours.</p>
+                <%} %>
+            </section>
+
+
+        </div>
+
+
+    </div>
+
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.js"
+      integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+      crossorigin="anonymous"
+    ></script>
+    <script src="/scripts/party.js"></script>
+</body>
+</html>

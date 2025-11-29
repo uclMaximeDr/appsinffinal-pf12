@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const { ObjectId } = require("mongodb");
 
 // Routes
 
@@ -83,4 +85,105 @@ router.post('/validate-captcha', function (req, res, next) {
     res.send({ success: isValid });
 });
 
+
+// ### CAMERA ###
+router.post("/uploadPhoto", (req, res) => {
+    const upload = req.app.locals.upload;
+    const db = req.app.locals.db;
+    const uploadSingle = upload.single("photo");
+
+    uploadSingle(req, res, async function (err) {
+        if (err instanceof multer.MulterError) {
+            return res.status(500).json({ error: err.message });
+        } else if (err) {
+            return res.status(500).json({ error: "Erreur lors du téléchargement du fichier" });
+        }
+
+        if (!req.file) return res.status(400).json({ error: "Aucun fichier reçu" });
+
+        // On récupère l'utilisateur
+        const email = req.session?.email;
+        if (!email) return res.status(401).json({ error: "Utilisateur non connecté" });
+
+        // Coordonnées GPS (optionnelles)
+        let lat = req.body.lat ? parseFloat(req.body.lat) : null;
+        let lng = req.body.lng ? parseFloat(req.body.lng) : null;
+        const location = (lat !== null && lng !== null) ? { type: "Point", coordinates: [lng, lat] } : null;
+
+        // On crée l'objet photo
+        const photoDoc = {
+            filename: req.file.filename,
+            uploadedBy: email,
+            uploadedAt: new Date(),
+            location: location
+        };
+
+        try {
+            await db.collection("photos").insertOne(photoDoc);
+            res.json({ message: "Image enregistrée et ajoutée à la DB", photo: photoDoc });
+        } catch (dbErr) {
+            console.error(dbErr);
+            res.status(500).json({ error: "Erreur lors de l'enregistrement en DB" });
+        }
+    });
+});
+
 module.exports = router;
+
+
+// ### PARTY ###
+
+// Création soirée
+router.post('/create', async function (req, res, next) {
+    const database = req.app.locals.db;
+
+    const {address, title, description} = req.body;
+
+    // Soumettre nouvelle soirée
+    if (req.session.email != null && !req.session.id_saved){
+        await database.collection('party').insertOne({address, title, description, email: req.session.email });
+        res.send({success : true, message : "Soirée crée !"});
+    }
+    // Modifier soirée avec même identifiant
+    else if (req.session.email != null && req.session.id_saved){
+        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id), email: req.session.email},{$set: {address, title, description}});
+        req.session.id_saved = null; 
+        res.send({success : true,  message : "Soirée modifiée !"});
+    }
+    // Refus
+    else{
+        res.send({success : false, message : "Soirée non crée, pas de compte connecté."});
+    }
+})
+
+// Modification soirée
+router.post('/edit', async function (req, res, next) {
+    const database = req.app.locals.db;
+    const edit_id = req.body.edit_id;
+    req.session.data_party = await database.collection('party').findOne({ _id: new ObjectId(edit_id) });
+    req.session.id_saved = new ObjectId(edit_id);
+
+    // Vérification si identifiant reçu
+    if (req.session.email != null && req.session.id_saved != null){
+        res.send({success : true,  message : "Soirée modifiée !"});
+    }
+    else{
+        res.send({success : false, message : "Soirée non modifiée, pas de compte connecté."});
+    }
+})
+
+// Suppression soirée
+router.post('/delete', async function (req, res, next) {
+    const database = req.app.locals.db;
+    const delete_id = req.body.delete_id;
+    
+    // Vérification si identifiant reçu
+    if (req.session.email != null && delete_id != null){
+        await database.collection('party').deleteOne({email: req.session.email, _id: new ObjectId(delete_id)});
+        res.send({success : true, message : "Soirée supprimée !"});
+    }
+    else{
+        res.send({success : false, message : "Soirée non supprimée, pas de compte connecté."});
+    }
+})
+

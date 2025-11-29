@@ -26,8 +26,19 @@ router.use((req, res, next) => {
 });
 
 // Routes
-router.get('/', (req, res) => {
-    res.render("index");
+router.get('/', async function(req, res){
+
+    //Recherche soirée database avec pseudo
+    const database = req.app.locals.db;
+
+    const parties = await database.collection('party').find().toArray();
+    const partiesNames = await Promise.all(parties.map(async party => {
+        return {
+            ...party,
+            userFullname: await database.collection('users').findOne({email : req.session.email})
+        };
+    }));
+    res.render("index", {email: req.session.email, username: req.session.username, parties : partiesNames});
 });
 
 router.get('/start', (req, res) => {
@@ -67,6 +78,22 @@ router.get('/user/profile', (req, res) => {
 
     res.render("user/profile", { email: req.session.email, username: req.session.username, rating : 3.5 });
 })
+
+// ### PARTY ###
+router.get('/party/create', (req, res) => {
+    res.render("party/create", {email: req.session.email, username: req.session.username, data_party : req.session.data_party, id_saved : req.session.id_saved});
+});
+
+
+//Affichage soirée de l'utilisateur
+router.get('/party/myposts', async function(req, res){
+
+    const database = req.app.locals.db;
+
+    const parties = await database.collection('party').find({email : req.session.email}).toArray();
+    
+    res.render("party/myposts", {email: req.session.email, username: req.session.username, parties: parties});
+});
 
 
 module.exports = router;

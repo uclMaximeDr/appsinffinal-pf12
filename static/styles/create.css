@@ -1,0 +1,187 @@
+body {
+
+    min-height: 100vh;
+    display: flex;
+    font-weight: bold;
+    text-decoration:none 
+    
+    
+
+}
+
+
+/*Left panel*/
+
+.leftPanel {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start; 
+    min-height: 100vh;
+    flex: 0 0 170px; /*Gardera la taille min car sinon bug sûr d'autres écrans*/
+    height: 100%;
+    background-color: hsl(228, 42%, 18%);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+    
+
+}
+
+
+.partyContainer nav {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start; 
+    align-items: left;
+
+    margin-top: 80px;
+    margin-left: 15%;
+    gap: 40px;
+}
+
+.partyContainer nav img {
+    width: 15%;
+    padding: 10px;
+    margin-top: 5px;
+
+}
+
+
+.partyContainer nav a :hover{
+    background-color: hsl(231, 40%, 10%);
+    border-radius: 30%;
+}
+
+.partyContainer nav a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    
+}
+
+.partyContainer nav a span{
+    margin-top: 5px;
+}
+
+
+
+
+
+/*Right panel*/
+
+.rightPanel {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    padding-left: 25%;
+    
+
+}
+
+.data-box{
+    width: 45%;
+    height: 80%;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+
+}
+
+
+
+.party_line{
+    padding: 12px;
+    margin: 10px;
+
+    margin-left: 0px;
+    border: 3px solid #ccc;
+    border-radius: 20px;
+    font-size: 16px;
+    resize: none;
+}
+
+.party_input{
+
+    height: 200px;
+    padding: 12px;
+    margin: 10px;
+    margin-top: 80px;
+    margin-left: 0px;
+
+    border: 3px solid #ccc;
+    border-radius: 20px;
+    font-size: 16px;
+    resize: none;
+}
+
+#party_submit {
+    width: 90px;
+    margin: 10px;
+    padding: 10px;
+    margin-left: auto; /*Pas certain que c'est la bonne manière de*/
+    border-radius: 20px;
+
+}
+
+
+
+.rules{
+    overflow: scroll;
+    background-color: hsl(229, 41%, 18%);
+    
+    border: 5px solid hsl(229, 41%, 18%) ;
+    border-radius: 20px;
+    margin-bottom: 10%;
+    margin-left: 3%;
+    height: 75%;
+    width: 18%;
+    padding: 20px;
+}
+
+.rules p {
+    padding: 15px;
+
+    
+    
+}
+
+.profil{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    
+
+    background-color: hsl(229, 41%, 18%);
+    border: 5px solid hsl(229, 41%, 18%) ;
+    border-radius: 20px;
+
+    height: 2%;
+    width: 8%;
+
+    
+    margin-left: auto;
+    margin-right: 10%;
+    margin-bottom: 75%;
+    padding:15px;
+     
+}
+
+.profil .profil_pic{
+    background-color: hsl(229, 10%, 59%);
+    border: 5px solid hsl(229, 8%, 60%) ;
+    border-radius: 50%;
+    margin-left: 20%;
+
+    height: 100%;
+    width: 20%;
+}
+
+
+
+
+
+
+

@@ -44,7 +44,7 @@ const map = L.map("map", {
   attributionControl: false,
 }).setView([50.6689126, 4.6150577], 15);
 
-L.tileLayer("https://tile.openstreetmap.bzh/ca/{z}/{x}/{y}.png", {
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
 }).addTo(map);
 
