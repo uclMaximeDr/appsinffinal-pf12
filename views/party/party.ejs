@@ -8,6 +8,7 @@
 <div class="rightPanel">
 
     <div class="data-box">
+
         <div class="user-info">
             <img src="/images/default_user.png" alt="user">
             <p><%= party.username %></p>
@@ -16,18 +17,27 @@
         </div>
 
         <h2><strong></strong> <%= party.title %></h2>
-        
-        
         <p><strong> <%= party.description %></strong></p>
         <br>
 
-        <textarea class="party_input" id="party_comment" name="data_comment" placeholder="Poster ton avis" rows="2" cols="60"></textarea>
+        <textarea class="party_input" id="comment_data" placeholder="Poster ton avis" rows="2" cols="60"></textarea>
         <div class = "subbar-input">
             <td><button class="UpDown" id ="up"> 0 ^ </button></td>
             <td><button class="UpDown" id ="down">0 v </button></td>
             <td><button class="button-comment" id ="share"> Share </button></td>
-            <td><button class="button-comment" data-comment = "<%= party._id%>" > Poster </button></td>
+            <td><button class="button-comment" id="comment_post" data-party_id = "<%= party._id%>" > Poster </button></td>
 
+        </div>
+
+
+        <div class="comment">
+            <% if (comments && comments.length != 0) { %>
+                <% comments.forEach(user_comment =>{%>
+                    <p><%= user_comment.comment %></p>
+                <%})%>
+            <%} else { %>
+                <p>Pas de commentaire.</p>
+            <%} %>
         </div>
 
         
@@ -36,3 +46,5 @@
 
 
 </div>
+
+<script src="/scripts/party.js"></script>

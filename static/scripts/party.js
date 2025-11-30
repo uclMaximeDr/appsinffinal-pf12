@@ -1,3 +1,5 @@
+// ### PARTY ### 
+
 // Soumettre une soirée
 $('#party_submit').click(function () {
   const address = $('#party_address').val();
@@ -54,3 +56,42 @@ $('.party_delete').click(function () {
 
 })
 
+
+// ### COMMENT ### 
+
+// Poster un commentaire
+$('#comment_post').click(function () {
+  const comment = $('#comment_data').val();
+  const party_id = $(this).data("party_id");
+  
+
+  if (comment === "") {
+    alert("Veuillez remplir le champs pour soumettre");
+    return;
+  }
+
+  $.post("/api/comment_create", {party_id: party_id, comment: comment }, function (data) {
+    if (data.success) {
+      window.location.reload();
+      alert(data.message);
+    } else {
+      alert(data.message);
+    }
+  })
+})
+
+// Supprimer son commentaire
+$('.comment_delete').click(function () {
+  const comment_delete_id = $(this).data("comment_delete");
+
+
+  $.post("/api/comment_delete", { delcom_id: comment_delete_id }, function (data) {
+    if (data.success) {
+      alert(data.message);
+    } else {
+      alert(data.message);
+    }
+
+  })
+
+})

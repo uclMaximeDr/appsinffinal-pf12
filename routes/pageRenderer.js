@@ -135,7 +135,7 @@ router.get('/party/myposts', async function(req, res){
 
     const parties = await database.collection('party').find({email : req.session.email}).toArray();
     
-    res.render("party/myposts", {email: req.session.email, username: req.session.username, parties: parties,});
+    res.render("party/myposts", {email: req.session.email, username: req.session.username, parties: parties});
 });
 
 
@@ -143,11 +143,11 @@ router.get('/party/myposts', async function(req, res){
 router.get('/party/:id', async function(req, res){
     const database = req.app.locals.db;
     const party = await database.collection('party').findOne({ _id: new ObjectId(req.params.id) });
-    const connected = req.session ? (req.session.email == party.email) : false;
-    //const userFullname = await getFullname(database, party.email);
-    //dans res => fullname: await getFullname(database, req.session.email)
 
-    res.render("party/party", { party: { ...party }, connected: connected });
+    const comments = await database.collection('comments').find({ party_id: new ObjectId(req.params.id)}).toArray();
+    const connected = req.session ? (req.session.email == party.email) : false;
+
+    res.render("party/party", { party: { ...party }, comments: comments, connected: connected });
 });
 
 

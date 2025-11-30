@@ -305,6 +305,44 @@ router.post('/delete', async function (req, res, next) {
     }
 })
 
+
+
+// ### COMMENTAIRE ###
+
+// Création commentaire
+router.post('/comment_create', async function (req, res, next) {
+    const database = req.app.locals.db;
+
+    const {comment} = req.body;
+    const party_id = req.body.party_id;
+
+    // Soumettre commentaire
+    if (req.session.email != null){
+        await database.collection('comments').insertOne({party_id : new ObjectId(party_id), comment, email: req.session.email, username : req.session.username });
+        res.send({success : true, message : "Commentaire crée !"});
+    }
+    // Refus
+    else{
+        res.send({success : false, message : "Commentaire non crée, pas de compte connecté."});
+    }
+})
+
+
+// Suppression commentaire
+router.post('/comment_delete', async function (req, res, next) {
+    const database = req.app.locals.db;
+    const delcom_id = req.body.delcom_id;
+    
+    // Vérification si identifiant reçu
+    if (req.session.email != null && delcom_id != null){
+        await database.collection('comments').deleteOne({party_id : new ObjectId(req.params.id) ,email: req.session.email, _id: new ObjectId(delcom_id)});
+        res.send({success : true, message : "Commentaire supprimée !"});
+    }
+    else{
+        res.send({success : false, message : "Commentaire non supprimée, pas de compte connecté."});
+    }
+})
+
 // ### UTILS ###
 function uploadImage(req, res, context) {
     return new Promise((resolve, reject) => {
