@@ -81,7 +81,7 @@ body {
 }
 
 .data-box{
-    width: 45%;
+    width: 60%;
     height: 80%;
     
     display: flex;
@@ -110,7 +110,16 @@ body {
     border-radius: 50px;
 }
 .user-info h4{
-    margin-left: 15vh;
+    margin-left: auto;
+    padding-right: 3vh;
+}
+
+#description{
+    background-color: hsl(229, 41%, 18%);
+    border: 5px solid hsl(229, 41%, 18%) ;
+    border-radius: 25px;
+    padding: 20px;
+
 }
 
 #party_comment{
@@ -120,11 +129,6 @@ body {
 .button-comment{
     margin-left: auto;
     border-radius: 50px;
-}
-
-.UpDown{
-    border-radius: 50px;
-
 }
 
 .subbar-input{
@@ -140,7 +144,7 @@ body {
     background-color: hsl(229, 41%, 18%);
     border: 5px solid hsl(229, 41%, 18%) ;
     border-radius: 20px;
-    margin-left: 20vh;
+    margin-left: 10vh;
     margin-bottom: 15vh;
     padding: 20px;
     height: 60vh;

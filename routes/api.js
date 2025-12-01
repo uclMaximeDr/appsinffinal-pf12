@@ -352,7 +352,7 @@ router.post('/rating', async function (req, res, next) {
     
     // Vérification si identifiant reçu
     if (req.session.email != null){
-        await database.collection('rating').updateOne({email: req.session.email, _id: new ObjectId(party_id)},{$set: {rate}}, { upsert: true });
+        await database.collection('rating').updateOne({email: req.session.email, party_id: new ObjectId(party_id)},{$set: {rate}}, { upsert: true });
         res.send({success : true, message : "Noter !"});
     }
     else{

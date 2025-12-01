@@ -18,7 +18,7 @@
         </div>
 
         <h2><strong></strong> <%= party.title %></h2>
-        <p><strong> <%= party.description %></strong></p>
+        <p id = "description"><strong> <%= party.description %></strong></p>
         
 
         <textarea class="party_input" id="comment_data" placeholder="Poster ton avis" rows="2" cols="60"></textarea>
@@ -52,11 +52,13 @@
         <button><span class="star4" data-rate = "4" data-party_id = "<%= party._id%>">★</span></button>
         <button><span class="star5" data-rate = "5" data-party_id = "<%= party._id%>">★</span></button>
 
-        <p>(0) ★★★★★</p>
-        <p>(0) ★★★★</p>
-        <p>(0) ★★★</p>
-        <p>(0) ★★</p>
-        <p>(0) ★</p>
+        <%for (let i = 1; i < 6; i++){ %>
+            <span>(<%= vote_tot[5-i] %>)</span>
+            <%for (let j = i; j < 6; j++){ %>
+            <span>★</span>
+            <%}%>
+            <br>
+        <%}%>
 
         <% if (rating != null) { %>
             <h3 id="output">La note est : <span><%= rating.rate%></span>/5</h3>

@@ -142,13 +142,22 @@ router.get('/party/myposts', async function(req, res){
 //Affichage information de la soirée
 router.get('/party/:id', async function(req, res){
     const database = req.app.locals.db;
+    let vote_tot = [];
+
     const party = await database.collection('party').findOne({ _id: new ObjectId(req.params.id) });
-    const rating = await database.collection('rating').findOne({email: req.session.email, _id: new ObjectId(req.params.id) });
+    const rating = await database.collection('rating').findOne({email: req.session.email, party_id: new ObjectId(req.params.id) });
+    
+    
+    for (let i = 1; i < 6; i++){
+        //convertir en string sinon mongodb compare le type string et int donc !=
+        star = await database.collection('rating').countDocuments({party_id: new ObjectId(req.params.id), rate: i.toString()});
+        vote_tot.push(star);
+    }
 
     const comments = await database.collection('comments').find({ party_id: new ObjectId(req.params.id)}).toArray();
     const connected = req.session ? (req.session.email == party.email) : false;
 
-    res.render("party/party", { party: { ...party }, comments: comments, connected: connected, rating:rating });
+    res.render("party/party", { party: { ...party }, comments: comments, connected: connected, rating:rating, vote_tot});
 });
 
 
