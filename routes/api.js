@@ -335,7 +335,7 @@ router.post('/comment_delete', async function (req, res, next) {
     
     // Vérification si identifiant reçu
     if (req.session.email != null && delcom_id != null){
-        await database.collection('comments').deleteOne({party_id : new ObjectId(req.params.id) ,email: req.session.email, _id: new ObjectId(delcom_id)});
+        await database.collection('comments').deleteOne({email: req.session.email, _id: new ObjectId(delcom_id)});
         res.send({success : true, message : "Commentaire supprimée !"});
     }
     else{

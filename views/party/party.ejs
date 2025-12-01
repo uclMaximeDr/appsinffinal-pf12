@@ -34,6 +34,7 @@
             <% if (comments && comments.length != 0) { %>
                 <% comments.forEach(user_comment =>{%>
                     <p><%= user_comment.comment %></p>
+                    <td><button class="comment_postdel" data-comment_id = "<%= user_comment._id%>" > Delete </button></td>
                 <%})%>
             <%} else { %>
                 <p>Pas de commentaire.</p>

@@ -73,7 +73,6 @@ $('#comment_post').click(function () {
   $.post("/api/comment_create", {party_id: party_id, comment: comment }, function (data) {
     if (data.success) {
       window.location.reload();
-      alert(data.message);
     } else {
       alert(data.message);
     }
@@ -81,13 +80,17 @@ $('#comment_post').click(function () {
 })
 
 // Supprimer son commentaire
-$('.comment_delete').click(function () {
-  const comment_delete_id = $(this).data("comment_delete");
+$('.comment_postdel').click(function () {
+  const comment_delete_id = $(this).data("comment_id");
+
+  if(!confirm("Tu es certain de supprimer ce commentaire ?")){
+    return;
+  }
 
 
   $.post("/api/comment_delete", { delcom_id: comment_delete_id }, function (data) {
     if (data.success) {
-      alert(data.message);
+      window.location.reload();
     } else {
       alert(data.message);
     }
