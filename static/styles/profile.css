@@ -41,17 +41,15 @@ body {
 }
 
 .leftPanel .profile .profilePicture {
-
     position: relative;
     
     width: 75px;
     height: 75px;
-
-    background-color: red;
-
-    border: white solid 3px;
+    
+    overflow: hidden;
     border-radius: 100%;
-
+    
+    object-fit: cover;
 }
 
 .leftPanel .profile .username {

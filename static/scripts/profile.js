@@ -3,7 +3,7 @@ $('#back').click(() => {
 })
 
 $('#editButton').click(() => {
-    alert("Changing name functionality in progress ^^")
+    window.location.href = "/user/edit"
 })
 
 $('#addFriend').click(() => {
