@@ -136,6 +136,23 @@ body {
 }
 
 
+.rating{
+    background-color: hsl(229, 41%, 18%);
+    border: 5px solid hsl(229, 41%, 18%) ;
+    border-radius: 20px;
+    margin-left: 20vh;
+    margin-bottom: 15vh;
+    padding: 20px;
+    height: 60vh;
+    width: 20vh;
+}
+.rating button{
+    background-color: transparent;
+    padding : 0px;
+    margin: 8px;
+}
+
+
 
 
 

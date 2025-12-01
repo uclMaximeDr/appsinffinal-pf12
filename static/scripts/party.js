@@ -98,3 +98,25 @@ $('.comment_postdel').click(function () {
   })
 
 })
+
+
+// Rating
+$('.rating span').click(function () {
+  //internet pour savoir qu'on pouvait utiliser span
+  const rate_s = $(this).data("rate");
+  const party_id = $(this).data("party_id");
+
+  const rate = Number(rate_s); 
+
+
+
+  $.post("/api/rating", { rate : rate, party_id: party_id }, function (data) {
+    if (data.success) {
+      window.location.reload();
+    } else {
+      alert(data.message);
+    }
+
+  })
+
+})

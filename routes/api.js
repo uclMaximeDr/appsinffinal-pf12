@@ -343,6 +343,23 @@ router.post('/comment_delete', async function (req, res, next) {
     }
 })
 
+// ## Note ##
+
+// Donner une note
+router.post('/rating', async function (req, res, next) {
+    const database = req.app.locals.db;
+    const {rate, party_id} = req.body;
+    
+    // Vérification si identifiant reçu
+    if (req.session.email != null){
+        await database.collection('rating').updateOne({email: req.session.email, _id: new ObjectId(party_id)},{$set: {rate}}, { upsert: true });
+        res.send({success : true, message : "Noter !"});
+    }
+    else{
+        res.send({success : false, message : "Pas de note, pas de compte connecté."});
+    }
+})
+
 // ### UTILS ###
 function uploadImage(req, res, context) {
     return new Promise((resolve, reject) => {

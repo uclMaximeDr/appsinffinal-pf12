@@ -143,11 +143,12 @@ router.get('/party/myposts', async function(req, res){
 router.get('/party/:id', async function(req, res){
     const database = req.app.locals.db;
     const party = await database.collection('party').findOne({ _id: new ObjectId(req.params.id) });
+    const rating = await database.collection('rating').findOne({email: req.session.email, _id: new ObjectId(req.params.id) });
 
     const comments = await database.collection('comments').find({ party_id: new ObjectId(req.params.id)}).toArray();
     const connected = req.session ? (req.session.email == party.email) : false;
 
-    res.render("party/party", { party: { ...party }, comments: comments, connected: connected });
+    res.render("party/party", { party: { ...party }, comments: comments, connected: connected, rating:rating });
 });
 
 

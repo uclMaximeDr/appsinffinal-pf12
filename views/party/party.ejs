@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="/styles/party.css">`
 %>
 <div class="leftPanel">
+    <img src="/icons/leftarrow.svg" alt="Back icon" id="back" width="35px">
 
 </div>
 
@@ -18,13 +19,11 @@
 
         <h2><strong></strong> <%= party.title %></h2>
         <p><strong> <%= party.description %></strong></p>
-        <br>
+        
 
         <textarea class="party_input" id="comment_data" placeholder="Poster ton avis" rows="2" cols="60"></textarea>
         <div class = "subbar-input">
-            <td><button class="UpDown" id ="up"> 0 ^ </button></td>
-            <td><button class="UpDown" id ="down">0 v </button></td>
-            <td><button class="button-comment" id ="share"> Share </button></td>
+            <td><button class="button-comment" id ="share"> Partager </button></td>
             <td><button class="button-comment" id="comment_post" data-party_id = "<%= party._id%>" > Poster </button></td>
 
         </div>
@@ -34,7 +33,7 @@
             <% if (comments && comments.length != 0) { %>
                 <% comments.forEach(user_comment =>{%>
                     <p><%= user_comment.comment %></p>
-                    <td><button class="comment_postdel" data-comment_id = "<%= user_comment._id%>" > Delete </button></td>
+                    <td><button class="comment_postdel" data-comment_id = "<%= user_comment._id%>" > Supprimer </button></td>
                 <%})%>
             <%} else { %>
                 <p>Pas de commentaire.</p>
@@ -44,6 +43,28 @@
         
 
     </div>
+
+    <div class="rating" >
+        <p>Votre avis nous intéresse !</p>
+        <button><span class="star1" data-rate = "1" data-party_id = "<%= party._id%>">★</span></button>
+        <button><span class="star2" data-rate = "2" data-party_id = "<%= party._id%>">★</span></button>
+        <button><span class="star3" data-rate = "3" data-party_id = "<%= party._id%>">★</span></button>
+        <button><span class="star4" data-rate = "4" data-party_id = "<%= party._id%>">★</span></button>
+        <button><span class="star5" data-rate = "5" data-party_id = "<%= party._id%>">★</span></button>
+
+        <p>(0) ★★★★★</p>
+        <p>(0) ★★★★</p>
+        <p>(0) ★★★</p>
+        <p>(0) ★★</p>
+        <p>(0) ★</p>
+
+        <% if (rating != null) { %>
+            <h3 id="output">La note est : <span><%= rating.rate%></span>/5</h3>
+        <%} else { %>
+            <h3 id="output">La note est : 0/5</h3>
+        <%} %>
+    </div>
+
 
 
 </div>
