@@ -48,8 +48,6 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
 }).addTo(map);
 
-const markers = [{ lat: 50.667639, lng: 4.6191022, img: "/images/casa.jpeg" }];
-
 markers.forEach(async (m) => {
   (await createCustomMarker(m.lat, m.lng, m.img)).addTo(map);
 });
