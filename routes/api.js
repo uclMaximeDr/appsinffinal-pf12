@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const { ObjectId } = require("mongodb");
+const bcrypt = require('bcrypt');
+const SALT_ROUNDS = 12;
 
 // Routes
 
@@ -11,8 +13,8 @@ router.post('/login', async function (req, res, next) {
     const database = req.app.locals.db;
     const { email, password } = req.body;
 
-    const user = await database.collection('users').findOne({ email, password });
-    if (user) {
+    const user = await database.collection('users').findOne({ email });
+    if (user && await verifyPassword(password, user.password)) {
         req.session.email = user.email;
         req.session.username = user.fullname;
         res.send({ success: true });
@@ -36,7 +38,8 @@ router.post('/register', async function (req, res, next) {
     const isFirstUser = (await database.collection('users').countDocuments({})) === 0;
 
     if (!existingUser) {
-        await database.collection('users').insertOne({ fullname, email, password, admin: isFirstUser });
+        const hashedPassword = await hashPassword(password);
+        await database.collection('users').insertOne({ fullname, email, password: hashedPassword, admin: isFirstUser });
         res.send({ success: true })
     }
     else {
@@ -259,6 +262,13 @@ function uploadImage(req, res, context) {
             resolve(req.file.filename);
         });
     });
+}
+async function hashPassword(plainPassword) {
+  const hash = await bcrypt.hash(plainPassword, SALT_ROUNDS);
+  return hash;
+}
+async function verifyPassword(plainPassword, storedHash) {
+  return await bcrypt.compare(plainPassword, storedHash);
 }
 
 module.exports = router;
