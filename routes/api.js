@@ -85,7 +85,7 @@ router.get('/user/profile-picture/me', async function (req, res, next) {
 });
 
 router.get('/user/profile-picture/:id', async function (req, res, next) {
-    // Global function to send the profile picture of an
+    // Global function to send the profile picture of an id
 
     const database = req.app.locals.db;
     const id = req.params.id;
@@ -137,18 +137,17 @@ router.post('/user/edit', async function (req, res, next) {
 router.get('/user/search', async function(req, res, next) {
     
     const db = req.app.locals.db;
-    const query = req.query.q.toLowerCase().trim(); // Get the user from the request
+    const query = req.query.q.toLowerCase().trim(); // Get the text from the request
 
+    // Tries to find a user which corresponds to the query, disregarding casing
     const users = await db.collection("users").find({fullname: {$regex: query, $options: "i"} }).toArray();
 
     if(!users) return res.send([]);
         
-    // Only take the name and the id of the user
-    const result = users.map(u => {
+    // Only send the name and the id of the user 
+    return res.send(users.map(u => {
         return {fullname: u.fullname, id: u._id}
-    });
-
-    return res.send(result);
+    }));
 })
 
 router.post('/user/addFriend', async function (req, res, next) {
@@ -158,9 +157,9 @@ router.post('/user/addFriend', async function (req, res, next) {
     const id = req.body.id;
 
     const user = await db.collection("users").findOne({ email : req.session.email });
-
     let friendsList = user.friends;
 
+    // Prevents us from adding ourselves as a friend
     if (id.toString() == user._id.toString())
     {
         throw new Error("Cannot be your own friend.")
@@ -193,9 +192,9 @@ router.post('/user/removeFriend', async function (req, res, next) {
     const id = req.body.id;
 
     const user = await db.collection("users").findOne({ email : req.session.email });
-
     let friendsList = user.friends;
-    
+
+    // Prevents us from adding ourselves as a friend
     if (id.toString() == user._id.toString())
     {
         throw new Error("Cannot be your own friend.")

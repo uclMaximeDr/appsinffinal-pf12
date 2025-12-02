@@ -22,6 +22,14 @@
             <% if (!isOwnProfile) { %>
                 <div>
 
+                    <!--
+                    Both buttons are always added whether isFriend is true or false,
+                    to allow them to switch when clicked
+                    
+                    e.g. clicking on the '+ Add Friend' hides it and shows '- Remove Friend' without
+                    refreshing the page
+                    -->
+                    
                     <% if (!isFriend) { %>
                         <p id="addFriend" class="editFriend">+ Add friend</p>
                         <p id="removeFriend" class="editFriend" hidden>- Remove friend</p>

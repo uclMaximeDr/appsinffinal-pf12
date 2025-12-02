@@ -97,6 +97,8 @@ router.get('/user/profile/:id', async (req, res) => {
 
     // Whether the page we send is our own profile or not
     const isOwnProfile = connectedUser._id.toString() == user._id.toString()
+
+    // Whether we are friend with the user we want to visit
     const isFriend = connectedUser.friends.includes(parseInt(id));
 
     const parties = await database.collection('party').find({email : req.session.email}).toArray();

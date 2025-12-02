@@ -17,6 +17,8 @@ $('#addFriend').click(() => {
         if(data.success) {
 
             showModal("Successfully added new friend !");
+
+            // Hide/show the other button
             $('#removeFriend').show();
             $('#addFriend').hide();
         }
@@ -36,6 +38,8 @@ $('#removeFriend').click(() => {
         if(data.success) {
 
             showModal("Successfully removed friend !")
+
+            // Hide/show the other button
             $('#removeFriend').hide();
             $('#addFriend').show();
         }
