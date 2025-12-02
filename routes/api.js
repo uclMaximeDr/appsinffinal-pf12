@@ -105,7 +105,6 @@ router.get('/user/profile-picture/:id', async function (req, res, next) {
 
 router.post('/user/edit', async function (req, res, next) {
     const database = req.app.locals.db;
-    const upload = req.app.locals.upload;
     
     uploadImage(req, res, "profilePicture").then(async (filename) => {
         const { username, email, password } = req.body;
@@ -253,7 +252,15 @@ function uploadImage(req, res, context) {
                 return res.status(500).json({ error: "Erreur lors du téléchargement du fichier" });
             }
 
-            if (!req.file) return res.status(400).json({ error: "Aucun fichier reçu" });
+            if (!req.file) {
+
+                if (context !== "profilePicture")
+                {
+                    return res.status(400).json({ error: "Aucun fichier reçu" });
+                }
+
+                return resolve(null);
+            }
 
             // On récupère l'utilisateur
             const email = req.session?.email;
