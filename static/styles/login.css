@@ -9,11 +9,50 @@
   max-width: 400px;
   overflow: hidden;
 }
+
 .loginContainer img {
   width: 100%;
   aspect-ratio: 2 / 1;
   object-fit: cover;
 }
+
+.loginContainer #inputWithEye {
+
+  position: relative;
+  
+  width: 340px;
+  height: 39px;
+
+  border: 1px solid grey;
+  border-radius: 12px;
+
+  background-color: white ;
+}
+
+.loginContainer #passwordEye {
+
+  position: absolute;
+
+  z-index: 5000;
+
+  margin: 0;
+  padding: 0;
+
+  top: 50%;
+
+  transform: translate(50%, -50%);
+
+  width: 25px;
+  height: 25px;
+}
+
+.loginContainer #inputWithEye input {
+  
+  width: 260px;
+
+  border: none;
+}
+
 .loginContainer .menu {
   padding: 30px;
 
@@ -21,6 +60,7 @@
   flex-direction: column;
   gap: 15px;
 }
+
 .loginContainer .menu-item {
   display: flex;
   flex-direction: column;

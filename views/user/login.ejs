@@ -6,32 +6,49 @@ styles = `
 
 <section class="pageContainer flex">
   <div class="loginContainer">
+
     <img src="/icons/leftarrow.svg" alt="Back icon" id="back">
     <img src="/images/casa.jpeg" alt="Illustration image of Casa" />
     
     <div class="menu">
       <div class="selectorContainer" id="actionSelector">
+        
         <div class="selector left"></div>
+        
         <div class="options">
           <p>Se connecter</p>
           <p>S'inscrire</p>
         </div>
       </div>
+
       <div class="menu-item" style="display: none" id="full-name-container">
         <label for="full-name">Nom complet</label>
         <input type="text" id="full-name" />
       </div>
+
       <div class="menu-item">
         <label for="email">Adresse email</label>
         <input type="email" id="email" />
       </div>
+
       <div class="menu-item">
-      <label for="password">Mot de passe</label>
-      <input type="password" id="password" />
-    </div>
+        <label for="password">Mot de passe</label>
+        <div id="inputWithEye">
+          <input type="password" id="password" />
+          <img src="/icons/eye-slash-fill.svg" id="passwordEye"/>
+        </div>
+      </div>
+
+      <div class="menu-item" style="display: none" id="confirm-password-container">
+        <label for="confirmPassword">Confirmer le mot de passe</label>
+        <input type="password" id="confirmPassword" />
+      </div>
+    
+
     <div class="menu-item">
       <button id="submit">Se connecter</button>
     </div>
+
   </div>
 </section>
 
