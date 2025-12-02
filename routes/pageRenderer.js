@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { ObjectId } = require('mongodb')
 
 // Middleware to check for first visit and captcha requirement
 router.use((req, res, next) => {
@@ -55,21 +56,40 @@ router.get('/captcha', (req, res) => {
 router.get('/user/login', (req, res) => {
     
     if(req.session && req.session.email) {
-        res.redirect("/user/profile");
+        res.redirect("/user/profile/me");
         return;
     }
 
     res.render("user/login");
 })
 
-router.get('/user/profile', (req, res) => {
+router.get('/user/profile/me', async (req, res) => {
+    const database = req.app.locals.db;
+    const email = req.session?.email;
 
-    if(!req.session || !req.session.email) {
-        res.redirect("/user/login");
-        return;
+    if (!email) {
+        return res.status(401).json({ error: "Utilisateur non connecté" });
     }
 
-    res.render("user/profile", { email: req.session.email, username: req.session.username, rating : 3.5 });
+    const user = await database.collection('users').findOne({ email });
+    if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+
+    res.redirect(`/user/profile/${user._id}`);
+})
+
+router.get('/user/profile/:id', async (req, res) => {
+
+    const database = req.app.locals.db;
+    const id = req.params.id;
+
+    const user = await database.collection('users').findOne({ _id: new ObjectId(id) });
+    if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+
+    res.render("user/profile", { username: user.fullname, rating : 3.5 });
 })
 
 router.get('/user/edit', (req, res) => {

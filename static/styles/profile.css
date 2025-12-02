@@ -145,6 +145,86 @@ body {
     height: 100%;
 }
 
+.friendSearch {
+    
+    position: absolute;
+
+    left: 50%;
+    transform: translateX(-50%);
+
+    top: 20px;
+
+    z-index: 1000;
+
+    --width: 350px;
+}
+
+.friendSearch .searchBar {
+
+    width: var(--width);
+
+}
+
+.friendSearch .searchResult {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 10px;
+    
+    background-color: rgba(0, 0, 0, 60%);
+    
+    width: var(--width);
+    height: 300px;
+
+    border-radius: 8px;
+
+}
+
+.friendSearch .searchResult .searchElement {
+
+    background-color: var(--hover-blue);
+
+    width: var(--width);
+
+    border-radius: 8px;
+
+}
+
+.friendSearch .searchResult .searchElement img {
+
+    position: relative;
+
+    left: 15px;
+    top: 4px;
+
+    border-radius: 100%;
+
+}
+
+.friendSearch .searchResult .searchElement span {
+
+    position: relative;
+
+    font-size: 30px;
+    font-weight: bold;
+
+    left: 25px;
+    bottom: 14px;
+
+    user-select: none;
+
+}
+
+.partyContainer {
+
+    margin-top: 100px;
+
+}
+
 .partyElement {
     position: relative;
 

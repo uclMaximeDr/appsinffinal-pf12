@@ -10,6 +10,13 @@ $('#addFriend').click(() => {
     alert("You don't have any stop pretending")
 })
 
+$('.searchElement').click((event) => {
+    const user = event.target.closest(".searchElement")
+    const id = user.dataset.id
+
+    window.location.href = '/user/profile/' + id
+})
+
 $('#startCollapse').click(() => {
 
     $('#collapseMenu').toggleClass("collapsed");
