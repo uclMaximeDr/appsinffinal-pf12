@@ -1,3 +1,7 @@
+$('#back').click(() => {
+    window.location.href = '/user/profile/me';
+})
+
 $('.profilePictureContainer .hover').click(function() {
     $('#profilePictureInput').click();
 });

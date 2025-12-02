@@ -121,11 +121,29 @@ router.post('/user/edit', async function (req, res, next) {
     });
 });
 
+router.get('/user/search', async function(req, res, next) {
+    
+    const db = req.app.locals.db;
+    const query = req.query.q.toLowerCase().trim();
+
+    const users = await db.collection("users").find({fullname: {$regex : query} }).toArray();
+
+    if(users)
+    {
+        const result = users.map(u => {
+            return {fullname: u.fullname, id: u._id}
+        });
+
+        return res.send(result);
+    }
+
+    return res.send([]);
+})
+
 // ### CAPTCHA ###
 router.post('/validate-captcha', function (req, res, next) {
     const parts = JSON.parse(req.body.parts);
     const correctParts = ['1-1', '2-2', '2-3', '1-3', '2-1'];
-    console.log(parts);
     
     let isValid = true;
     if(parts.length !== correctParts.length) isValid = false;

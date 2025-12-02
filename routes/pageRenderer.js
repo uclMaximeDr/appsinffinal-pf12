@@ -89,7 +89,11 @@ router.get('/user/profile/:id', async (req, res) => {
         return res.status(404).json({ error: "Utilisateur non trouvé" });
     }
 
-    res.render("user/profile", { username: user.fullname, rating : 3.5 });
+    const connectedUser = await database.collection('users').findOne({ email: req.session.email });
+
+    const isOwnProfile = connectedUser._id.toString() == user._id.toString()
+
+    res.render("user/profile", { username: user.fullname, rating : 3.5, isOwnProfile : isOwnProfile });
 })
 
 router.get('/user/edit', (req, res) => {

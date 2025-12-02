@@ -3,18 +3,53 @@ $('#back').click(() => {
 })
 
 $('#editButton').click(() => {
+
     window.location.href = "/user/edit"
 })
 
 $('#addFriend').click(() => {
+
     alert("You don't have any stop pretending")
+
+    $('#removeFriend').removeClass("hidden")
+    $('#addFriend').addClass("hidden")
 })
+
+$('#removeFriend').click(() => {
+
+    alert("You don't have any stop pretending")
+
+    $('#removeFriend').addClass("hidden")
+    $('#addFriend').removeClass("hidden")
+})
+
+function onSearch(event) {
+  const query = event.target.value;
+
+  if(query.length == 0) {
+    $('#searchResult').empty();
+    return;
+  }
+
+  $.get('/api/user/search', { q: query }, function(data) {
+    const resultsContainer = $('#searchResult');
+    resultsContainer.empty(); // Clear previous results
+
+    data.forEach(item => {
+      const user = item
+      resultsContainer.append(`<div class="searchElement" data-id="${user.id}">
+
+                    <img src="/api/user/profile-picture/${user.id}" width="50px">
+                    <span>${user.fullname}</span>
+
+                </div>`);
+    });
+  });
+}
 
 $('.searchElement').click((event) => {
     const user = event.target.closest(".searchElement")
-    const id = user.dataset.id
-
-    window.location.href = '/user/profile/' + id
+    
 })
 
 $('#startCollapse').click(() => {
@@ -64,7 +99,7 @@ function displayStarRating() {
     for (var i = 0; i < amount; i++) {
 
         const img = document.createElement('img');
-        img.src = '/images/full_star.svg';
+        img.src = '/icons/full_star.svg';
         img.classList.add('star');
 
         $('#starRating').append(img);
@@ -74,7 +109,7 @@ function displayStarRating() {
     if (decimal == 1 && amount < maxStars)
     {
         const img = document.createElement('img');
-        img.src = '/images/half_star.svg';
+        img.src = '/icons/half_star.svg';
         img.classList.add('star');
 
         $('#starRating').append(img);
@@ -85,7 +120,7 @@ function displayStarRating() {
     for (var i = 0; i < maxStars - amount; i++) {
 
         const img = document.createElement('img');
-        img.src = '/images/empty_star.svg';
+        img.src = '/icons/empty_star.svg';
         img.classList.add('star');
 
         $('#starRating').append(img);

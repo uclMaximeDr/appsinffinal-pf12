@@ -3,6 +3,9 @@ body {
     height: 100vh;
 }
 
+.hidden {
+    display: none;
+}
 
 /* ### LEFT PANEL ###*/
 
@@ -75,7 +78,7 @@ body {
 
 }
 
-.leftPanel #addFriend {
+.leftPanel .editFriend {
     
     position: relative;
 
@@ -87,7 +90,7 @@ body {
     
 }
 
-.leftPanel #addFriend:hover {
+.leftPanel .editFriend:hover {
 
     color: var(--hover-blue);
 
@@ -159,7 +162,7 @@ body {
     --width: 350px;
 }
 
-.friendSearch .searchBar {
+.friendSearch #searchBar {
 
     width: var(--width);
 
