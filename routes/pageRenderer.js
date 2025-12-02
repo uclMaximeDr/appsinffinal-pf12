@@ -62,14 +62,17 @@ router.get('/user/login', (req, res) => {
     res.render("user/login");
 })
 
-router.get('/user/profile', (req, res) => {
-
+router.get('/user/profile', async (req, res) => {
     if(!req.session || !req.session.email) {
         res.redirect("/user/login");
         return;
     }
 
-    res.render("user/profile", { email: req.session.email, username: req.session.username, rating : 3.5 });
+    const database = req.app.locals.db;
+    const parties = await database.collection('party').find({email : req.session.email}).toArray();
+    const averageRating = parties.length > 0 ? (parties.reduce((sum, party) => sum + (party.rating || 0), 0) / parties.length).toFixed(1) : 0;
+
+    res.render("user/profile", { username: req.session.username, rating : averageRating, parties:  parties });
 })
 
 router.get('/user/edit', (req, res) => {
