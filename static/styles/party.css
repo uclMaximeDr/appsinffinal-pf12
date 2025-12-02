@@ -126,6 +126,12 @@ body {
     
     border-radius: 50px;
 }
+
+#comment_picture img{
+    max-width: 3vh;
+    max-height: 3vh;
+}
+
 .button-comment{
     margin-left: auto;
     border-radius: 50px;

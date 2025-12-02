@@ -32,7 +32,8 @@
         <div class="comment">
             <% if (comments && comments.length != 0) { %>
                 <% comments.forEach(user_comment =>{%>
-                    <span><%= party.username %></span>
+                    <span id="comment_picture"><img src="/images/default_user.png" alt="user"></span>
+                    <span><%= user_comment.username %></span>
                     <button class="comment_postdel" data-comment_id = "<%= user_comment._id%>" > Supprimer </button>
                     <p><%= user_comment.comment %></p>
                 <%})%>
@@ -50,13 +51,13 @@
         <p>Votre avis nous intéresse !</p>
         <!-- Affichage des étoiles en fonction de la note de l'utilisateur-->
         <%for (let i = 1; i < 6; i++){ %>
-            <% if( i <= rating.rate){%>
+            <% if( rating != null && i <= rating.rate){%>
                 <button><span class="star" data-rate = "<%= i %>" data-party_id = "<%= party._id%>">★</span></button>
             <%} else {%>
                 <button><span class="star" data-rate = "<%= i %>" data-party_id = "<%= party._id%>">☆</span></button>
             <%}%>
         <%}%>
-
+        <br>
         <!-- Création avec boucle de la note de soirée -->
         <%for (let i = 1; i < 6; i++){ %>
             <span>(<%= vote_tot[5-i] %>)</span>

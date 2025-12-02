@@ -298,6 +298,7 @@ router.post('/delete', async function (req, res, next) {
     // Vérification si identifiant reçu
     if (req.session.email != null && delete_id != null){
         await database.collection('party').deleteOne({email: req.session.email, _id: new ObjectId(delete_id)});
+        await database.collection('party').delete({email: req.session.email, party_id: new ObjectId(delete_id)});
         res.send({success : true, message : "Soirée supprimée !"});
     }
     else{
