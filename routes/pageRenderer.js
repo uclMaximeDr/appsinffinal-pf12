@@ -93,7 +93,10 @@ router.get('/user/profile/:id', async (req, res) => {
 
     const isOwnProfile = connectedUser._id.toString() == user._id.toString()
 
-    res.render("user/profile", { username: user.fullname, rating : 3.5, isOwnProfile : isOwnProfile });
+    const parties = await database.collection('party').find({email : req.session.email}).toArray();
+    const averageRating = parties.length > 0 ? (parties.reduce((sum, party) => sum + (party.rating || 0), 0) / parties.length).toFixed(1) : 0;
+
+    res.render("user/profile", { username: user.fullname, rating : averageRating, parties : parties, isOwnProfile : isOwnProfile });
 })
 
 router.get('/user/edit', (req, res) => {

@@ -40,7 +40,7 @@
                 
                 
                 <div id="collapseMenu" class="collapsed">
-                    <h2>Nombre de posts : </h2>
+                    <h2>Nombre de posts : <%- parties.length %></h2>
                     <h2>Nombre d'amis : </h2>
                     <h2>Street Credit : </h2>
                     <h2>Note moyenne :
@@ -68,88 +68,33 @@
         <div class="partyContainer">
 
             <div class="partyElement">
-                <h1>DATE</h1>
-                <p>Chez ...</p>
+                <% if (parties && parties.length !=0) { %>
+                    <%parties.forEach(party =>{%>
+                        <h1><%- party.date %></h1>
+                        <p><%- party.address %></p>
 
-                <div class="imgContainer">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                </div>
+                        <div class="imgContainer">
+                            <img class="elem">
+                            <img class="elem">
+                            <img class="elem">
+                            <img class="elem">
+                            <img class="elem">
+                            <img class="elem">
+                            <img class="elem">
+                            <img class="elem">
+                            <img class="elem">
+                            <img class="elem">
+                            <img class="elem">
+                            <img class="elem">
+                        </div>
+                    <%})%>
+                <% }  else { %>
+                    <p>Vous n'avez fait aucune soirée.</p>
+                <% } %>
             </div> 
-
-            <div class="partyElement">
-                <h1>DATE</h1>
-                <p>Chez ...</p>
-
-                <div class="imgContainer">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                </div>
-            </div>
-
-            <div class="partyElement">
-                <h1>DATE</h1>
-                <p>Chez ...</p>
-        
-                <div class="imgContainer">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                </div>
-            </div>
-
-            <div class="partyElement">
-                <h1>DATE</h1>
-                <p>Chez ...</p>
-        
-                <div class="imgContainer">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                    <img class="elem">
-                </div>
-            </div>
-
         </div>
-
     </div>
+
 </section>
 
     <script

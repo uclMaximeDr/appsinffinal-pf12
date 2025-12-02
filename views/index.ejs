@@ -39,4 +39,23 @@
 </section>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+function randomCoords() { // Generate random coordinates near LLN
+    return {
+        lat: 50.6689126 + (Math.random() - 0.5) * 0.01,
+        lng: 4.6150577 + (Math.random() - 0.5) * 0.01
+    };
+}
+const markers = <%- JSON.stringify(parties.map(party => ({ lat: party.latitude, lng: party.longitude, img: party.image }))) %>;
+markers.map(marker => {
+    if(!marker.img) {
+        marker.img = "/images/casa.jpeg";
+    }
+    if(!marker.lat || !marker.lng) {
+        const coords = randomCoords();
+        marker.lat = coords.lat;
+        marker.lng = coords.lng;
+    }
+});
+</script>
 <script src="/scripts/index.js"></script>

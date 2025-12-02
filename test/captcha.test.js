@@ -5,8 +5,7 @@ const request = require("supertest");
 const { randomUUID } = require('crypto');
 const { MongoClient } = require('mongodb');
 
-const api = require("../routes/api");
-const { setDatabase } = require("../app");
+const { app, setDatabase } = require("../app");
 
 
 describe("Profile test", () => {
@@ -24,17 +23,34 @@ describe("Profile test", () => {
         setDatabase(database);
     });
 
-    it("Test pass captcha", async () => {
-        return true;
-    });
-    
-    it("Test fail captcha", async () => {
-        return true;
+    it("Test start page", async () => {
+        const response = await request(app)
+        .get("/")
+        .expect(302)
+        .expect('Location', '/start');
+        
+        const cookie = response.headers['set-cookie'];
     });
 
     it("Test bypass captcha", async () => {
-        // Should redirect to captcha if you try to change page without passing it
+        const response = await request(app)
+        .get("/")
+        .expect(302)
+        .expect('Location', '/start');
+
+        const cookie = response.headers['set-cookie'];
         
+        await request(app)
+        .get("/captcha")
+        .set('Cookie', cookie)
+        .expect(200);
+        
+        await request(app)
+        .get("/")
+        .set('Cookie', cookie)
+        .expect(302)
+        .expect('Location', '/captcha?next=%2F');
+
         return true;
     })
 
