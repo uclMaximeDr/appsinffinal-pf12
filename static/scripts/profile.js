@@ -57,7 +57,7 @@ function displayStarRating() {
     for (var i = 0; i < amount; i++) {
 
         const img = document.createElement('img');
-        img.src = '/images/full_star.svg';
+        img.src = '/icons/full_star.svg';
         img.classList.add('star');
 
         $('#starRating').append(img);
@@ -67,7 +67,7 @@ function displayStarRating() {
     if (decimal == 1 && amount < maxStars)
     {
         const img = document.createElement('img');
-        img.src = '/images/half_star.svg';
+        img.src = '/icons/half_star.svg';
         img.classList.add('star');
 
         $('#starRating').append(img);
@@ -78,7 +78,7 @@ function displayStarRating() {
     for (var i = 0; i < maxStars - amount; i++) {
 
         const img = document.createElement('img');
-        img.src = '/images/empty_star.svg';
+        img.src = '/icons/empty_star.svg';
         img.classList.add('star');
 
         $('#starRating').append(img);
