@@ -65,6 +65,8 @@ router.post('/disconnect', async function (req, res, next) {
 
 // ### USER INFO ###
 router.get('/user/profile-picture/me', async function (req, res, next) {
+    // Default function to return the profile picture of the currently connected user
+
     const database = req.app.locals.db;
     const email = req.session?.email;
 
@@ -81,6 +83,8 @@ router.get('/user/profile-picture/me', async function (req, res, next) {
 });
 
 router.get('/user/profile-picture/:id', async function (req, res, next) {
+    // Global function to send the profile picture of an
+
     const database = req.app.locals.db;
     const id = req.params.id;
 
@@ -126,20 +130,18 @@ router.post('/user/edit', async function (req, res, next) {
 router.get('/user/search', async function(req, res, next) {
     
     const db = req.app.locals.db;
-    const query = req.query.q.toLowerCase().trim();
+    const query = req.query.q.toLowerCase().trim(); // Get the user from the request
 
     const users = await db.collection("users").find({fullname: {$regex : query} }).toArray();
 
-    if(users)
-    {
-        const result = users.map(u => {
-            return {fullname: u.fullname, id: u._id}
-        });
+    if(!users) return res.send([]);
+        
+    // Only take the name and the id of the user
+    const result = users.map(u => {
+        return {fullname: u.fullname, id: u._id}
+    });
 
-        return res.send(result);
-    }
-
-    return res.send([]);
+    return res.send(result);
 })
 
 // ### CAPTCHA ###

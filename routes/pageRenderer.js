@@ -64,6 +64,8 @@ router.get('/user/login', (req, res) => {
 })
 
 router.get('/user/profile/me', async (req, res) => {
+    // Default function to get the profile page of the currently connected user
+
     const database = req.app.locals.db;
     const email = req.session?.email;
 
@@ -80,6 +82,7 @@ router.get('/user/profile/me', async (req, res) => {
 })
 
 router.get('/user/profile/:id', async (req, res) => {
+    // Global function to get the profile page of an id
 
     const database = req.app.locals.db;
     const id = req.params.id;
@@ -89,8 +92,10 @@ router.get('/user/profile/:id', async (req, res) => {
         return res.status(404).json({ error: "Utilisateur non trouvé" });
     }
 
+    // The currently connected user
     const connectedUser = await database.collection('users').findOne({ email: req.session.email });
 
+    // Whether the page we send is our own profile or not
     const isOwnProfile = connectedUser._id.toString() == user._id.toString()
 
     const parties = await database.collection('party').find({email : req.session.email}).toArray();

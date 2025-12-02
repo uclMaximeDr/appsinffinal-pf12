@@ -32,6 +32,7 @@ $('#actionSelector p').click((event) => {
 let slashed = true;
 
 $('#passwordEye').click(() => {
+    // Function to toggle the visibility of a password
     
     if (!slashed)
     {

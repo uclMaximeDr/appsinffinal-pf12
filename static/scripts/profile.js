@@ -7,6 +7,7 @@ $('#editButton').click(() => {
     window.location.href = "/user/edit"
 })
 
+// Behavior of the edit friend buttons
 $('#addFriend').click(() => {
 
     showModal("You don't have any stop pretending")
@@ -24,6 +25,8 @@ $('#removeFriend').click(() => {
 })
 
 function onSearch(event) {
+    // Search for users in the database and adds them as searchElement
+
   const query = event.target.value;
 
   if(query.length == 0) {

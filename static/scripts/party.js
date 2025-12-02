@@ -1,4 +1,3 @@
-
 // Soumettre une soirée
 $('#party_submit').click(function () {
   const address = $('#party_address').val();

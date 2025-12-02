@@ -1,15 +1,18 @@
 body {
+
     width: 100vw;
     height: 100vh;
 }
 
 .hidden {
+
     display: none;
 }
 
 /* ### LEFT PANEL ###*/
 
 .leftPanel {
+    
     position: relative;
 
     width: 25%;
@@ -61,7 +64,6 @@ body {
 
     margin: 0px;
     align-self: center;
-
 }
 
 .leftPanel .profile svg {
@@ -69,13 +71,11 @@ body {
     align-self: center;
 
     transition: 0.3s;
-
 }
 
 .leftPanel .profile svg:hover {
     
     color: var(--hover-blue);
-
 }
 
 .leftPanel .editFriend {
@@ -87,13 +87,11 @@ body {
     left: 190px;
 
     transition: 0.3s;
-    
 }
 
 .leftPanel .editFriend:hover {
 
     color: var(--hover-blue);
-
 }
 
 #collapseMenu {
@@ -104,19 +102,16 @@ body {
 
     transition: 0.3s;
     transform-origin: top;  
-
 }
 
 .leftPanel .rotate {
     
     transform: rotate(180deg);
-
 }
 
 .leftPanel .collapsed {
 
     transform: scaleY(0);
-
 }
 
 .leftPanel .star {
@@ -126,6 +121,7 @@ body {
 }
 
 .leftPanel #disconnect {
+
     position: absolute;
 
     margin: 20px;
@@ -165,7 +161,6 @@ body {
 .friendSearch #searchBar {
 
     width: var(--width);
-
 }
 
 .friendSearch .searchResult {
@@ -184,7 +179,6 @@ body {
     height: 300px;
 
     border-radius: 8px;
-
 }
 
 .friendSearch .searchResult .searchElement {
@@ -194,7 +188,6 @@ body {
     width: var(--width);
 
     border-radius: 8px;
-
 }
 
 .friendSearch .searchResult .searchElement img {
@@ -205,7 +198,6 @@ body {
     top: 4px;
 
     border-radius: 100%;
-
 }
 
 .friendSearch .searchResult .searchElement span {
@@ -219,16 +211,15 @@ body {
     bottom: 14px;
 
     user-select: none;
-
 }
 
 .partyContainer {
 
     margin-top: 100px;
-
 }
 
 .partyElement {
+
     position: relative;
 
     width: 85%;
@@ -251,6 +242,7 @@ body {
 }
 
 .partyElement .imgContainer {
+
     display: flex;
 
     flex-direction: row;
