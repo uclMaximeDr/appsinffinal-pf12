@@ -61,7 +61,7 @@ $('#submit').click(() => {
 
         $.post('/api/login', { email: email, password: password }, function(data) {
             if(data.success) {
-                const nextURL = "/user/profile";
+                const nextURL = "/user/profile/me";
                 window.location.href = "/captcha?next=" + encodeURIComponent(nextURL);
             } else {
                 showModal(data.message);
@@ -89,7 +89,7 @@ $('#submit').click(() => {
 
         $.post('/api/register', { fullname: fullname, email: email, password: password}, function(data) {
             if(data.success) {
-                const nextURL = "/user/profile";
+                const nextURL = "/user/profile/me";
                 window.location.href = "/captcha?next=" + encodeURIComponent(nextURL);
             }
             else

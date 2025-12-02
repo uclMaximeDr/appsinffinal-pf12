@@ -3,11 +3,53 @@ $('#back').click(() => {
 })
 
 $('#editButton').click(() => {
+
     window.location.href = "/user/edit"
 })
 
 $('#addFriend').click(() => {
+
     showModal("You don't have any stop pretending")
+
+    $('#removeFriend').removeClass("hidden")
+    $('#addFriend').addClass("hidden")
+})
+
+$('#removeFriend').click(() => {
+
+    showModal("You don't have any stop pretending")
+
+    $('#removeFriend').addClass("hidden")
+    $('#addFriend').removeClass("hidden")
+})
+
+function onSearch(event) {
+  const query = event.target.value;
+
+  if(query.length == 0) {
+    $('#searchResult').empty();
+    return;
+  }
+
+  $.get('/api/user/search', { q: query }, function(data) {
+    const resultsContainer = $('#searchResult');
+    resultsContainer.empty(); // Clear previous results
+
+    data.forEach(item => {
+      const user = item
+      resultsContainer.append(`<div class="searchElement" data-id="${user.id}">
+
+                    <img src="/api/user/profile-picture/${user.id}" width="50px">
+                    <span>${user.fullname}</span>
+
+                </div>`);
+    });
+  });
+}
+
+$('.searchElement').click((event) => {
+    const user = event.target.closest(".searchElement")
+    
 })
 
 $('#startCollapse').click(() => {
