@@ -4,6 +4,7 @@ const multer = require('multer');
 const { ObjectId } = require("mongodb");
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 12;
+const fs = require('fs');
 
 // Routes
 
@@ -98,6 +99,11 @@ router.get('/user/profile-picture/:id', async function (req, res, next) {
         return res.sendFile("static/images/default-profile.png", { root: '.' });
     }
 
+    const fileExist = fs.existsSync(`uploads/${filename}`);
+    if (!fileExist) {
+        return res.sendFile("static/images/default-profile.png", { root: '.' });
+    }
+
     res.sendFile(`uploads/${filename}`, { root: '.' })
 });
 
@@ -132,7 +138,7 @@ router.get('/user/search', async function(req, res, next) {
     const db = req.app.locals.db;
     const query = req.query.q.toLowerCase().trim(); // Get the user from the request
 
-    const users = await db.collection("users").find({fullname: {$regex : query} }).toArray();
+    const users = await db.collection("users").find({fullname: {$regex: query, $options: "i"} }).toArray();
 
     if(!users) return res.send([]);
         
