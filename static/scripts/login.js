@@ -55,7 +55,7 @@ $('#submit').click(() => {
         const password = $('#password').val();
 
         if(email === "" || password === "") {
-            alert("Veuillez remplir tous les champs.");
+            showModal("Veuillez remplir tous les champs.");
             return;
         }
 
@@ -64,7 +64,7 @@ $('#submit').click(() => {
                 const nextURL = "/user/profile";
                 window.location.href = "/captcha?next=" + encodeURIComponent(nextURL);
             } else {
-                alert(data.message);
+                showModal(data.message);
             }
         })
 
@@ -77,12 +77,12 @@ $('#submit').click(() => {
         const confirmPassword = $('#confirmPassword').val().trim();
 
         if(fullname === "" || email === "" || password === "" || confirmPassword === "") {
-            alert("Veuillez remplir tous les champs.");
+            showModal("Veuillez remplir tous les champs.");
             return;
         }
         else {
             if (password != confirmPassword) {
-                alert("La confirmation de mot de passe a échoué !");
+                showModal("La confirmation de mot de passe a échoué !");
                 return;
             }
         }
@@ -94,7 +94,7 @@ $('#submit').click(() => {
             }
             else
             {
-                alert(data.message);
+                showModal(data.message);
             }
         })
 

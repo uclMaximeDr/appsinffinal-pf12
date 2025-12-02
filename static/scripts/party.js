@@ -6,17 +6,17 @@ $('#party_submit').click(function () {
   const description = $('#party_description').val();
 
   if (address === "" || title === "" || description === "") {
-    alert("Veuillez remplir tous les champs pour soumettre");
+    showModal("Veuillez remplir tous les champs pour soumettre");
     return;
   }
 
 
   $.post("/api/create", { address: address, title: title, description: description }, function (data) {
     if (data.success) {
-      alert(data.message);
+      showModal(data.message);
       window.location.href = "/";
     } else {
-      alert(data.message);
+      showModal(data.message);
     }
   })
 })
@@ -31,7 +31,7 @@ $('.party_edit').click(function () {
     if (data.success) {
       window.location.href = "/party/create";
     } else {
-      alert(data.message);
+      showModal(data.message);
     }
 
   })
@@ -45,10 +45,10 @@ $('.party_delete').click(function () {
 
   $.post("/api/delete", { delete_id: delete_id }, function (data) {
     if (data.success) {
-      alert(data.message);
+      showModal(data.message);
       window.location.href = "/party/myposts";
     } else {
-      alert(data.message);
+      showModal(data.message);
     }
 
   })

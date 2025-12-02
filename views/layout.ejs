@@ -18,9 +18,21 @@
       integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
       crossorigin="anonymous"
     ></script>
-</head>
+  </head>
+  
+  <body>
+    <!-- Ajout du modal -->
+    <div class="modalContainer">
+      <div class="modalBackground"></div>
+      <div class="modal">
+        <p id="modalMessage"></p>
+        <button id="modalClose">Fermer</button>
+      </div>
+    </div>
+    <!-- Script du modal -->
+    <script src="/scripts/modal.js"></script>
 
-<body>
+    <!-- Contenu de la page -->
     <%- body %>
-</body>
+  </body>
 </html>

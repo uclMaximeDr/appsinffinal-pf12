@@ -34,14 +34,14 @@ $('#submit').click(function() {
     })
     .then(response => {
         if (response.ok) {
-            alert('Profil mis à jour avec succès !');
+            showModal('Profil mis à jour avec succès !');
             window.location.href = '/user/profile';
         } else {
-            alert('Erreur lors de la mise à jour du profil.');
+            showModal('Erreur lors de la mise à jour du profil.');
         }
     })
     .catch(error => {
         console.error('Erreur:', error);
-        alert('Erreur lors de la mise à jour du profil.');
+        showModal('Erreur lors de la mise à jour du profil.');
     });
 });

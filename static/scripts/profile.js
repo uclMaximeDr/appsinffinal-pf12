@@ -7,7 +7,7 @@ $('#editButton').click(() => {
 })
 
 $('#addFriend').click(() => {
-    alert("You don't have any stop pretending")
+    showModal("You don't have any stop pretending")
 })
 
 $('#startCollapse').click(() => {
@@ -94,7 +94,7 @@ $('#disconnect').click(() => {
             window.location.href = "/"
         }
         else {
-            alert(data.message);
+            showModal(data.message);
         }
     })
 
