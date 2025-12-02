@@ -3,6 +3,7 @@
 ` %>
 
 <section class="pageContainer">
+
     <div class="leftPanel">
         <img src="/icons/leftarrow.svg" alt="Back icon" id="back" width="35px">
         
@@ -21,15 +22,20 @@
             <% if (!isOwnProfile) { %>
                 <div>
 
-                    <p id="addFriend" class="editFriend">+ Add friend</p>
-                    <p id="removeFriend" class="editFriend hidden">- Remove friend</p>
+                    <% if (!isFriend) { %>
+                        <p id="addFriend" class="editFriend">+ Add friend</p>
+                        <p id="removeFriend" class="editFriend" hidden>- Remove friend</p>
+                    <% } else { %>
+                        <p id="addFriend" class="editFriend" hidden>+ Add friend</p>
+                        <p id="removeFriend" class="editFriend">- Remove friend</p>
+                    <% } %>
 
                 </div>
             <% } %>
 
             <div>
                 
-                <h1 id="startCollapse">
+                <h1 id="statsCollapse">
                 Stats !
 
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" id="startCollapseArrow" viewBox="0 0 16 16">
@@ -37,7 +43,6 @@
                 </svg>
 
                 </h1>
-                
                 
                 <div id="collapseMenu" class="collapsed">
                     <h2>Nombre de posts : <%- parties.length %></h2>
@@ -49,12 +54,26 @@
                 </div>
             </div>
 
+            <% if (isOwnProfile) { %>
             <button id="disconnect">Disconnect</button>
+            <% } %>
         </div>
     </div>
     
     <div class="rightPanel">
 
+        <% if(!isOwnProfile) { %>
+            <a href="/user/profile/me" class="backToProfile">
+
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="white" class="bi bi-arrow-90deg-up" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M4.854 1.146a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L4 2.707V12.5A2.5 2.5 0 0 0 6.5 15h8a.5.5 0 0 0 0-1h-8A1.5 1.5 0 0 1 5 12.5V2.707l3.146 3.147a.5.5 0 1 0 .708-.708z"/>
+            </svg>
+
+            Back to me!
+        
+            </a>
+            <% } %>
+        
         <div class="friendSearch">
 
             <input id="searchBar" type="search" oninput="onSearch(event)" placeholder="Cherchez des amis...">

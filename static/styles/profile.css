@@ -82,6 +82,8 @@ body {
     
     position: relative;
 
+    user-select: none;
+
     font-size: 1.2rem;
 
     left: 190px;
@@ -92,6 +94,13 @@ body {
 .leftPanel .editFriend:hover {
 
     color: var(--hover-blue);
+}
+
+#statsCollapse {
+
+    position: relative;
+
+    left: 10px;
 }
 
 #collapseMenu {
@@ -142,6 +151,29 @@ body {
     bottom: 0;
     width: 75%;
     height: 100%;
+}
+
+.rightPanel a {
+    
+    color: white;
+    text-decoration: none;
+
+    user-select: none;
+
+    transition: 0.3s;
+}
+
+.rightPanel a:hover {
+
+    color: var(--hover-blue);
+}
+
+.rightPanel .backToProfile {
+    
+    position: absolute;
+
+    left: 32%;
+    transform: translate(-50%, 30px);
 }
 
 .friendSearch {

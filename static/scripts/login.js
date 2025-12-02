@@ -34,16 +34,16 @@ let slashed = true;
 $('#passwordEye').click(() => {
     // Function to toggle the visibility of a password
     
-    if (!slashed)
+    if (slashed)
     {
         $('#passwordEye').attr('src', '/icons/eye-slash-fill.svg');
         $('#password').attr('type', 'text');
-        slashed = true;
+        slashed = false;
     }
     else {
         $('#passwordEye').attr('src', '/icons/eye-fill.svg');
         $('#password').attr('type', 'password');
-        slashed = false;
+        slashed = true;
     }
 
 })

@@ -97,11 +97,17 @@ router.get('/user/profile/:id', async (req, res) => {
 
     // Whether the page we send is our own profile or not
     const isOwnProfile = connectedUser._id.toString() == user._id.toString()
+    const isFriend = connectedUser.friends.includes(parseInt(id));
 
     const parties = await database.collection('party').find({email : req.session.email}).toArray();
     const averageRating = parties.length > 0 ? (parties.reduce((sum, party) => sum + (party.rating || 0), 0) / parties.length).toFixed(1) : 0;
 
-    res.render("user/profile", { username: user.fullname, rating : averageRating, parties : parties, isOwnProfile : isOwnProfile });
+    res.render("user/profile", {
+        username: user.fullname,
+        rating : averageRating,
+        parties : parties,
+        isFriend : isFriend,
+        isOwnProfile : isOwnProfile });
 })
 
 router.get('/user/edit', (req, res) => {

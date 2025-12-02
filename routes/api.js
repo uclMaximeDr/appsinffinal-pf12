@@ -5,6 +5,7 @@ const { ObjectId } = require("mongodb");
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 12;
 const fs = require('fs');
+const { send } = require('process');
 
 // Routes
 
@@ -40,7 +41,7 @@ router.post('/register', async function (req, res, next) {
 
     if (!existingUser) {
         const hashedPassword = await hashPassword(password);
-        await database.collection('users').insertOne({ fullname, email, password: hashedPassword, admin: isFirstUser });
+        await database.collection('users').insertOne({ fullname, email, password: hashedPassword, friends: [], admin: isFirstUser });
         res.send({ success: true })
     }
     else {
@@ -148,6 +149,71 @@ router.get('/user/search', async function(req, res, next) {
     });
 
     return res.send(result);
+})
+
+router.post('/user/addFriend', async function (req, res, next) {
+    // Function to add a new friend
+    
+    const db = req.app.locals.db;
+    const id = req.body.id;
+
+    const user = await db.collection("users").findOne({ email : req.session.email });
+
+    let friendsList = user.friends;
+
+    if (id.toString() == user._id.toString())
+    {
+        throw new Error("Cannot be your own friend.")
+    }
+
+    // Adds a new empty friendsList if the user doesn't already have one
+    if (!user.friends) {
+        friendsList = await db.collection("users").updateOne({email: req.session.email}, {$set: { friends: [] }})
+    }
+
+    if (!friendsList.includes(parseInt(id))) {
+
+        friendsList.push(parseInt(id));
+
+        // Updates the database with the new friends list
+        await db.collection("users").updateOne({email: req.session.email}, {$set: { friends: friendsList }});
+
+        res.send({success : true});
+    }
+    else {
+
+        res.send({success : false, message: "This is already your friend."});
+    }
+})
+
+router.post('/user/removeFriend', async function (req, res, next) {
+    // Function to remove an existing friend
+    
+    const db = req.app.locals.db;
+    const id = req.body.id;
+
+    const user = await db.collection("users").findOne({ email : req.session.email });
+
+    let friendsList = user.friends;
+    
+    if (id.toString() == user._id.toString())
+    {
+        throw new Error("Cannot be your own friend.")
+    }
+
+    if (friendsList.includes(parseInt(id))) {
+
+        friendsList = friendsList.filter(elem => elem != parseInt(id))
+
+        // Updates the database with the new friends list
+        await db.collection("users").updateOne({email: req.session.email}, {$set: { friends: friendsList }});
+
+        res.send({success : true});
+    }
+    else {
+
+        res.send({success : false, message: "This is not your friend."});
+    }
 })
 
 // ### CAPTCHA ###
