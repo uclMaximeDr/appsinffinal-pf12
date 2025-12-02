@@ -74,6 +74,7 @@ let client;
 
 function setDatabase(db) {
   database = db;
+  app.locals.db = db;
 }
 
 // Start the server

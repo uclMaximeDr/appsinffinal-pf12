@@ -22,13 +22,13 @@ router.post('/login', async function (req, res, next) {
 });
 
 router.post('/register', async function (req, res, next) {
-     
+    
     const database = req.app.locals.db;
 
     const {fullname, email, password } = req.body;
 
     if (!fullname || !email || !password) {
-        res.status(400).end();
+        res.status(400).send("Some informations are missing!");
         return;
     }
 
@@ -46,8 +46,6 @@ router.post('/register', async function (req, res, next) {
 })
 
 router.post('/disconnect', async function (req, res, next) {
-    
-    console.log(req.session);
 
     if (req.session.email != null)
         {
