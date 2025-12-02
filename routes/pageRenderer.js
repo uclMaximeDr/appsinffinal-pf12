@@ -1,18 +1,17 @@
 const express = require('express');
 const router = express.Router();
 
-// Chech if need captcha middleware
+// Middleware to check for first visit and captcha requirement
 router.use((req, res, next) => {
     if(req.originalUrl.startsWith('/captcha') || req.originalUrl.startsWith('/api/')) {
         next();
         return;
     }
-
-    if(!req.session.visited) {
+    
+    if(!req.session.visited) { // Check if first visit
         req.session.visited = true;
         res.redirect('/start');
-    }    
-    else if (req.session && req.session.needCaptcha) {
+    } else if(req.session && req.session.needCaptcha) { // Check if need captcha
         res.redirect(`/captcha?next=${encodeURIComponent(req.originalUrl)}`);
     } else {
         next();
@@ -72,6 +71,16 @@ router.get('/user/profile', (req, res) => {
 
     res.render("user/profile", { email: req.session.email, username: req.session.username, rating : 3.5 });
 })
+
+router.get('/user/edit', (req, res) => {
+
+    if(!req.session || !req.session.email) {
+        res.redirect("/user/login");
+        return;
+    }
+
+    res.render("user/edit", { email: req.session.email, username: req.session.username });
+});
 
 // ### PARTY ###
 router.get('/party/create', (req, res) => {

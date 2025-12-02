@@ -60,6 +60,66 @@ router.post('/disconnect', async function (req, res, next) {
 
 })
 
+// ### USER INFO ###
+router.get('/user/profile-picture/me', async function (req, res, next) {
+    const database = req.app.locals.db;
+    const email = req.session?.email;
+
+    if (!email) {
+        return res.status(401).json({ error: "Utilisateur non connecté" });
+    }
+
+    const user = await database.collection('users').findOne({ email });
+    if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+
+    res.redirect(`/api/user/profile-picture/${user._id}`);
+});
+
+router.get('/user/profile-picture/:id', async function (req, res, next) {
+    const database = req.app.locals.db;
+    const id = req.params.id;
+
+    const user = await database.collection('users').findOne({ _id: new ObjectId(id) });
+    if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+
+    const filename = user.profilePicture;
+    if (!filename) {
+        return res.sendFile("static/images/default-profile.png", { root: '.' });
+    }
+
+    res.sendFile(`uploads/${filename}`, { root: '.' })
+});
+
+router.post('/user/edit', async function (req, res, next) {
+    const database = req.app.locals.db;
+    const upload = req.app.locals.upload;
+    
+    uploadImage(req, res, "profilePicture").then(async (filename) => {
+        const { username, email, password } = req.body;
+        const updateData = {};
+        if (username) updateData.fullname = username;
+        if (email) updateData.email = email;
+        if (password) updateData.password = password;
+
+        await database.collection('users').updateOne(
+            { email: req.session.email },
+            { $set: updateData }
+        );
+        
+        // Met à jour la session si l'email ou le nom d'utilisateur a changé
+        if (email) req.session.email = email;
+        if (username) req.session.username = username;
+        res.send({ success: true });
+
+    }).catch((error) => {
+        console.error('Erreur lors de la mise à jour du profil :', error);
+        res.status(500).send({ success: false, message: "Erreur lors de la mise à jour du profil." });
+    });
+});
 
 // ### CAPTCHA ###
 router.post('/validate-captcha', function (req, res, next) {
@@ -86,48 +146,15 @@ router.post('/validate-captcha', function (req, res, next) {
 
 // ### CAMERA ###
 router.post("/uploadPhoto", (req, res) => {
-    const upload = req.app.locals.upload;
-    const db = req.app.locals.db;
-    const uploadSingle = upload.single("photo");
-
-    uploadSingle(req, res, async function (err) {
-        if (err instanceof multer.MulterError) {
-            return res.status(500).json({ error: err.message });
-        } else if (err) {
-            return res.status(500).json({ error: "Erreur lors du téléchargement du fichier" });
-        }
-
-        if (!req.file) return res.status(400).json({ error: "Aucun fichier reçu" });
-
-        // On récupère l'utilisateur
-        const email = req.session?.email;
-        if (!email) return res.status(401).json({ error: "Utilisateur non connecté" });
-
-        // Coordonnées GPS (optionnelles)
-        let lat = req.body.lat ? parseFloat(req.body.lat) : null;
-        let lng = req.body.lng ? parseFloat(req.body.lng) : null;
-        const location = (lat !== null && lng !== null) ? { type: "Point", coordinates: [lng, lat] } : null;
-
-        // On crée l'objet photo
-        const photoDoc = {
-            filename: req.file.filename,
-            uploadedBy: email,
-            uploadedAt: new Date(),
-            location: location
-        };
-
-        try {
-            await db.collection("photos").insertOne(photoDoc);
-            res.json({ message: "Image enregistrée et ajoutée à la DB", photo: photoDoc });
-        } catch (dbErr) {
-            console.error(dbErr);
-            res.status(500).json({ error: "Erreur lors de l'enregistrement en DB" });
-        }
-    });
+    uploadImage(req, res, 'photoUpload')
+        .then(async (filename) => {
+            res.send({ success: true, filename: filename });
+        })
+        .catch((error) => {
+            console.error("Erreur lors du téléchargement de l'image :", error);
+            res.status(500).send({ success: false, message: "Erreur lors du téléchargement de l'image." });
+        });
 });
-
-module.exports = router;
-
 
 // ### PARTY ###
 
@@ -185,3 +212,53 @@ router.post('/delete', async function (req, res, next) {
     }
 })
 
+// ### UTILS ###
+function uploadImage(req, res, context) {
+    return new Promise((resolve, reject) => {
+        const upload = req.app.locals.upload;
+        const db = req.app.locals.db;
+        const uploadSingle = upload.single("photo");
+
+        uploadSingle(req, res, async function (err) {
+            if (err instanceof multer.MulterError) {
+                return res.status(500).json({ error: err.message });
+            } else if (err) {
+                return res.status(500).json({ error: "Erreur lors du téléchargement du fichier" });
+            }
+
+            if (!req.file) return res.status(400).json({ error: "Aucun fichier reçu" });
+
+            // On récupère l'utilisateur
+            const email = req.session?.email;
+            if (!email) return res.status(401).json({ error: "Utilisateur non connecté" });
+
+            if(context === 'profilePicture') {
+                // On met à jour la photo de profil de l'utilisateur
+                await db.collection("users").updateOne(
+                    { email: email },
+                    { $set: { profilePicture: req.file.filename } }
+                );
+            } else if(context === 'photoUpload') {
+                // Coordonnées GPS (optionnelles)
+                let lat = req.body.lat ? parseFloat(req.body.lat) : null;
+                let lng = req.body.lng ? parseFloat(req.body.lng) : null;
+                const location = (lat !== null && lng !== null) ? { type: "Point", coordinates: [lng, lat] } : null;
+    
+                // On crée l'objet photo
+                const photoDoc = {
+                    filename: req.file.filename,
+                    uploadedBy: email,
+                    uploadedAt: new Date(),
+                    location: location
+                };
+    
+                // On insère la photo dans la collection
+                await db.collection("photos").insertOne(photoDoc);
+            }
+
+            resolve(req.file.filename);
+        });
+    });
+}
+
+module.exports = router;
