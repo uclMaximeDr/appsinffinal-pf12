@@ -157,7 +157,7 @@ router.get('/party/:id', async function(req, res){
     const comments = await database.collection('comments').find({ party_id: new ObjectId(req.params.id)}).toArray();
     const connected = req.session ? (req.session.email == party.email) : false;
 
-    res.render("party/party", { party: { ...party }, comments: comments, connected: connected, rating:rating, vote_tot});
+    res.render("party/party", { party: { ...party }, username: req.session.username, comments: comments, connected: connected, rating:rating, vote_tot});
 });
 
 

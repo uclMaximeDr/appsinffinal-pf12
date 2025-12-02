@@ -23,8 +23,8 @@
 
         <textarea class="party_input" id="comment_data" placeholder="Poster ton avis" rows="2" cols="60"></textarea>
         <div class = "subbar-input">
-            <td><button class="button-comment" id ="share"> Partager </button></td>
-            <td><button class="button-comment" id="comment_post" data-party_id = "<%= party._id%>" > Poster </button></td>
+            <button class="button-comment" id ="share"> Partager </button>
+            <button class="button-comment" id="comment_post" data-party_id = "<%= party._id%>" > Poster </button>
 
         </div>
 
@@ -32,8 +32,9 @@
         <div class="comment">
             <% if (comments && comments.length != 0) { %>
                 <% comments.forEach(user_comment =>{%>
+                    <span><%= party.username %></span>
+                    <button class="comment_postdel" data-comment_id = "<%= user_comment._id%>" > Supprimer </button>
                     <p><%= user_comment.comment %></p>
-                    <td><button class="comment_postdel" data-comment_id = "<%= user_comment._id%>" > Supprimer </button></td>
                 <%})%>
             <%} else { %>
                 <p>Pas de commentaire.</p>
@@ -45,13 +46,18 @@
     </div>
 
     <div class="rating" >
-        <p>Votre avis nous intéresse !</p>
-        <button><span class="star1" data-rate = "1" data-party_id = "<%= party._id%>">★</span></button>
-        <button><span class="star2" data-rate = "2" data-party_id = "<%= party._id%>">★</span></button>
-        <button><span class="star3" data-rate = "3" data-party_id = "<%= party._id%>">★</span></button>
-        <button><span class="star4" data-rate = "4" data-party_id = "<%= party._id%>">★</span></button>
-        <button><span class="star5" data-rate = "5" data-party_id = "<%= party._id%>">★</span></button>
 
+        <p>Votre avis nous intéresse !</p>
+        <!-- Affichage des étoiles en fonction de la note de l'utilisateur-->
+        <%for (let i = 1; i < 6; i++){ %>
+            <% if( i <= rating.rate){%>
+                <button><span class="star" data-rate = "<%= i %>" data-party_id = "<%= party._id%>">★</span></button>
+            <%} else {%>
+                <button><span class="star" data-rate = "<%= i %>" data-party_id = "<%= party._id%>">☆</span></button>
+            <%}%>
+        <%}%>
+
+        <!-- Création avec boucle de la note de soirée -->
         <%for (let i = 1; i < 6; i++){ %>
             <span>(<%= vote_tot[5-i] %>)</span>
             <%for (let j = i; j < 6; j++){ %>
@@ -59,7 +65,8 @@
             <%}%>
             <br>
         <%}%>
-
+        
+        <!-- Affiche notre-->
         <% if (rating != null) { %>
             <h3 id="output">La note est : <span><%= rating.rate%></span>/5</h3>
         <%} else { %>
