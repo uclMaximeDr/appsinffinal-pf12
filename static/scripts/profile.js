@@ -28,18 +28,20 @@ function onSearch(event) {
 
   if(query.length == 0) {
     $('#searchResult').empty();
+    $('#searchResult').hide();
     return;
   }
 
   $.get('/api/user/search', { q: query }, function(data) {
     const resultsContainer = $('#searchResult');
     resultsContainer.empty(); // Clear previous results
+    resultsContainer.show();
 
     data.forEach(item => {
       const user = item
       resultsContainer.append(`<div class="searchElement" data-id="${user.id}">
 
-                    <img src="/api/user/profile-picture/${user.id}" width="50px">
+                    <img src="/api/user/profile-picture/${user.id}">
                     <span>${user.fullname}</span>
 
                 </div>`);
@@ -47,10 +49,16 @@ function onSearch(event) {
   });
 }
 
-$('.searchElement').click((event) => {
-    const user = event.target.closest(".searchElement")
+$(document).click((event) => {
+    const target = $(event.target);
     
-})
+    if(target.closest('.searchElement').length) {
+        const friend = target.closest('.searchElement');
+        const id = friend.data('id');
+
+        window.location.href = `/user/profile/${id}`;
+    }
+});
 
 $('#startCollapse').click(() => {
 

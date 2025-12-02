@@ -170,53 +170,51 @@ body {
 
 .friendSearch .searchResult {
 
-    display: flex;
+    display: none;
 
-    flex-direction: column;
-
-    align-items: center;
-
-    gap: 10px;
+    background-color: rgba(0, 0, 0, 80%);
     
-    background-color: rgba(0, 0, 0, 60%);
-    
-    width: var(--width);
-    height: 300px;
+    width: calc(var(--width) - 20px);
+    max-height: 400px;
+    overflow-y: scroll;
 
     border-radius: 8px;
-
+    padding: 10px;
 }
 
 .friendSearch .searchResult .searchElement {
-
+    position: relative;
     background-color: var(--hover-blue);
 
-    width: var(--width);
+    width: calc(var(--width) - 20px);
+    height: 60px;
 
     border-radius: 8px;
-
+    margin-bottom: 10px;
 }
 
 .friendSearch .searchResult .searchElement img {
 
-    position: relative;
+    position: absolute;
 
+    top: 50%;
+    transform: translateY(-50%);
     left: 15px;
-    top: 4px;
 
     border-radius: 100%;
 
+    width: 50px;
+    aspect-ratio: 1;
 }
 
 .friendSearch .searchResult .searchElement span {
-
-    position: relative;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 80px;
 
     font-size: 30px;
     font-weight: bold;
-
-    left: 25px;
-    bottom: 14px;
 
     user-select: none;
 
