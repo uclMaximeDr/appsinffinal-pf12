@@ -32,20 +32,20 @@ $('#submit').click(function() {
         formData.append('photo', fileInput.files[0]);
     }
 
-    fetch('/api/user/edit', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (response.ok) {
-            showModal('Profil mis à jour avec succès !');
-            window.location.href = '/user/profile';
-        } else {
-            showModal('Erreur lors de la mise à jour du profil.');
+    $.ajax(
+    {
+        url : '/api/user/edit',
+        type: 'POST',
+        data: formData,
+        processData: false, //empêche JQuery de transformer les données
+        contentType: false, // Permet l'envoi de fichiers
+        
+        success: function() {
+            window.location.href = '/user/profile/me'
+        },
+
+        error: function() {
+            alert("Erreur lors de la modification du compte.")
         }
     })
-    .catch(error => {
-        console.error('Erreur:', error);
-        showModal('Erreur lors de la mise à jour du profil.');
-    });
 });

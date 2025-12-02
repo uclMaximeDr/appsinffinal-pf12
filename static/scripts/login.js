@@ -89,7 +89,7 @@ $('#submit').click(() => {
 
         $.post('/api/register', { fullname: fullname, email: email, password: password}, function(data) {
             if(data.success) {
-                const nextURL = "/user/profile/me";
+                const nextURL = "/user/login";
                 window.location.href = "/captcha?next=" + encodeURIComponent(nextURL);
             }
             else
