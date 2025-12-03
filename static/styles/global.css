@@ -21,6 +21,7 @@ body {
 
 .pageContainer {
   position: relative;
+  width: 100%;
   height: 100vh;
 }
 .pageContainer.flex {

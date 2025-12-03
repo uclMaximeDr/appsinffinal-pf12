@@ -23,20 +23,24 @@
                 <div>
 
                     <!--
-                    Both buttons are always added whether isFriend is true or false,
+                    Only show friend edit buttons if the viewer is connected
+
+                    Both buttons are added whether isFriend is true or false,
                     to allow them to switch when clicked
                     
                     e.g. clicking on the '+ Add Friend' hides it and shows '- Remove Friend' without
                     refreshing the page
                     -->
                     
-                    <% if (!isFriend) { %>
-                        <p id="addFriend" class="editFriend">+ Add friend</p>
-                        <p id="removeFriend" class="editFriend" hidden>- Remove friend</p>
-                    <% } else { %>
-                        <p id="addFriend" class="editFriend" hidden>+ Add friend</p>
-                        <p id="removeFriend" class="editFriend">- Remove friend</p>
-                    <% } %>
+                    <% if( isConnected ) {
+                        if (!isFriend) { %>
+                            <p id="addFriend" class="editFriend">+ Add friend</p>
+                            <p id="removeFriend" class="editFriend" hidden>- Remove friend</p>
+                        <% } else { %>
+                            <p id="addFriend" class="editFriend" hidden>+ Add friend</p>
+                            <p id="removeFriend" class="editFriend">- Remove friend</p>
+                        <% }
+                    } %>
 
                 </div>
             <% } %>
@@ -70,7 +74,7 @@
     
     <div class="rightPanel">
 
-        <% if(!isOwnProfile) { %>
+        <% if(!isOwnProfile && isConnected) { %>
             <a href="/user/profile/me" class="backToProfile">
 
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="white" class="bi bi-arrow-90deg-up" viewBox="0 0 16 16">
@@ -80,7 +84,7 @@
             Back to me!
         
             </a>
-            <% } %>
+        <% } %>
         
         <div class="friendSearch">
 
@@ -97,7 +101,15 @@
             <div class="partyElement">
                 <% if (parties && parties.length !=0) { %>
                     <%parties.forEach(party =>{%>
-                        <h1><%- party.date %></h1>
+                        <div class="header">
+                            <h1><%- party.date %></h1>
+                            <% if( isOwnProfile ) { %>
+                                <div class="controls">
+                                    <button class="party_edit" data-edit = "<%= party._id%>" > Modifier </button>
+                                    <button class="party_delete" data-delete = "<%= party._id%>" > X </button>
+                                </div>
+                            <% } %>
+                        </div>
                         <p><%- party.address %></p>
 
                         <div class="imgContainer">
@@ -130,5 +142,6 @@
       crossorigin="anonymous"
     ></script>
     <script src="/scripts/profile.js"></script>
+    <script src="/scripts/party.js"></script>
 </body>
 </html>

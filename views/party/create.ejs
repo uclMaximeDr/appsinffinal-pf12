@@ -1,28 +1,9 @@
 <% styles=`
 <link rel="stylesheet" href="/styles/create.css">`
 %>
-    <div class="leftPanel">
-        <div class="partyContainer">
-            <nav>
-                <a href="/">
-                    <img src="/icons/home.svg" alt="Home icon">
-                    <span>Home</span>
-                </a>
-                <a href="/party/myposts">
-                    <img src="/icons/eye.svg" alt="Myposts icon" />
-                    <span>My posts</span>
-                </a>
-                <a href="/edit">
-                    <img src="/icons/edit.svg" alt="Edit icon">
-                     <span>Edit posts</span>
-                </a>
-            </nav>
-        </div>
-    </div>
-
-
-    
-    <div class="rightPanel">
+<img src="/icons/leftarrow.svg" alt="Back icon" id="back" width="35px">
+<div class="pageContainer flex">
+    <div class="content">
         
         <div class="data-box">
             <% if (!id_saved && !data_party) {%>
@@ -42,25 +23,18 @@
 
         </div>
 
-        <div class = "rules">
+        <div class="rulesContainer">
             <h2>FindMyParty - Règles</h2>
-            <p>1. Ne postez pas de soirée qui ne sont pas les votres.</p>
-            <p>2. Soyez courtois et polis.</p>
-            <p>3. Évitez tous débat politique. </p>
-            <p>4. Pas de pub perso ou quelconques. </p>
-            <p>5. Merci de ne pas perturber la discussion en organisant des raids, en propageant la haine ou en votant négativement sur tout le monde.</p>
-            <p>6. Aucune pornographie ou nudité d'aucune sorte.</p>
-            <p>7. Amusez-vous un maximum !</p>
-
-        </div>
-
-
-        <div class="profil">
-            <p>Alks</p>
-            <img src="" alt="pic" class="profil_pic">
-            
-            
-            
+            <div class="rules">
+                <p>1. Ne postez pas de soirée qui ne sont pas les votres.</p>
+                <p>2. Soyez courtois et polis.</p>
+                <p>3. Évitez tous débat politique. </p>
+                <p>4. Pas de pub perso ou quelconques. </p>
+                <p>5. Merci de ne pas perturber la discussion en organisant des raids, en propageant la haine ou en votant négativement sur tout le monde.</p>
+                <p>6. Aucune pornographie ou nudité d'aucune sorte.</p>
+                <p>7. Amusez-vous un maximum !</p>
+            </div>
         </div>
     </div>
+</div>
 <script src="/scripts/party.js"></script>

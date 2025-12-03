@@ -1,86 +1,84 @@
 <% styles=`
 <link rel="stylesheet" href="/styles/party.css">`
 %>
-<div class="leftPanel">
-    <div class="leftPanel">
-        <img src="/icons/leftarrow.svg" alt="Back icon" id="back" width="35px">
-    </div>
-</div>
+<div class="pageContainer flex">
+    <img src="/icons/leftarrow.svg" alt="Back icon" id="back" width="35px">
+    <div class="content">
 
-<div class="rightPanel">
-
-    <div class="data-box">
-
-        <div class="user-info">
-
-            <img src="/api/user/profile-picture/<%= user._id %>" alt="user">
-            <a href="/user/profile/<%= user._id %>"><%= user.fullname %></a>
-
-            <h4><strong><span id="party-address"><%= party.address %></span></strong></h4>
+        <div class="data-box">
+    
+            <div class="user-info">
+    
+                <img src="/api/user/profile-picture/<%= user._id %>" alt="user">
+                <a href="/user/profile/<%= user._id %>"><%= user.fullname %></a>
+    
+                <h4><strong><span id="party-address"><%= party.address %></span></strong></h4>
+            </div>
+    
+            <h2><strong></strong> <%= party.title %></h2>
+            <p id = "description"><strong> <%= party.description %></strong></p>
+            
+    
+            <textarea class="party_input" id="comment_data" placeholder="Poster ton avis" rows="2" cols="60"></textarea>
+            <div class = "subbar-input">
+                <button class="button-comment" id ="share"> Partager </button>
+                <button class="button-comment" id="comment_post" data-party_id = "<%= party._id%>" > Poster </button>
+    
+            </div>
+    
+            <!-- Affichage des commentaire avex image, pseudo, commentaire-->
+            <div class="comment">
+                <% if (comments && comments.length != 0) { %>
+                    <% comments.forEach(user_comment =>{%>
+                        <div class="comment">
+                            <div class="user">
+                                <img src="/api/user/profile-picture/<%= user_comment.user._id %>" alt="user">
+                                <span><%= user_comment.user.fullname %></span>
+                                <% if(user_comment.user_id == self_user_id){ %>
+                                    <button class="delete-comment" data-comment_id = "<%= user_comment._id%>" > Supprimer </button>
+                                <% } %>
+                            </div>
+                            <p><%= user_comment.comment %></p>
+                        </div>
+                    <%})%>
+                <%} else { %>
+                    <p>Pas de commentaire.</p>
+                <%} %>
+            </div>
+    
+            
+    
         </div>
-
-        <h2><strong></strong> <%= party.title %></h2>
-        <p id = "description"><strong> <%= party.description %></strong></p>
-        
-
-        <textarea class="party_input" id="comment_data" placeholder="Poster ton avis" rows="2" cols="60"></textarea>
-        <div class = "subbar-input">
-            <button class="button-comment" id ="share"> Partager </button>
-            <button class="button-comment" id="comment_post" data-party_id = "<%= party._id%>" > Poster </button>
-
-        </div>
-
-        <!-- Affichage des commentaire avex image, pseudo, commentaire-->
-        <div class="comment">
-            <% if (comments && comments.length != 0) { %>
-                <% comments.forEach(user_comment =>{%>
-                    <span id="comment_picture"><img src="/images/default_user.png" alt="user"></span>
-                    <span><%= user_comment.user.fullname %></span>
-                    <% if(user_comment.user_id == self_user_id){ %>
-                        <button class="comment_postdel" data-comment_id = "<%= user_comment._id%>" > Supprimer </button>
-                    <% } %>
-                    <p><%= user_comment.comment %></p>
-                <%})%>
-            <%} else { %>
-                <p>Pas de commentaire.</p>
-            <%} %>
-        </div>
-
-        
-
-    </div>
-
-    <div class="rating" >
-
-        <p>Votre avis nous intéresse !</p>
-        <!-- Affichage des étoiles en fonction de la note de l'utilisateur-->
-        <%for (let i = 1; i < 6; i++){ %>
-            <% if( rating != null && i <= rating.rate){%>
-                <button><span class="star" data-rate = "<%= i %>" data-party_id = "<%= party._id%>" data-rated_user = "<%= party.email%>">★</span></button>
-            <%} else {%>
-                <button><span class="star" data-rate = "<%= i %>" data-party_id = "<%= party._id%>" data-rated_user = "<%= party.email%>">☆</span></button>
-            <%}%>
-        <%}%>
-        <br>
-        <!-- Création avec boucle de la note de soirée -->
-        <%for (let i = 1; i < 6; i++){ %>
-            <span>(<%= vote_tot[5-i] %>)</span>
-            <%for (let j = i; j < 6; j++){ %>
-            <span>★</span>
+    
+        <div class="rating" >
+    
+            <p>Votre avis nous intéresse !</p>
+            <!-- Affichage des étoiles en fonction de la note de l'utilisateur-->
+            <%for (let i = 1; i < 6; i++){ %>
+                <% if( rating != null && i <= rating.rate){%>
+                    <button><span class="star" data-rate = "<%= i %>" data-party_id = "<%= party._id%>">★</span></button>
+                <%} else {%>
+                    <button><span class="star" data-rate = "<%= i %>" data-party_id = "<%= party._id%>">☆</span></button>
+                <%}%>
             <%}%>
             <br>
-        <%}%>
-        
-        <!-- Affiche note-->
-        <% if (rating != null) { %>
-            <h3 id="output">La note est : <span><%= rating.rate%></span>/5</h3>
-        <%} else { %>
-            <h3 id="output">La note est : 0/5</h3>
-        <%} %>
+            <!-- Création avec boucle de la note de soirée -->
+            <%for (let i = 1; i < 6; i++){ %>
+                <span>(<%= vote_tot[5-i] %>)</span>
+                <%for (let j = i; j < 6; j++){ %>
+                <span>★</span>
+                <%}%>
+                <br>
+            <%}%>
+            
+            <!-- Affiche note-->
+            <% if (rating != null) { %>
+                <h3 id="output">La note est : <span><%= rating.rate%></span>/5</h3>
+            <%} else { %>
+                <h3 id="output">La note est : 0/5</h3>
+            <%} %>
+        </div>
     </div>
-
-
-
 </div>
 
 <script src="/scripts/party.js"></script>

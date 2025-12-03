@@ -45,7 +45,7 @@ $('#submit').click(function() {
         },
 
         error: function() {
-            alert("Erreur lors de la modification du compte.")
+            showModal("Erreur lors de la modification du compte.")
         }
     })
 });

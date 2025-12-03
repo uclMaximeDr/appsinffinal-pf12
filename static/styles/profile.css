@@ -265,13 +265,23 @@ body {
     border-radius: 20px;
 }
 
+.partyElement .header {
+    
+    display: flex;
+
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 10px;
+    border-bottom: white solid 1px;
+}
+
 .partyElement h1 {
     
     font-size: x-large;
     
     margin: 0;
-
-    border-bottom: white solid 1px;
 }
 
 .partyElement .imgContainer {

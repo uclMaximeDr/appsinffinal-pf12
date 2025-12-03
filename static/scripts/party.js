@@ -19,7 +19,6 @@ $('#party_submit').click(function () {
 
   $.post("/api/create", { address: address, title: title, description: description }, function (data) {
     if (data.success) {
-      showModal(data.message);
       window.location.href = "/";
     } else {
       showModal(data.message);
@@ -50,7 +49,7 @@ $('.party_delete').click(function () {
   $.post("/api/delete", { delete_id: delete_id }, function (data) {
     if (data.success) {
       showModal(data.message);
-      window.location.href = "/party/myposts";
+      window.location.href = "/user/profile/me";
     } else {
       showModal(data.message);
     }
@@ -69,7 +68,7 @@ $('#comment_post').click(function () {
   
 
   if (comment === "") {
-    alert("Veuillez remplir le champs pour soumettre");
+    showModal("Veuillez remplir le champs pour soumettre");
     return;
   }
 
@@ -77,7 +76,7 @@ $('#comment_post').click(function () {
     if (data.success) {
       window.location.reload();
     } else {
-      alert(data.message);
+      showModal(data.message);
     }
   })
 })
@@ -95,7 +94,7 @@ $('.comment_postdel').click(function () {
     if (data.success) {
       window.location.reload();
     } else {
-      alert(data.message);
+      showModal(data.message);
     }
 
   })
@@ -108,17 +107,16 @@ $('.rating span').click(function () {
 
   const rate_s = $(this).data("rate");
   const party_id = $(this).data("party_id");
-  const rated_user = $(this).data("rated_user");
 
   const rate = Number(rate_s); 
 
 
 
-  $.post("/api/rating", { rate : rate, party_id: party_id, rated_user: rated_user }, function (data) {
+  $.post("/api/rating", { rate : rate, party_id: party_id }, function (data) {
     if (data.success) {
       window.location.reload();
     } else {
-      alert(data.message);
+      showModal(data.message);
     }
 
   })
