@@ -2,8 +2,9 @@
 <link rel="stylesheet" href="/styles/party.css">`
 %>
 <div class="leftPanel">
-    <img src="/icons/leftarrow.svg" alt="Back icon" id="back" width="35px">
-
+    <div class="leftPanel">
+        <img src="/icons/leftarrow.svg" alt="Back icon" id="back" width="35px">
+    </div>
 </div>
 
 <div class="rightPanel">
@@ -11,8 +12,11 @@
     <div class="data-box">
 
         <div class="user-info">
+
             <img src="/images/default_user.png" alt="user">
-            <p><%= party.username %></p>
+            <a href="/user/profile/<%= user._id %>">
+                 <p><%= party.username %></p>
+            </a>
 
             <h4><strong><span id="party-address"><%= party.address %></span></strong></h4>
         </div>
@@ -28,7 +32,7 @@
 
         </div>
 
-
+        <!-- Affichage des commentaire avex image, pseudo, commentaire-->
         <div class="comment">
             <% if (comments && comments.length != 0) { %>
                 <% comments.forEach(user_comment =>{%>
@@ -52,9 +56,9 @@
         <!-- Affichage des étoiles en fonction de la note de l'utilisateur-->
         <%for (let i = 1; i < 6; i++){ %>
             <% if( rating != null && i <= rating.rate){%>
-                <button><span class="star" data-rate = "<%= i %>" data-party_id = "<%= party._id%>">★</span></button>
+                <button><span class="star" data-rate = "<%= i %>" data-party_id = "<%= party._id%>" data-rated_user = "<%= party.email%>">★</span></button>
             <%} else {%>
-                <button><span class="star" data-rate = "<%= i %>" data-party_id = "<%= party._id%>">☆</span></button>
+                <button><span class="star" data-rate = "<%= i %>" data-party_id = "<%= party._id%>" data-rated_user = "<%= party.email%>">☆</span></button>
             <%}%>
         <%}%>
         <br>
@@ -67,7 +71,7 @@
             <br>
         <%}%>
         
-        <!-- Affiche notre-->
+        <!-- Affiche note-->
         <% if (rating != null) { %>
             <h3 id="output">La note est : <span><%= rating.rate%></span>/5</h3>
         <%} else { %>

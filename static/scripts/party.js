@@ -1,5 +1,10 @@
 // ### PARTY ### 
 
+
+$('#back').click(() => {
+    window.location.href = '/';
+})
+
 // Soumettre une soirée
 $('#party_submit').click(function () {
   const address = $('#party_address').val();
@@ -102,15 +107,16 @@ $('.comment_postdel').click(function () {
 
 // Rating
 $('.rating span').click(function () {
-  //internet pour savoir qu'on pouvait utiliser span
+
   const rate_s = $(this).data("rate");
   const party_id = $(this).data("party_id");
+  const rated_user = $(this).data("rated_user");
 
   const rate = Number(rate_s); 
 
 
 
-  $.post("/api/rating", { rate : rate, party_id: party_id }, function (data) {
+  $.post("/api/rating", { rate : rate, party_id: party_id, rated_user: rated_user }, function (data) {
     if (data.success) {
       window.location.reload();
     } else {

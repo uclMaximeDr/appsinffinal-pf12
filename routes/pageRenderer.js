@@ -83,11 +83,27 @@ router.get('/user/profile/me', async (req, res) => {
 
 router.get('/user/profile/:id', async (req, res) => {
     // Global function to get the profile page of an id
+    //Déclarer sinon pas déclarer
+    let averageRating;
 
     const database = req.app.locals.db;
     const id = req.params.id;
 
     const user = await database.collection('users').findOne({ _id: new ObjectId(id) });
+
+    //Source internet pour aggregate
+    //matcher condition puis grouper tous les docs et faire la somme des notes
+    const rating_array = await database.collection('rating').aggregate([{$match:{rated_user: user.email}}, {$group :{_id: null, total:{$sum: {$toInt:"$rate"}}}}]).toArray();
+    const num_total = await database.collection('rating').countDocuments({rated_user: user.email}); 
+
+    // Vérification si vide
+    if (rating_array.length > 0 && num_total > 0){
+        averageRating = Math.round(rating_array[0].total/num_total);
+    }else{
+        averageRating = 0;
+    }
+    
+
     if (!user) {
         return res.status(404).json({ error: "Utilisateur non trouvé" });
     }
@@ -95,14 +111,13 @@ router.get('/user/profile/:id', async (req, res) => {
     // The currently connected user
     const connectedUser = await database.collection('users').findOne({ email: req.session.email });
 
+
+    const parties = await database.collection('party').find({email : req.session.email}).toArray();
     // Whether the page we send is our own profile or not
     const isOwnProfile = connectedUser._id.toString() == user._id.toString()
 
     // Whether we are friend with the user we want to visit
     const isFriend = connectedUser.friends.includes(parseInt(id));
-
-    const parties = await database.collection('party').find({email : req.session.email}).toArray();
-    const averageRating = parties.length > 0 ? (parties.reduce((sum, party) => sum + (party.rating || 0), 0) / parties.length).toFixed(1) : 0;
 
     res.render("user/profile", {
         username: user.fullname,
@@ -144,12 +159,14 @@ router.get('/party/:id', async function(req, res){
     const database = req.app.locals.db;
     let vote_tot = [];
 
+
     const party = await database.collection('party').findOne({ _id: new ObjectId(req.params.id) });
+    const user = await database.collection('users').findOne({ email: party.email });
     const rating = await database.collection('rating').findOne({email: req.session.email, party_id: new ObjectId(req.params.id) });
     
     
     for (let i = 1; i < 6; i++){
-        //convertir en string sinon mongodb compare le type string et int donc !=
+        //Convertion en string sinon string et int pas les mêmes
         star = await database.collection('rating').countDocuments({party_id: new ObjectId(req.params.id), rate: i.toString()});
         vote_tot.push(star);
     }
@@ -157,7 +174,7 @@ router.get('/party/:id', async function(req, res){
     const comments = await database.collection('comments').find({ party_id: new ObjectId(req.params.id)}).toArray();
     const connected = req.session ? (req.session.email == party.email) : false;
 
-    res.render("party/party", { party: { ...party }, username: req.session.username, comments: comments, connected: connected, rating:rating, vote_tot});
+    res.render("party/party", {user:user, party: { ...party }, username: req.session.username, comments: comments, connected: connected, rating:rating, vote_tot});
 });
 
 

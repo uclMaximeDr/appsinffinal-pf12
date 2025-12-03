@@ -349,11 +349,12 @@ router.post('/comment_delete', async function (req, res, next) {
 // Donner une note
 router.post('/rating', async function (req, res, next) {
     const database = req.app.locals.db;
-    const {rate, party_id} = req.body;
+    const {rate, party_id, rated_user} = req.body;
     
     // Vérification si identifiant reçu
     if (req.session.email != null){
-        await database.collection('rating').updateOne({email: req.session.email, party_id: new ObjectId(party_id)},{$set: {rate}}, { upsert: true });
+        // Crée doc si existe pas sinon update
+        await database.collection('rating').updateOne({email: req.session.email, party_id: new ObjectId(party_id), rated_user : rated_user},{$set: {rate}}, { upsert: true });
         res.send({success : true, message : "Noter !"});
     }
     else{
