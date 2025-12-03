@@ -3,11 +3,7 @@ body {
     display: flex;
     font-weight: bold;
     text-decoration:none 
-    
-    
-
 }
-
 
 /*Left panel*/
 
@@ -20,8 +16,6 @@ body {
 
     background-color: hsl(228, 42%, 18%);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-    
-
 }
 
 
@@ -55,16 +49,11 @@ body {
     align-items: center;
     text-decoration: none;
     color: white;
-    
 }
 
 .partyContainer nav a span{
     margin-top: 5px;
 }
-
-
-
-
 
 /*Right panel*/
 
@@ -73,9 +62,6 @@ body {
     display: flex;
     flex-direction: center;
     align-items: center;
-    
-    
-
 }
 
 .data-tab{
@@ -85,18 +71,12 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    
-
 }
 
-
-/*W3school tableau*/
 table {
-  border-collapse: collapse;
-  width: 100vh;
-  height: 70vh;
-  
+    border-collapse: collapse;
+    width: 100vh;
+    height: 70vh;
 }
 
 th,

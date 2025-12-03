@@ -7,23 +7,53 @@ $('#editButton').click(() => {
     window.location.href = "/user/edit"
 })
 
+// Behavior of the edit friend buttons
 $('#addFriend').click(() => {
 
-    showModal("You don't have any stop pretending")
+    const id = window.location.pathname.split('/')[3];
 
-    $('#removeFriend').removeClass("hidden")
-    $('#addFriend').addClass("hidden")
+    $.post('/api/user/addFriend', {id: id}, function(data) {
+
+        if(data.success) {
+
+            showModal("Successfully added new friend !");
+
+            // Hide/show the other button
+            $('#removeFriend').show();
+            $('#addFriend').hide();
+        }
+        else {
+            
+            showModal(data.message);
+        }
+    })
 })
 
 $('#removeFriend').click(() => {
 
-    showModal("You don't have any stop pretending")
+    const id = window.location.pathname.split('/')[3];
 
-    $('#removeFriend').addClass("hidden")
-    $('#addFriend').removeClass("hidden")
+    $.post('/api/user/removeFriend', {id: id}, function(data) {
+
+        if(data.success) {
+
+            showModal("Successfully removed friend !")
+
+            // Hide/show the other button
+            $('#removeFriend').hide();
+            $('#addFriend').show();
+        }
+        else {
+            
+            showModal(data.message)
+        }
+    })
 })
 
+
 function onSearch(event) {
+    // Search for users in the database and adds them as searchElement
+
   const query = event.target.value;
 
   if(query.length == 0) {
@@ -60,11 +90,11 @@ $(document).click((event) => {
     }
 });
 
-$('#startCollapse').click(() => {
+$('#statsCollapse').click(() => {
 
     $('#collapseMenu').toggleClass("collapsed");
     
-    $('#startCollapseArrow').toggleClass("rotate")
+    $('#statsCollapseArrow').toggleClass("rotate")
 })
 
 function displayStarRating() {

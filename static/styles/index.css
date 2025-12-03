@@ -18,6 +18,7 @@ body{
     flex-direction: column;
     justify-content: center;
     gap: 20px;
+    max-height: 100vh;
 }
 
 #map {
@@ -41,6 +42,7 @@ body{
 
     z-index: 1000;
 }
+
 .links a {
     position: relative;
     transition: 0.2s;
@@ -50,9 +52,11 @@ body{
     
     background-color: #00D0FF;
 }
+
 .links a:hover {
     background-color: var(--hover-blue);
 }
+
 .links img {
     position: absolute;
     top: 50%;
@@ -64,29 +68,37 @@ body{
     z-index: 1;
 }
 
-
 .cardContainer{
-    display: flex;
-    flex-direction: column;
+
+    display: block;
+
+    overflow-x : hidden;
     overflow-y: scroll;
-    overflow-x:hidden;
     
-    height: 100vh;
     width: 90%;
-    padding: 20px;
-
-
+    height: 80vh;
 
 }
 
 .cardParty{
+
+    position: relative;
+
     background-color: hsl(229, 41%, 18%);
     border: 5px solid hsl(229, 42%, 42%) ;
     border-radius: 20px;
 
     width: 85%;
-    margin: 15px;
-    padding: 10px;
+    margin: 15px 0px;
+    padding: 10px 20px;
+    
+}
 
+/* Prevent card description from overflowing */
+.cardParty p, .cardParty h3, .cardParty h4{
 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
 }

@@ -5,6 +5,7 @@ const { ObjectId } = require("mongodb");
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 12;
 const fs = require('fs');
+const { send } = require('process');
 
 // Routes
 
@@ -40,7 +41,7 @@ router.post('/register', async function (req, res, next) {
 
     if (!existingUser) {
         const hashedPassword = await hashPassword(password);
-        await database.collection('users').insertOne({ fullname, email, password: hashedPassword, admin: isFirstUser });
+        await database.collection('users').insertOne({ fullname, email, password: hashedPassword, friends: [], admin: isFirstUser });
         res.send({ success: true })
     }
     else {
@@ -66,6 +67,8 @@ router.post('/disconnect', async function (req, res, next) {
 
 // ### USER INFO ###
 router.get('/user/profile-picture/me', async function (req, res, next) {
+    // Default function to return the profile picture of the currently connected user
+
     const database = req.app.locals.db;
     const email = req.session?.email;
 
@@ -82,6 +85,8 @@ router.get('/user/profile-picture/me', async function (req, res, next) {
 });
 
 router.get('/user/profile-picture/:id', async function (req, res, next) {
+    // Global function to send the profile picture of an id
+
     const database = req.app.locals.db;
     const id = req.params.id;
 
@@ -132,20 +137,82 @@ router.post('/user/edit', async function (req, res, next) {
 router.get('/user/search', async function(req, res, next) {
     
     const db = req.app.locals.db;
-    const query = req.query.q.toLowerCase().trim();
+    const query = req.query.q.toLowerCase().trim(); // Get the text from the request
 
+    // Tries to find a user which corresponds to the query, disregarding casing
     const users = await db.collection("users").find({fullname: {$regex: query, $options: "i"} }).toArray();
 
-    if(users)
-    {
-        const result = users.map(u => {
-            return {fullname: u.fullname, id: u._id}
-        });
+    if(!users) return res.send([]);
+        
+    // Only send the name and the id of the user 
+    return res.send(users.map(u => {
+        return {fullname: u.fullname, id: u._id}
+    }));
+})
 
-        return res.send(result);
+router.post('/user/addFriend', async function (req, res, next) {
+    // Function to add a new friend
+    
+    const db = req.app.locals.db;
+    const id = req.body.id;
+
+    const user = await db.collection("users").findOne({ email : req.session.email });
+    let friendsList = user.friends;
+
+    // Prevents us from adding ourselves as a friend
+    if (id.toString() == user._id.toString())
+    {
+        throw new Error("Cannot be your own friend.")
     }
 
-    return res.send([]);
+    // Adds a new empty friendsList if the user doesn't already have one
+    if (!user.friends) {
+        friendsList = await db.collection("users").updateOne({email: req.session.email}, {$set: { friends: [] }})
+    }
+
+    if (!friendsList.includes(parseInt(id))) {
+
+        friendsList.push(parseInt(id));
+
+        // Updates the database with the new friends list
+        await db.collection("users").updateOne({email: req.session.email}, {$set: { friends: friendsList }});
+
+        res.send({success : true});
+    }
+    else {
+
+        res.send({success : false, message: "This is already your friend."});
+    }
+})
+
+router.post('/user/removeFriend', async function (req, res, next) {
+    // Function to remove an existing friend
+    
+    const db = req.app.locals.db;
+    const id = req.body.id;
+
+    const user = await db.collection("users").findOne({ email : req.session.email });
+    let friendsList = user.friends;
+
+    // Prevents us from adding ourselves as a friend
+    if (id.toString() == user._id.toString())
+    {
+        throw new Error("Cannot be your own friend.")
+    }
+
+    if (friendsList.includes(parseInt(id))) {
+
+        friendsList = friendsList.filter(elem => elem != parseInt(id))
+
+        // Updates the database with the new friends list
+        await db.collection("users").updateOne({email: req.session.email}, {$set: { friends: friendsList }});
+
+        res.send({success : true});
+    }
+    else {
+
+        res.send({success : false, message: "This is not your friend."});
+    }
 })
 
 // ### CAPTCHA ###
@@ -192,7 +259,7 @@ router.post('/create', async function (req, res, next) {
 
     // Soumettre nouvelle soirée
     if (req.session.email != null && !req.session.id_saved){
-        await database.collection('party').insertOne({address, title, description, email: req.session.email });
+        await database.collection('party').insertOne({address, title, description, email: req.session.email, username : req.session.username });
         res.send({success : true, message : "Soirée crée !"});
     }
     // Modifier soirée avec même identifiant
@@ -231,10 +298,67 @@ router.post('/delete', async function (req, res, next) {
     // Vérification si identifiant reçu
     if (req.session.email != null && delete_id != null){
         await database.collection('party').deleteOne({email: req.session.email, _id: new ObjectId(delete_id)});
+        await database.collection('party').delete({email: req.session.email, party_id: new ObjectId(delete_id)});
         res.send({success : true, message : "Soirée supprimée !"});
     }
     else{
         res.send({success : false, message : "Soirée non supprimée, pas de compte connecté."});
+    }
+})
+
+
+
+// ### COMMENTAIRE ###
+
+// Création commentaire
+router.post('/comment_create', async function (req, res, next) {
+    const database = req.app.locals.db;
+
+    const {comment} = req.body;
+    const party_id = req.body.party_id;
+
+    // Soumettre commentaire
+    if (req.session.email != null){
+        await database.collection('comments').insertOne({party_id : new ObjectId(party_id), comment, email: req.session.email, username : req.session.username });
+        res.send({success : true, message : "Commentaire crée !"});
+    }
+    // Refus
+    else{
+        res.send({success : false, message : "Commentaire non crée, pas de compte connecté."});
+    }
+})
+
+
+// Suppression commentaire
+router.post('/comment_delete', async function (req, res, next) {
+    const database = req.app.locals.db;
+    const delcom_id = req.body.delcom_id;
+    
+    // Vérification si identifiant reçu
+    if (req.session.email != null && delcom_id != null){
+        await database.collection('comments').deleteOne({email: req.session.email, _id: new ObjectId(delcom_id)});
+        res.send({success : true, message : "Commentaire supprimée !"});
+    }
+    else{
+        res.send({success : false, message : "Commentaire non supprimée, pas de compte connecté."});
+    }
+})
+
+// ## Note ##
+
+// Donner une note
+router.post('/rating', async function (req, res, next) {
+    const database = req.app.locals.db;
+    const {rate, party_id, rated_user} = req.body;
+    
+    // Vérification si identifiant reçu
+    if (req.session.email != null){
+        // Crée doc si existe pas sinon update
+        await database.collection('rating').updateOne({email: req.session.email, party_id: new ObjectId(party_id), rated_user : rated_user},{$set: {rate}}, { upsert: true });
+        res.send({success : true, message : "Noter !"});
+    }
+    else{
+        res.send({success : false, message : "Pas de note, pas de compte connecté."});
     }
 })
 

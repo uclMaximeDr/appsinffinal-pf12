@@ -5,6 +5,7 @@
 
 <section class="pageContainer">
     <div class="sidebar">
+
         <input type="search" placeholder="Search...">
         <div class="selectorContainer" id="searchSelector">
             <div class="selector left"></div>
@@ -13,17 +14,20 @@
                 <p>Amis</p>
             </div>
         </div>
+
         <div class = "cardContainer">
         <%parties.forEach(party =>{%>
             <div class = "cardParty">
                 <h3><%= party.title %></h3>
-                <h4><%= party.address %></h4>
+                <h4>Posté par <%= party.username %></h4>
+                <h5><%= party.address %></h4>
                 <p><%= party.description %></p>
-                
+                <a href="/party/<%= party._id %>">Détails</a>
             </div>
         <%})%>
         </div>
     </div>
+    
     <div id="map"></div>
     <div class="links">
         <a href="/user/login" title="Gestion du compte">

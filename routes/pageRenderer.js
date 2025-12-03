@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { ObjectId } = require('mongodb')
+const { ObjectId } = require("mongodb");
 
 // Middleware to check for first visit and captcha requirement
 router.use((req, res, next) => {
@@ -64,6 +64,8 @@ router.get('/user/login', (req, res) => {
 })
 
 router.get('/user/profile/me', async (req, res) => {
+    // Default function to get the profile page of the currently connected user
+
     const database = req.app.locals.db;
     const email = req.session?.email;
 
@@ -80,23 +82,30 @@ router.get('/user/profile/me', async (req, res) => {
 })
 
 router.get('/user/profile/:id', async (req, res) => {
-
     const database = req.app.locals.db;
     const id = req.params.id;
 
     const user = await database.collection('users').findOne({ _id: new ObjectId(id) });
+
     if (!user) {
         return res.status(404).json({ error: "Utilisateur non trouvé" });
     }
 
+    // The currently connected user
     const connectedUser = await database.collection('users').findOne({ email: req.session.email });
-
-    const isOwnProfile = connectedUser._id.toString() == user._id.toString()
+    const isOwnProfile = connectedUser && connectedUser._id.equals(user._id);
 
     const parties = await database.collection('party').find({email : user.email}).toArray();
     const averageRating = parties.length > 0 ? (parties.reduce((sum, party) => sum + (party.rating || 0), 0) / parties.length).toFixed(1) : 0;
 
-    res.render("user/profile", { username: user.fullname, rating : averageRating, parties : parties, isOwnProfile : isOwnProfile, id : user._id });
+    res.render("user/profile", {
+        username: user.fullname,
+        rating : averageRating,
+        parties : parties,
+        isFriend : isFriend,
+        isOwnProfile : isOwnProfile,
+        id: user._id
+    });
 })
 
 router.get('/user/edit', (req, res) => {
@@ -123,6 +132,30 @@ router.get('/party/myposts', async function(req, res){
     const parties = await database.collection('party').find({email : req.session.email}).toArray();
     
     res.render("party/myposts", {email: req.session.email, username: req.session.username, parties: parties});
+});
+
+
+//Affichage information de la soirée
+router.get('/party/:id', async function(req, res){
+    const database = req.app.locals.db;
+    let vote_tot = [];
+
+
+    const party = await database.collection('party').findOne({ _id: new ObjectId(req.params.id) });
+    const user = await database.collection('users').findOne({ email: party.email });
+    const rating = await database.collection('rating').findOne({email: req.session.email, party_id: new ObjectId(req.params.id) });
+    
+    
+    for (let i = 1; i < 6; i++){
+        //Convertion en string sinon string et int pas les mêmes
+        star = await database.collection('rating').countDocuments({party_id: new ObjectId(req.params.id), rate: i.toString()});
+        vote_tot.push(star);
+    }
+
+    const comments = await database.collection('comments').find({ party_id: new ObjectId(req.params.id)}).toArray();
+    const connected = req.session ? (req.session.email == party.email) : false;
+
+    res.render("party/party", {user:user, party: { ...party }, username: req.session.username, comments: comments, connected: connected, rating:rating, vote_tot});
 });
 
 
