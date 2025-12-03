@@ -17,8 +17,7 @@ router.post('/login', async function (req, res, next) {
 
     const user = await database.collection('users').findOne({ email });
     if (user && await verifyPassword(password, user.password)) {
-        req.session.email = user.email;
-        req.session.username = user.fullname;
+        req.session.userid = user._id;
         res.send({ success: true });
     } else {
         res.send({ success: false, message: "Nom d'utilisateur ou mot de passe incorrect." });
@@ -52,11 +51,9 @@ router.post('/register', async function (req, res, next) {
 
 router.post('/disconnect', async function (req, res, next) {
 
-    if (req.session.email != null)
+    if (req.session.userid != null)
         {
-            req.session.email = null;
-            req.session.username = null;
-
+            req.session.userid = null;
             res.send({success: true})
         }
         else {
@@ -70,13 +67,13 @@ router.get('/user/profile-picture/me', async function (req, res, next) {
     // Default function to return the profile picture of the currently connected user
 
     const database = req.app.locals.db;
-    const email = req.session?.email;
+    const id = req.session?.userid;
 
-    if (!email) {
+    if (!id) {
         return res.status(401).json({ error: "Utilisateur non connecté" });
     }
 
-    const user = await database.collection('users').findOne({ email });
+    const user = await database.collection('users').findOne({ _id: new ObjectId(id) });
     if (!user) {
         return res.status(404).json({ error: "Utilisateur non trouvé" });
     }
@@ -119,13 +116,10 @@ router.post('/user/edit', async function (req, res, next) {
         if (password) updateData.password = password;
 
         await database.collection('users').updateOne(
-            { email: req.session.email },
+            { _id: new ObjectId(req.session.userid) },
             { $set: updateData }
         );
         
-        // Met à jour la session si l'email ou le nom d'utilisateur a changé
-        if (email) req.session.email = email;
-        if (username) req.session.username = username;
         res.send({ success: true });
 
     }).catch((error) => {
@@ -156,7 +150,7 @@ router.post('/user/addFriend', async function (req, res, next) {
     const db = req.app.locals.db;
     const id = req.body.id;
 
-    const user = await db.collection("users").findOne({ email : req.session.email });
+    const user = await db.collection("users").findOne({ _id: new ObjectId(req.session.userid) });
     let friendsList = user.friends;
 
     // Prevents us from adding ourselves as a friend
@@ -165,17 +159,12 @@ router.post('/user/addFriend', async function (req, res, next) {
         throw new Error("Cannot be your own friend.")
     }
 
-    // Adds a new empty friendsList if the user doesn't already have one
-    if (!user.friends) {
-        friendsList = await db.collection("users").updateOne({email: req.session.email}, {$set: { friends: [] }})
-    }
+    if (!friendsList.includes(id)) {
 
-    if (!friendsList.includes(parseInt(id))) {
-
-        friendsList.push(parseInt(id));
+        friendsList.push(id);
 
         // Updates the database with the new friends list
-        await db.collection("users").updateOne({email: req.session.email}, {$set: { friends: friendsList }});
+        await db.collection("users").updateOne({_id: new ObjectId(req.session.userid)}, {$set: { friends: friendsList }});
 
         res.send({success : true});
     }
@@ -191,7 +180,7 @@ router.post('/user/removeFriend', async function (req, res, next) {
     const db = req.app.locals.db;
     const id = req.body.id;
 
-    const user = await db.collection("users").findOne({ email : req.session.email });
+    const user = await db.collection("users").findOne({ _id: new ObjectId(req.session.userid) });
     let friendsList = user.friends;
 
     // Prevents us from adding ourselves as a friend
@@ -200,12 +189,12 @@ router.post('/user/removeFriend', async function (req, res, next) {
         throw new Error("Cannot be your own friend.")
     }
 
-    if (friendsList.includes(parseInt(id))) {
+    if (friendsList.includes(id)) {
 
-        friendsList = friendsList.filter(elem => elem != parseInt(id))
+        friendsList = friendsList.filter(elem => elem != id)
 
         // Updates the database with the new friends list
-        await db.collection("users").updateOne({email: req.session.email}, {$set: { friends: friendsList }});
+        await db.collection("users").updateOne({_id: new ObjectId(req.session.userid)}, {$set: { friends: friendsList }});
 
         res.send({success : true});
     }
@@ -258,13 +247,13 @@ router.post('/create', async function (req, res, next) {
     const {address, title, description} = req.body;
 
     // Soumettre nouvelle soirée
-    if (req.session.email != null && !req.session.id_saved){
-        await database.collection('party').insertOne({address, title, description, email: req.session.email, username : req.session.username });
+    if (req.session.userid != null && !req.session.id_saved){
+        await database.collection('party').insertOne({address, title, description, user_id: new ObjectId(req.session.userid) });
         res.send({success : true, message : "Soirée crée !"});
     }
     // Modifier soirée avec même identifiant
-    else if (req.session.email != null && req.session.id_saved){
-        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id), email: req.session.email},{$set: {address, title, description}});
+    else if (req.session.userid != null && req.session.id_saved){
+        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id)},{$set: {address, title, description}});
         req.session.id_saved = null; 
         res.send({success : true,  message : "Soirée modifiée !"});
     }
@@ -282,7 +271,7 @@ router.post('/edit', async function (req, res, next) {
     req.session.id_saved = new ObjectId(edit_id);
 
     // Vérification si identifiant reçu
-    if (req.session.email != null && req.session.id_saved != null){
+    if (req.session.userid != null && req.session.id_saved != null){
         res.send({success : true,  message : "Soirée modifiée !"});
     }
     else{
@@ -296,9 +285,8 @@ router.post('/delete', async function (req, res, next) {
     const delete_id = req.body.delete_id;
     
     // Vérification si identifiant reçu
-    if (req.session.email != null && delete_id != null){
-        await database.collection('party').deleteOne({email: req.session.email, _id: new ObjectId(delete_id)});
-        await database.collection('party').delete({email: req.session.email, party_id: new ObjectId(delete_id)});
+    if (req.session.userid != null && delete_id != null){
+        await database.collection('party').deleteOne({_id: new ObjectId(delete_id)});
         res.send({success : true, message : "Soirée supprimée !"});
     }
     else{
@@ -318,8 +306,8 @@ router.post('/comment_create', async function (req, res, next) {
     const party_id = req.body.party_id;
 
     // Soumettre commentaire
-    if (req.session.email != null){
-        await database.collection('comments').insertOne({party_id : new ObjectId(party_id), comment, email: req.session.email, username : req.session.username });
+    if (req.session.userid != null){
+        await database.collection('comments').insertOne({party_id : new ObjectId(party_id), comment, user_id: new ObjectId(req.session.userid) });
         res.send({success : true, message : "Commentaire crée !"});
     }
     // Refus
@@ -335,8 +323,8 @@ router.post('/comment_delete', async function (req, res, next) {
     const delcom_id = req.body.delcom_id;
     
     // Vérification si identifiant reçu
-    if (req.session.email != null && delcom_id != null){
-        await database.collection('comments').deleteOne({email: req.session.email, _id: new ObjectId(delcom_id)});
+    if (req.session.userid != null && delcom_id != null){
+        await database.collection('comments').deleteOne({user_id: new ObjectId(req.session.userid), _id: new ObjectId(delcom_id)});
         res.send({success : true, message : "Commentaire supprimée !"});
     }
     else{
@@ -352,9 +340,9 @@ router.post('/rating', async function (req, res, next) {
     const {rate, party_id, rated_user} = req.body;
     
     // Vérification si identifiant reçu
-    if (req.session.email != null){
+    if (req.session.userid != null){
         // Crée doc si existe pas sinon update
-        await database.collection('rating').updateOne({email: req.session.email, party_id: new ObjectId(party_id), rated_user : rated_user},{$set: {rate}}, { upsert: true });
+        await database.collection('rating').updateOne({user_id: new ObjectId(req.session.userid), party_id: new ObjectId(party_id), rated_user : rated_user},{$set: {rate}}, { upsert: true });
         res.send({success : true, message : "Noter !"});
     }
     else{
@@ -387,13 +375,13 @@ function uploadImage(req, res, context) {
             }
 
             // On récupère l'utilisateur
-            const email = req.session?.email;
-            if (!email) return res.status(401).json({ error: "Utilisateur non connecté" });
+            const id = req.session?.userid;
+            if (!id) return res.status(401).json({ error: "Utilisateur non connecté" });
 
             if(context === 'profilePicture') {
                 // On met à jour la photo de profil de l'utilisateur
                 await db.collection("users").updateOne(
-                    { email: email },
+                    { _id: new ObjectId(id) },
                     { $set: { profilePicture: req.file.filename } }
                 );
             } else if(context === 'photoUpload') {

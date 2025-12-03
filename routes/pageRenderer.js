@@ -29,10 +29,12 @@ router.get('/', async function(req, res){
     const partiesNames = await Promise.all(parties.map(async party => {
         return {
             ...party,
-            userFullname: await database.collection('users').findOne({email : req.session.email})
+            user: {
+                fullname: (await database.collection('users').findOne({_id : new ObjectId(party.user_id)})).fullname
+            }
         };
     }));
-    res.render("index", {email: req.session.email, username: req.session.username, parties : partiesNames});
+    res.render("index", {parties : partiesNames});
 });
 
 router.get('/start', (req, res) => {
@@ -55,7 +57,7 @@ router.get('/captcha', (req, res) => {
 
 router.get('/user/login', (req, res) => {
     
-    if(req.session && req.session.email) {
+    if(req.session && req.session.userid) {
         res.redirect("/user/profile/me");
         return;
     }
@@ -67,13 +69,13 @@ router.get('/user/profile/me', async (req, res) => {
     // Default function to get the profile page of the currently connected user
 
     const database = req.app.locals.db;
-    const email = req.session?.email;
+    const userid = req.session.userid;
 
-    if (!email) {
-        return res.status(401).json({ error: "Utilisateur non connecté" });
+    if (!userid) {
+        return res.redirect("/user/login");
     }
 
-    const user = await database.collection('users').findOne({ email });
+    const user = await database.collection('users').findOne({ _id: new ObjectId(userid) });
     if (!user) {
         return res.status(404).json({ error: "Utilisateur non trouvé" });
     }
@@ -92,11 +94,13 @@ router.get('/user/profile/:id', async (req, res) => {
     }
 
     // The currently connected user
-    const connectedUser = await database.collection('users').findOne({ email: req.session.email });
+    const connectedUser = await database.collection('users').findOne({ _id: new ObjectId(req.session.userid) });
     const isOwnProfile = connectedUser && connectedUser._id.equals(user._id);
 
-    const parties = await database.collection('party').find({email : user.email}).toArray();
+    const parties = await database.collection('party').find({user_id : user._id}).toArray();
     const averageRating = parties.length > 0 ? (parties.reduce((sum, party) => sum + (party.rating || 0), 0) / parties.length).toFixed(1) : 0;
+
+    const isFriend = connectedUser && connectedUser.friends && connectedUser.friends.includes(user._id.toString());
 
     res.render("user/profile", {
         username: user.fullname,
@@ -108,19 +112,22 @@ router.get('/user/profile/:id', async (req, res) => {
     });
 })
 
-router.get('/user/edit', (req, res) => {
+router.get('/user/edit', async (req, res) => {
 
-    if(!req.session || !req.session.email) {
+    if(!req.session || !req.session.userid) {
         res.redirect("/user/login");
         return;
     }
 
-    res.render("user/edit", { email: req.session.email, username: req.session.username });
+    const database = req.app.locals.db;
+    const user = await database.collection('users').findOne({ _id: new ObjectId(req.session.userid) });
+
+    res.render("user/edit", { email: user.email, username: user.fullname });
 });
 
 // ### PARTY ###
 router.get('/party/create', (req, res) => {
-    res.render("party/create", {email: req.session.email, username: req.session.username, data_party : req.session.data_party, id_saved : req.session.id_saved});
+    res.render("party/create", {data_party : req.session.data_party, id_saved : req.session.id_saved});
 });
 
 
@@ -129,9 +136,9 @@ router.get('/party/myposts', async function(req, res){
 
     const database = req.app.locals.db;
 
-    const parties = await database.collection('party').find({email : req.session.email}).toArray();
+    const parties = await database.collection('party').find({user_id : req.session.userid}).toArray();
     
-    res.render("party/myposts", {email: req.session.email, username: req.session.username, parties: parties});
+    res.render("party/myposts", {parties: parties});
 });
 
 
@@ -142,8 +149,8 @@ router.get('/party/:id', async function(req, res){
 
 
     const party = await database.collection('party').findOne({ _id: new ObjectId(req.params.id) });
-    const user = await database.collection('users').findOne({ email: party.email });
-    const rating = await database.collection('rating').findOne({email: req.session.email, party_id: new ObjectId(req.params.id) });
+    const user = await database.collection('users').findOne({ _id: new ObjectId(party.user_id) });
+    const rating = await database.collection('rating').findOne({user_id: req.session.userid, party_id: new ObjectId(req.params.id) });
     
     
     for (let i = 1; i < 6; i++){
@@ -153,9 +160,18 @@ router.get('/party/:id', async function(req, res){
     }
 
     const comments = await database.collection('comments').find({ party_id: new ObjectId(req.params.id)}).toArray();
-    const connected = req.session ? (req.session.email == party.email) : false;
+    comments_with_user = await Promise.all(comments.map( async (comment) => {
+        const user = await database.collection('users').findOne({ _id: new ObjectId(comment.user_id) });
+        return {
+            ...comment,
+            user: {
+                fullname: user.fullname
+            }
+        };
+    }));
+    const connected = req.session ? (req.session.userid == party.user_id) : false;
 
-    res.render("party/party", {user:user, party: { ...party }, username: req.session.username, comments: comments, connected: connected, rating:rating, vote_tot});
+    res.render("party/party", {user:user, party: party, comments: comments_with_user, connected: connected, rating:rating, vote_tot, self_user_id: req.session.userid});
 });
 
 

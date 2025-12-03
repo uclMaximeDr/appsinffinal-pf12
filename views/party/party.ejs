@@ -13,10 +13,8 @@
 
         <div class="user-info">
 
-            <img src="/images/default_user.png" alt="user">
-            <a href="/user/profile/<%= user._id %>">
-                 <p><%= party.username %></p>
-            </a>
+            <img src="/api/user/profile-picture/<%= user._id %>" alt="user">
+            <a href="/user/profile/<%= user._id %>"><%= user.fullname %></a>
 
             <h4><strong><span id="party-address"><%= party.address %></span></strong></h4>
         </div>
@@ -37,8 +35,10 @@
             <% if (comments && comments.length != 0) { %>
                 <% comments.forEach(user_comment =>{%>
                     <span id="comment_picture"><img src="/images/default_user.png" alt="user"></span>
-                    <span><%= user_comment.username %></span>
-                    <button class="comment_postdel" data-comment_id = "<%= user_comment._id%>" > Supprimer </button>
+                    <span><%= user_comment.user.fullname %></span>
+                    <% if(user_comment.user_id == self_user_id){ %>
+                        <button class="comment_postdel" data-comment_id = "<%= user_comment._id%>" > Supprimer </button>
+                    <% } %>
                     <p><%= user_comment.comment %></p>
                 <%})%>
             <%} else { %>

@@ -31,8 +31,6 @@ $('#party_submit').click(function () {
 $('.party_edit').click(function () {
   const edit_id = $(this).data("edit");
 
-  console.log("click")
-
   $.post("/api/edit", { edit_id: edit_id }, function (data) {
     if (data.success) {
       window.location.href = "/party/create";
