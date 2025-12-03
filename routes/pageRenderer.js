@@ -147,7 +147,7 @@ router.get('/party/:id', async function(req, res){
     const user = await database.collection('users').findOne({ _id: new ObjectId(party.user_id) });
     const rating = await database.collection('rating').findOne({user_id: new ObjectId(req.session.userid), party_id: new ObjectId(req.params.id) });
     
-    
+    // Counter total du nombre de like par nombre d'étoiles
     for (let i = 1; i < 6; i++){
         //Convertion en string sinon string et int pas les mêmes
         star = await database.collection('rating').countDocuments({party_id: new ObjectId(req.params.id), rate: i.toString()});
