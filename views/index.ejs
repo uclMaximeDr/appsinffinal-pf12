@@ -22,11 +22,12 @@
                 <h4>Posté par <%= party.username %></h4>
                 <h5><%= party.address %></h4>
                 <p><%= party.description %></p>
-                <td><a href="/party/<%= party._id %>">Détails</a></td>
+                <a href="/party/<%= party._id %>">Détails</a>
             </div>
         <%})%>
         </div>
     </div>
+    
     <div id="map"></div>
     <div class="links">
         <a href="/user/login" title="Gestion du compte">
