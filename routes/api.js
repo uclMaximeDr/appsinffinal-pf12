@@ -180,8 +180,6 @@ router.post('/user/addFriend', async function (req, res, next) {
         // Updates the database with the new friends list
         await db.collection("friendship").insertOne({ id_1: friendShip[0], id_2: friendShip[1] })
 
-        console.log(await db.collection('friendship').findOne({ id_1: friendShip[0], id_2: friendShip[1] }))
-
         res.send({success : true})
     }
     else {
@@ -204,8 +202,6 @@ router.post('/user/removeFriend', async function (req, res, next) {
 
     const friendShip = [req.session.userid, id];
     friendShip.sort();
-
-    console.log(await db.collection('friendship').findOne({ id_1: friendShip[0], id_2: friendShip[1] }))
 
     const alreadyFriend = await db.collection('friendship').findOne({ id_1: friendShip[0], id_2: friendShip[1] }) != null;
 

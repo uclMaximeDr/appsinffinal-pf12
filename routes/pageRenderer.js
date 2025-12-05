@@ -108,13 +108,12 @@ router.get('/user/profile/:id', async (req, res) => {
     }).toArray();
     const averageRating = parties.length > 0 ? (parties.reduce((sum, party) => sum + (party.rating || 0), 0) / parties.length).toFixed(1) : 0;
 
-    const friends = 0;
+    // Infos about user friendship
     const friendShip = [req.session.userid, id]
     friendShip.sort();
-
+    
+    const friends = 0; //TODO
     const isFriend = await database.collection('friendship').findOne({ id_1: friendShip[0], id_2: friendShip[1] }) != null;
-
-    console.log(isFriend);
 
     const isConnected = !!connectedUser;
 
