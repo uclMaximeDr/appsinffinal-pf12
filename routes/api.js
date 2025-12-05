@@ -245,11 +245,22 @@ router.post('/create', async function (req, res, next) {
     const database = req.app.locals.db;
 
     const {address, title, description} = req.body;
+    const username = (await database.collection('users').findOne({ _id: new ObjectId(req.session.userid) }))?.fullname;
 
     // Soumettre nouvelle soirée
     if (req.session.userid != null && !req.session.id_saved){
-        await database.collection('party').insertOne({address, title, description, user_id: new ObjectId(req.session.userid) });
+        const party = await database.collection('party').insertOne({address, title, description, user_id: new ObjectId(req.session.userid) });
         res.send({success : true, message : "Soirée crée !"});
+
+        req.app.locals.io.emit("newParty", {
+            address,
+            title,
+            description,
+            user: {
+                fullname: username
+            },
+            _id: party.insertedId
+        });
     }
     // Modifier soirée avec même identifiant
     else if (req.session.userid != null && req.session.id_saved){

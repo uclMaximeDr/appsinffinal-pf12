@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+const socketio = require('socket.io');
+const http = require('http');
 
 const { MongoClient } = require('mongodb');
 
@@ -57,6 +59,29 @@ app.use(express.static(path.join(__dirname, 'static')));
 app.use('/', pageRenderer);
 app.use('/api', apiRouter);
 
+// Database variable to be set in tests
+let database;
+let client;
+
+function setDatabase(db) {
+  database = db;
+  app.locals.db = db;
+}
+
+// Socket.IO setup
+const server = http.createServer(app);
+const io = new socketio.Server(server, {
+    cors: {
+        origin: '*',
+    },
+});
+app.locals.io = io;
+
+// Host the Socket.IO client script
+app.get('/scripts/socket.io.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'node_modules', 'socket.io', 'client-dist', 'socket.io.js'));
+});
+
 // 404 handler
 app.use((req, res) => {
     res.status(404).render("404");
@@ -67,15 +92,6 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(err.status || 500).json({ error: 'Internal Server Error' });
 });
-
-// Database variable to be set in tests
-let database;
-let client;
-
-function setDatabase(db) {
-  database = db;
-  app.locals.db = db;
-}
 
 // Start the server
 if (process.env.NODE_ENV !== "test") {
@@ -89,7 +105,7 @@ if (process.env.NODE_ENV !== "test") {
         app.locals.upload = upload;
     }
 
-    app.listen(PORT, '0.0.0.0', async () => {
+    server.listen(PORT, '0.0.0.0', async () => {
         console.log(`Example app listening on port ${PORT}`)
         await client.connect();
     });

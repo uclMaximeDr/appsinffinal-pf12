@@ -64,3 +64,22 @@ $("#searchSelector p").click((event) => {
     selector.classList.add("right");
   }
 });
+
+// Socket.IO client setup
+const socket = io();
+
+const partyContainer = $(".cardContainer");
+socket.on("newParty", (data) => {
+  console.log("New party received:", data);
+
+  const partyCard = `
+    <div class = "cardParty">
+      <h3>${data.title}</h3>
+      <h4>Posté par ${data.user.fullname}</h4>
+      <h5>Lieu : ${data.address}</h5>
+      <p>${data.description}</p>
+      <a href="/party/${data._id}">Détails</a>
+    </div>
+  `;
+  partyContainer.append(partyCard);
+});
