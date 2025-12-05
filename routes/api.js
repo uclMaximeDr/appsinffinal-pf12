@@ -203,7 +203,7 @@ router.post('/user/removeFriend', async function (req, res, next) {
     }
 
     const friendShip = [req.session.userid, id];
-    friendShip.sort();      
+    friendShip.sort();
 
     console.log(await db.collection('friendship').findOne({ id_1: friendShip[0], id_2: friendShip[1] }))
 
