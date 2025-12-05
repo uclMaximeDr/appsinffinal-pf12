@@ -63,7 +63,9 @@ $('#submit').click(() => {
         $.post('/api/login', { email: email, password: password }, function(data) {
             if(data.success) {
                 const nextURL = "/user/profile/me";
-                window.location.href = "/captcha?next=" + encodeURIComponent(nextURL);
+                // Temporarily disabled captcha for login
+                window.location.href = nextURL;
+                // window.location.href = "/captcha?next=" + encodeURIComponent(nextURL);
             } else {
                 showModal(data.message);
             }
