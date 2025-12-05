@@ -40,7 +40,7 @@ router.post('/register', async function (req, res, next) {
 
     if (!existingUser) {
         const hashedPassword = await hashPassword(password);
-        await database.collection('users').insertOne({ fullname, email, password: hashedPassword, friends: [], admin: isFirstUser });
+        await database.collection('users').insertOne({ fullname, email, password: hashedPassword, admin: isFirstUser });
         res.send({ success: true })
     }
     else {
@@ -164,23 +164,25 @@ router.post('/user/addFriend', async function (req, res, next) {
     const db = req.app.locals.db;
     const id = req.body.id;
 
-    const user = await db.collection("users").findOne({ _id: new ObjectId(req.session.userid) });
-    let friendsList = user.friends;
-
     // Prevents us from adding ourselves as a friend
-    if (id.toString() == user._id.toString())
+    if (id.toString() == req.session.userid.toString())
     {
         throw new Error("Cannot be your own friend.")
     }
 
-    if (!friendsList.includes(id)) {
+    const friendShip = [req.session.userid, id];
+    friendShip.sort();
 
-        friendsList.push(id);
+    const alreadyFriend = await db.collection('friendship').findOne({ id_1: friendShip[0], id_2: friendShip[1] }) != null;
+
+    if (!alreadyFriend) {
 
         // Updates the database with the new friends list
-        await db.collection("users").updateOne({_id: new ObjectId(req.session.userid)}, {$set: { friends: friendsList }});
+        await db.collection("friendship").insertOne({ id_1: friendShip[0], id_2: friendShip[1] })
 
-        res.send({success : true});
+        console.log(await db.collection('friendship').findOne({ id_1: friendShip[0], id_2: friendShip[1] }))
+
+        res.send({success : true})
     }
     else {
 
@@ -194,23 +196,25 @@ router.post('/user/removeFriend', async function (req, res, next) {
     const db = req.app.locals.db;
     const id = req.body.id;
 
-    const user = await db.collection("users").findOne({ _id: new ObjectId(req.session.userid) });
-    let friendsList = user.friends;
-
-    // Prevents us from adding ourselves as a friend
-    if (id.toString() == user._id.toString())
-    {
+    // Prevents us from removing ourselves as a friend
+    if (id.toString() == req.session.userid.toString())
+    { 
         throw new Error("Cannot be your own friend.")
     }
 
-    if (friendsList.includes(id)) {
+    const friendShip = [req.session.userid, id];
+    friendShip.sort();      
 
-        friendsList = friendsList.filter(elem => elem != id)
+    console.log(await db.collection('friendship').findOne({ id_1: friendShip[0], id_2: friendShip[1] }))
+
+    const alreadyFriend = await db.collection('friendship').findOne({ id_1: friendShip[0], id_2: friendShip[1] }) != null;
+
+    if (alreadyFriend) {
 
         // Updates the database with the new friends list
-        await db.collection("users").updateOne({_id: new ObjectId(req.session.userid)}, {$set: { friends: friendsList }});
+        await db.collection("friendship").deleteOne({ id_1: friendShip[0], id_2: friendShip[1] })
 
-        res.send({success : true});
+        res.send({success : true})
     }
     else {
 

@@ -108,13 +108,17 @@ router.get('/user/profile/:id', async (req, res) => {
     }).toArray();
     const averageRating = parties.length > 0 ? (parties.reduce((sum, party) => sum + (party.rating || 0), 0) / parties.length).toFixed(1) : 0;
 
-    const isFriend = connectedUser && connectedUser.friends && connectedUser.friends.includes(user._id.toString());
+    const friends = 0;
+    
+    const isFriend = true;
+
     const isConnected = !!connectedUser;
 
     res.render("user/profile", {
         username: user.fullname,
         rating : averageRating,
         parties : parties,
+        friends : friends,
         isFriend : isFriend,
         isOwnProfile : isOwnProfile,
         id: user._id,
