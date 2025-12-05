@@ -49,3 +49,18 @@ $('#submit').click(function() {
         }
     })
 });
+
+$('#delete').click(function() {
+    if (confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.")) {
+        $.ajax({
+            url: '/api/user/delete',
+            type: 'POST',
+            success: function() {
+                window.location.href = '/';
+            },
+            error: function() {
+                showModal("Erreur lors de la suppression du compte.")
+            }
+        });
+    }
+});

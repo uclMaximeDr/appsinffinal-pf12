@@ -128,6 +128,20 @@ router.post('/user/edit', async function (req, res, next) {
     });
 });
 
+router.post('/user/delete', async function (req, res, next) {
+    const database = req.app.locals.db;
+
+    await database.collection('users').updateOne({ _id: new ObjectId(req.session.userid) }, { $set: {
+        fullname: "Utilisateur supprimé",
+        email: "",
+        password: "",
+        profilePicture: ""
+    } });
+    req.session.userid = null;
+
+    res.send({ success: true });
+});
+
 router.get('/user/search', async function(req, res, next) {
     
     const db = req.app.locals.db;
