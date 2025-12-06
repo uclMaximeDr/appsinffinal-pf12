@@ -2,7 +2,7 @@
 async function geocode(q) {
   const url =
     "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
-    encodeURIComponent(q);
+    encodeURIComponent(q) + "+1348+Ottignies-Louvain-la-Neuve";
   try {
     const resp = await fetch(url, { headers: { "Accept-Language": "fr" } });
     if (!resp.ok) throw new Error("Erreur réseau: " + resp.status);
