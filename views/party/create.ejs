@@ -10,11 +10,26 @@
                 <h1>On va crée une soirée ensemble !</h1>
                 <input class="party_line" id="party_address" type="text" placeholder="Adresse*">
                 <input class="party_line" id="party_title" type="text" placeholder="Titre*">
+
+                <!-- Mode Raid -->
+                <label class="party_raid"> Mode raid 
+                    <input type="checkbox" id="party_raid">
+                    <span class="checkmark">: Ajoute votre soirée au tirage aléatoire de 19h pour attirer plus de fêtards chez vous.</span> 
+                </label>
+
                 <textarea class="party_input" id="party_description" name="data_party" placeholder="Donne nous une description de ta soirée !*" rows="10" cols="60"></textarea>
             <%} else {%>
                 <h1>Tu souhaites modifier ta soirée ? Pas de problème !</h1>
                 <input class="party_line" id="party_address" type="text" placeholder="Adresse*" value="<%= data_party.address%>">
                 <input class="party_line" id="party_title" type="text" placeholder="Titre*" value="<%= data_party.title%>">
+                <!-- Mode Raid -->
+                
+                <label class="containerRaid"> Mode raid
+                    <input type="checkbox" id="party_raid" checked="checked">
+                    <span class="checkmark">: Ajoute votre soirée au tirage aléatoire de 19h pour attirer plus de fêtards chez vous.</span> 
+                </label>
+
+                
                 <textarea class="party_input" id="party_description" name="data_party" placeholder="Donne nous une description de ta soirée !*" rows="10" cols="60"><%= data_party.description %></textarea>
 
             <%}%>
@@ -37,4 +52,5 @@
         </div>
     </div>
 </div>
+<script src="/scripts/index.js"></script>
 <script src="/scripts/party.js"></script>

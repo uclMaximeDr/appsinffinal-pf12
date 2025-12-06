@@ -1,3 +1,21 @@
+// Fonction utilitaire : géocoder via Nominatim (OpenStreetMap)
+async function geocode(q) {
+  const url =
+    "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
+    encodeURIComponent(q);
+  try {
+    const resp = await fetch(url, { headers: { "Accept-Language": "fr" } });
+    if (!resp.ok) throw new Error("Erreur réseau: " + resp.status);
+    const data = await resp.json();
+    if (!data || data.length === 0) return null;
+    return data[0];
+  } catch (err) {
+    console.error("Échec géocodage:", err);
+    return null;
+  }
+}
+
+
 // create marker
 async function createCustomMarker(lat, lng, imageUrl) {
   const imageBase64 = await fetch(imageUrl)

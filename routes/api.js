@@ -258,7 +258,7 @@ router.post("/uploadPhoto", (req, res) => {
 router.post('/create', async function (req, res, next) {
     const database = req.app.locals.db;
 
-    const {address, title, description} = req.body;
+    const {address, latitude, longitude, title, description, raid} = req.body;
     const username = (await database.collection('users').findOne({ _id: new ObjectId(req.session.userid) }))?.fullname;
 
     // Soumettre nouvelle soirée
@@ -278,7 +278,7 @@ router.post('/create', async function (req, res, next) {
     }
     // Modifier soirée avec même identifiant
     else if (req.session.userid != null && req.session.id_saved){
-        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id)},{$set: {address, title, description}});
+        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id)},{$set: {address, latitude, longitude, title, description, raid}});
         req.session.id_saved = null; 
         res.send({success : true,  message : "Soirée modifiée !"});
     }

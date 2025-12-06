@@ -11,8 +11,12 @@
     
                 <img src="/api/user/profile-picture/<%= user._id %>" alt="user">
                 <a href="/user/profile/<%= user._id %>"><%= user.fullname %></a>
-    
+
+                <%if (party.raid){%>
+                    <h6>Mode Raid activé %></h5>
+                <%}%>
                 <h4><strong><span id="party-address"><%= party.address %></span></strong></h4>
+                
             </div>
     
             <h2><strong></strong> <%= party.title %></h2>
