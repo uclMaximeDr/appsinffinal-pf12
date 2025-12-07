@@ -101,7 +101,7 @@ $('#comment_post').click(function () {
 })
 
 // Supprimer son commentaire
-$('.comment_postdel').click(function () {
+$('.delete-comment').click(function () {
 
   if(!confirm("Tu es certain de supprimer ce commentaire ?")){
     return;
