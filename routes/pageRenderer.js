@@ -99,7 +99,12 @@ router.get('/user/profile/:id', async (req, res) => {
     const connectedUser = await database.collection('users').findOne({ _id: new ObjectId(req.session.userid) });
     const isOwnProfile = connectedUser && connectedUser._id.equals(user._id);
 
-    const parties = await database.collection('party').find({user_id : user._id}).toArray();
+    const parties = await database.collection('party').find({user_id : user._id}).map(async party => {
+        return {
+            ...party,
+            images: await (database.collection('photos').find({partyId : new ObjectId(party._id)})).map(photo => photo._id).toArray()
+        };
+    }).toArray();
     const averageRating = parties.length > 0 ? (parties.reduce((sum, party) => sum + (party.rating || 0), 0) / parties.length).toFixed(1) : 0;
 
     const isFriend = connectedUser && connectedUser.friends && connectedUser.friends.includes(user._id.toString());

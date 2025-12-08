@@ -113,18 +113,13 @@
                         <p><%- party.address %></p>
 
                         <div class="imgContainer">
-                            <img class="elem">
-                            <img class="elem">
-                            <img class="elem">
-                            <img class="elem">
-                            <img class="elem">
-                            <img class="elem">
-                            <img class="elem">
-                            <img class="elem">
-                            <img class="elem">
-                            <img class="elem">
-                            <img class="elem">
-                            <img class="elem">
+                            <% if (party.images && party.images.length !=0) { %>
+                                <% party.images.forEach(id => { %>
+                                    <img class="elem" src="/uploadedImages/<%= id %>" alt="Party Image">
+                                <% }) %>
+                            <% } else { %>
+                                <p>Aucune image pour cette soirée.</p>
+                            <% } %>
                         </div>
                     <%})%>
                 <% }  else { %>
