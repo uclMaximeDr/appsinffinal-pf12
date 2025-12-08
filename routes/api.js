@@ -414,13 +414,17 @@ function uploadImage(req, res, context) {
                 let lat = req.body.lat ? parseFloat(req.body.lat) : null;
                 let lng = req.body.lng ? parseFloat(req.body.lng) : null;
                 const location = (lat !== null && lng !== null) ? { type: "Point", coordinates: [lng, lat] } : null;
+
+                // Recherche de la soirée la plus proche si des coordonnées sont fournies
+                const nearestParty = location ? await findNearestParty(db, lat, lng) : null;
     
                 // On crée l'objet photo
                 const photoDoc = {
                     filename: req.file.filename,
-                    uploadedBy: email,
+                    uploadedBy: new ObjectId(id),
                     uploadedAt: new Date(),
-                    location: location
+                    location: location,
+                    partyId: nearestParty ? nearestParty._id : null
                 };
     
                 // On insère la photo dans la collection
@@ -437,6 +441,27 @@ async function hashPassword(plainPassword) {
 }
 async function verifyPassword(plainPassword, storedHash) {
   return await bcrypt.compare(plainPassword, storedHash);
+}
+async function findNearestParty(db, latitude, longitude) {
+    const parties = await db.collection('party').find().toArray();
+
+    const toRadians = (degrees) => degrees * (Math.PI / 180);
+    const earthRadiusKm = 6371;
+
+    const distance = (lat1, lon1, lat2, lon2) => {
+        const dLat = toRadians(lat2 - lat1);
+        const dLon = toRadians(lon2 - lon1);
+        const a = Math.sin(dLat / 2) ** 2 +
+                  Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+                  Math.sin(dLon / 2) ** 2;
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return earthRadiusKm * c * 1000; // Convert to meters
+    };
+
+    return parties.map(party => {
+        const dist = distance(latitude, longitude, party.latitude, party.longitude);
+        return { party, distance: dist };
+    }).sort((a, b) => a.distance - b.distance)[0].party;
 }
 
 module.exports = router;
