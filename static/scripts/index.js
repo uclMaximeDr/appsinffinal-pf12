@@ -17,8 +17,8 @@ async function geocode(q) {
 
 
 // create marker
-async function createCustomMarker(lat, lng, imageUrl) {
-  const imageBase64 = await fetch(imageUrl)
+async function createCustomMarker(lat, lng, imageId) {
+  const imageBase64 = await fetch("/uploadedImages/" + imageId)
     .then((res) => res.blob())
     .then(
       (blob) =>

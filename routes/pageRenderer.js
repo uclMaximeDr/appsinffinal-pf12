@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { ObjectId } = require("mongodb");
+const path = require('path');
 
 // Middleware to check for first visit and captcha requirement
 router.use((req, res, next) => {
@@ -31,7 +32,8 @@ router.get('/', async function(req, res){
             ...party,
             user: {
                 fullname: (await database.collection('users').findOne({_id : new ObjectId(party.user_id)})).fullname
-            }
+            },
+            image: (await database.collection('photos').findOne({partyId : party._id}))?._id || null
         };
     }));
     res.render("index", {parties : partiesNames});
@@ -168,6 +170,23 @@ router.get('/party/:id', async function(req, res){
     const connected = req.session ? (req.session.userid == party.user_id) : false;
 
     res.render("party/party", {user:user, party: party, comments: comments_with_user, connected: connected, rating:rating, vote_tot, self_user_id: req.session.userid});
+});
+
+// ### Affichage d'image uploadée ###
+router.get('/uploadedImages/:id', async (req, res) => {
+    const database = req.app.locals.db;
+    const photo = await database.collection('photos').findOne({ _id: new ObjectId(req.params.id) });
+
+    if (!photo) {
+        return res.status(404).send('Image not found');
+    }
+
+    const filename = photo.filename;
+    const options = {
+        root: path.join(__dirname, '../uploads/')
+    };
+
+    res.sendFile(filename, options);
 });
 
 
