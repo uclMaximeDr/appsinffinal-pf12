@@ -153,6 +153,7 @@ router.get('/party/:id', async function(req, res){
     const party = await database.collection('party').findOne({ _id: new ObjectId(req.params.id) });
     const user = await database.collection('users').findOne({ _id: new ObjectId(party.user_id) });
     const rating = await database.collection('rating').findOne({user_id: new ObjectId(req.session.userid), party_id: new ObjectId(req.params.id) });
+    const images = await database.collection('photos').find({ partyId: new ObjectId(req.params.id)}).map(photo => photo._id).toArray();
     
     // Counter total du nombre de like par nombre d'étoiles
     for (let i = 1; i < 6; i++){
@@ -174,7 +175,7 @@ router.get('/party/:id', async function(req, res){
     }));
     const connected = req.session ? (req.session.userid == party.user_id) : false;
 
-    res.render("party/party", {user:user, party: party, comments: comments_with_user, connected: connected, rating:rating, vote_tot, self_user_id: req.session.userid});
+    res.render("party/party", {user:user, party: party, comments: comments_with_user, connected: connected, rating:rating, vote_tot, self_user_id: req.session.userid, images: images});
 });
 
 // ### Affichage d'image uploadée ###
