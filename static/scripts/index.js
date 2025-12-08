@@ -18,7 +18,7 @@ async function geocode(q) {
 
 // create marker
 async function createCustomMarker(lat, lng, imageId) {
-  const imageBase64 = await fetch("/uploadedImages/" + imageId)
+  const imageBase64 = await fetch("/uploadedImages/" + imageId + "/64")
     .then((res) => res.blob())
     .then(
       (blob) =>
@@ -30,14 +30,14 @@ async function createCustomMarker(lat, lng, imageId) {
     );
 
   const svgTemplate = `
-        <svg width="650" height="883" viewBox="0 0 650 883" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-          <path d="M650 325C650 504.493 325 883 325 883C325 883 0 504.493 0 325C0 145.507 145.507 0 325 0C504.493 0 650 145.507 650 325Z" fill="red"/>
-          <rect x="75" y="75" width="500" height="500" rx="250" fill="url(#pattern0_16_2)"/>
+        <svg width="80" height="109" viewBox="0 0 80 109" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+          <path d="M80 40.1189C80 62.276 40 109 40 109C40 109 0 62.276 0 40.1189C0 17.9618 17.9086 0 40 0C62.0914 0 80 17.9618 80 40.1189Z" fill="#FF0000"/>
+          <path d="M72 40C72 22.3269 57.6731 8 40 8C22.3269 8 8 22.3269 8 40C8 57.6731 22.3269 72 40 72C57.6731 72 72 57.6731 72 40Z" fill="url(#pattern0_16_2)"/>
           <defs>
             <pattern id="pattern0_16_2" patternContentUnits="objectBoundingBox" width="1" height="1">
-              <use xlink:href="#image" transform="translate(-0.0289474) scale(0.00526316)"/>
+              <use xlink:href="#image0_16_2" transform="scale(0.015625)"/>
             </pattern>
-            <image id="image" preserveAspectRatio="none" xlink:href="${imageBase64}"/>
+            <image id="image0_16_2" width="64" height="64" preserveAspectRatio="none" xlink:href="${imageBase64}"/>
           </defs>
         </svg>`;
 

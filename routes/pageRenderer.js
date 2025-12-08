@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { ObjectId } = require("mongodb");
 const path = require('path');
+const sharp = require('sharp');
 
 // Middleware to check for first visit and captcha requirement
 router.use((req, res, next) => {
@@ -180,20 +181,31 @@ router.get('/party/:id', async function(req, res){
 
 // ### Affichage d'image uploadée ###
 router.get('/uploadedImages/:id', async (req, res) => {
+    res.redirect('/uploadedImages/' + req.params.id + '/500');
+});
+// ### Affichage d'icône uploadée au format icône (64x64) ###
+router.get('/uploadedImages/:id/:size', async (req, res) => {
     const database = req.app.locals.db;
     const photo = await database.collection('photos').findOne({ _id: new ObjectId(req.params.id) });
+    const size = parseInt(req.params.size);
 
     if (!photo) {
         return res.status(404).send('Image not found');
     }
 
-    const filename = photo.filename;
-    const options = {
-        root: path.join(__dirname, '../uploads/')
-    };
+    const originalPath = path.join(__dirname, '../uploads/', photo.filename);
+    try {
+        const buffer = await sharp(originalPath)
+            .resize(size, size)
+            .toFormat('png')
+            .toBuffer();
 
-    res.sendFile(filename, options);
+        res.set('Content-Type', 'image/png');
+        res.send(buffer);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error processing image');
+    }
 });
-
 
 module.exports = router;
