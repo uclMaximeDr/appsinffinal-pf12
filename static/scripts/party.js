@@ -3,11 +3,11 @@
 $('#back').click(() => {
     window.location.href = '/';
 })
-let party_coord = null;
 
 //Obtenir position user - W3school tuto
 var x = document.getElementById("demo");
-async function getLocation(){
+let party_coord = null;
+function getLocation(){
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(setPosition);
   } else { 
@@ -63,12 +63,12 @@ $('#party_submit').click(async () => {
   party_coord = null;
   //Coordonnées limite Ottignies Louvain-la-Neuve
   if(lat > 50.67914 || lat < 50.65410 || lon > 4.63333 || lon < 4.59165){
-    showModal("Adresse introuvable, veuillez insérer une adresse existante.");
+    showModal("Adresse en dehors de Louvain-La-Neuve, veuillez insérer une adresse valide.");
     return;
   }
 
 
-  $.post("/api/create", { address: address, latitude : lat, longitude:lon, title: title, description: description, raid: raid }, function (data) {
+  $.post("/api/create", {address: address, latitude : lat, longitude:lon, title: title, description: description, raid: raid }, function (data) {
     if (data.success) {
       window.location.href = "/";
     } else {

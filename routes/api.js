@@ -266,7 +266,7 @@ router.post('/create', async function (req, res, next) {
     // Soumettre nouvelle soirée
     if (req.session.userid != null && !req.session.id_saved){
         
-        const party = await database.collection('party').insertOne({address, latitude, longitude, title, description, raid : raid_bool, user_id: new ObjectId(req.session.userid) });
+        const party = await database.collection('party').insertOne({date: Date(), address, latitude, longitude, title, description, raid : raid_bool, user_id: new ObjectId(req.session.userid) });
         res.send({success : true, message : "Soirée crée !"});
 
         req.app.locals.io.emit("newParty", {
@@ -281,7 +281,7 @@ router.post('/create', async function (req, res, next) {
     }
     // Modifier soirée avec même identifiant
     else if (req.session.userid != null && req.session.id_saved){
-        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id)},{$set: {address, latitude, longitude, title, description, raid :raid_bool}});
+        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id)},{$set: {date: new Date(), address, latitude, longitude, title, description, raid :raid_bool}});
         res.send({success : true,  message : "Soirée modifiée !"});
     }
     // Refus
@@ -334,7 +334,7 @@ router.post('/comment_create', async function (req, res, next) {
 
     // Soumettre commentaire
     if (req.session.userid != null){
-        await database.collection('comments').insertOne({party_id : new ObjectId(party_id), comment, user_id: new ObjectId(req.session.userid) });
+        await database.collection('comments').insertOne({date: Date(), party_id : new ObjectId(party_id), comment, user_id: new ObjectId(req.session.userid) });
         res.send({success : true, message : "Commentaire crée !"});
     }
     // Refus
