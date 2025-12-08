@@ -17,6 +17,9 @@ router.use((req, res, next) => {
     } else if(req.session && req.session.needCaptcha) { // Check if need captcha
         res.redirect(`/captcha?next=${encodeURIComponent(req.originalUrl)}`);
     } else {
+        if (!req.originalUrl.endsWith('/party/create')) {
+            req.session.id_saved = null;
+        }
         next();
     }
 });

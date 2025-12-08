@@ -260,10 +260,13 @@ router.post('/create', async function (req, res, next) {
 
     const {address, latitude, longitude, title, description, raid} = req.body;
     const username = (await database.collection('users').findOne({ _id: new ObjectId(req.session.userid) }))?.fullname;
+    //Conversion string bool vers bool
+    const raid_bool = (raid == 'true' ? true : false);
 
     // Soumettre nouvelle soirée
     if (req.session.userid != null && !req.session.id_saved){
-        const party = await database.collection('party').insertOne({address, latitude, longitude, title, description, user_id: new ObjectId(req.session.userid) });
+        
+        const party = await database.collection('party').insertOne({address, latitude, longitude, title, description, raid : raid_bool, user_id: new ObjectId(req.session.userid) });
         res.send({success : true, message : "Soirée crée !"});
 
         req.app.locals.io.emit("newParty", {
@@ -278,8 +281,7 @@ router.post('/create', async function (req, res, next) {
     }
     // Modifier soirée avec même identifiant
     else if (req.session.userid != null && req.session.id_saved){
-        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id)},{$set: {address, latitude, longitude, title, description, raid}});
-        req.session.id_saved = null; 
+        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id)},{$set: {address, latitude, longitude, title, description, raid :raid_bool}});
         res.send({success : true,  message : "Soirée modifiée !"});
     }
     // Refus
