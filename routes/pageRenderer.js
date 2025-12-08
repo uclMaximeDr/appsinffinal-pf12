@@ -108,12 +108,19 @@ router.get('/user/profile/:id', async (req, res) => {
     }).toArray();
     const averageRating = parties.length > 0 ? (parties.reduce((sum, party) => sum + (party.rating || 0), 0) / parties.length).toFixed(1) : 0;
 
-    // Infos about user friendship
+    // Infos about friendship with connected user
+    
+    
+    const friendsList = new Array().concat(await database.collection('friendship').find({ id_2 : new ObjectId(user._id) }).toArray(),
+                                        await database.collection('friendship').find({ id_1 : new ObjectId(user._id) }).toArray())
+
+    
+    const friends = friendsList.length; //TODO
+
     const friendShip = [req.session.userid, id]
     friendShip.sort();
-    
-    const friends = 0; //TODO
-    const isFriend = await database.collection('friendship').findOne({ id_1: friendShip[0], id_2: friendShip[1] }) != null;
+
+    const isFriend = await database.collection('friendship').findOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) }) != null;
 
     const isConnected = !!connectedUser;
 

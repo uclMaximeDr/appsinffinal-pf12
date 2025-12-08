@@ -173,12 +173,12 @@ router.post('/user/addFriend', async function (req, res, next) {
     const friendShip = [req.session.userid, id];
     friendShip.sort();
 
-    const alreadyFriend = await db.collection('friendship').findOne({ id_1: friendShip[0], id_2: friendShip[1] }) != null;
+    const alreadyFriend = await db.collection('friendship').findOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) }) != null;
 
     if (!alreadyFriend) {
 
         // Updates the database with the new friends list
-        await db.collection("friendship").insertOne({ id_1: friendShip[0], id_2: friendShip[1] })
+        await db.collection("friendship").insertOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) })
 
         res.send({success : true})
     }
@@ -203,12 +203,12 @@ router.post('/user/removeFriend', async function (req, res, next) {
     const friendShip = [req.session.userid, id];
     friendShip.sort();
 
-    const alreadyFriend = await db.collection('friendship').findOne({ id_1: friendShip[0], id_2: friendShip[1] }) != null;
+    const alreadyFriend = await db.collection('friendship').findOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) }) != null;
 
     if (alreadyFriend) {
 
         // Updates the database with the new friends list
-        await db.collection("friendship").deleteOne({ id_1: friendShip[0], id_2: friendShip[1] })
+        await db.collection("friendship").deleteOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) })
 
         res.send({success : true})
     }
