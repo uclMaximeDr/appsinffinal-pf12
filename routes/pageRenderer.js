@@ -115,7 +115,7 @@ router.get('/user/profile/:id', async (req, res) => {
                                         await database.collection('friendship').find({ id_1 : new ObjectId(user._id) }).toArray())
 
     
-    const friends = friendsList.length; //TODO
+    const friends = friendsList.length;
 
     const friendShip = [req.session.userid, id]
     friendShip.sort();
