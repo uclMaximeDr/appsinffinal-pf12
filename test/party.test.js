@@ -3,13 +3,13 @@ process.env.NODE_ENV = "test";
 // Dependencies
 const request = require("supertest");
 const { randomUUID } = require('crypto');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 
-const api = require("../routes/api");
-const { setDatabase } = require("../app");
-
+const { app, setDatabase } = require("../app");
 
 describe("Profile test", () => {
+
+    var cookie;
 
     beforeAll (async () => {
         // Créer une DB temporaire
@@ -22,18 +22,92 @@ describe("Profile test", () => {
 
         // Injecter la DB dans l'application
         setDatabase(database);
+
+        // Créer un utilisateur de test
+        await request(app)
+            .post("/api/register")
+            .send({ fullname: "testName", email: "test@gmail.com", password: "testPassword", confirmPassword : "testPassword" })
+            .set("Content-Type", "application/json")
+            .expect(200);
+
+        // Connecter l'utilisateur de test
+        const loginresponse = await request(app)
+            .post("/api/login")
+            .set("Content-Type", "application/json")
+            .send({ email: "test@gmail.com", password: "testPassword" })
+    
+        cookie = loginresponse.header['set-cookie'];
     });
     
     it("Test add party", async () => {
-        return true;
+        await request(app)
+            .post("/api/create")
+            .set("Content-Type", "application/json")
+            .set("Cookie", cookie)
+            .send({
+                address: "testadd",
+                latitude: 0,
+                longitude: 0,
+                title: "title",
+                description: "description",
+                raid: "true"
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.success).toBe(true);
+                expect(res.body.message).toBe("Soirée crée !")
+            });
+
+        const parties = await database.collection('party').find({  address: "testadd" }).toArray();
+        expect(parties.length).toBe(1);
     })
 
     it("Test edit party", async () => {
-        return true;
+        const partyId = (await database.collection('party').findOne())._id;
+        await request(app)
+            .post('/api/edit')
+            .set('Cookie', cookie)
+            .set("Content-Type", "application/json")
+            .send({
+                edit_id: partyId
+            })
+
+        await request(app)
+            .post("/api/create")
+            .set("Content-Type", "application/json")
+            .set("Cookie", cookie)
+            .send({
+                address: "testedit",
+                latitude: 0,
+                longitude: 0,
+                title: "title",
+                description: "description",
+                raid: "true"
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.success).toBe(true);
+                expect(res.body.message).toBe("Soirée modifiée !")
+            });
+
+        const newAddress = (await database.collection('party').findOne()).address;
+        expect(newAddress).toBe("testedit")
     });
 
     it("Test delete party", async () => {
-        return true;
+        const partyId = (await database.collection('party').findOne())._id;
+
+        await request(app)
+            .post('/api/delete')
+            .set('Cookie', cookie)
+            .set("Content-Type", "application/json")
+            .send({
+                delete_id: partyId
+            })
+
+
+        const parties = await database.collection('party').find().toArray();
+        expect(parties.length).toBe(0);
     });
 
     afterAll(async () => {
