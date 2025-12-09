@@ -6,7 +6,25 @@
     <div class="content">
         
         <div class="data-box">
-            <% if (!id_saved && !data_party) {%>
+            <span><button id = "location" onclick="getLocation()">Utiliser ma position</button></span>
+            <p id="demo"></p>
+            <% if (id_saved && data_party) {%>
+                <h1>Tu souhaites modifier ta soirée ? Pas de problème !</h1>
+                <input class="party_line" id="party_address" type="text" placeholder="Modification Adresse*" value="<%= data_party.address%>">
+
+                <input class="party_line" id="party_title" type="text" placeholder="Modification Titre*" value="<%= data_party.title%>">
+                <!-- Mode Raid -->
+                
+                <label class="containerRaid"> Mode raid
+                    <!-- raid ? StackOverflow-->
+                    <input type="checkbox" id="party_raid" <%= data_party.raid ? 'checked' : '' %>>
+                    <span class="checkmark">: Ajoute votre soirée au tirage aléatoire de 19h pour attirer plus de fêtards chez vous.</span> 
+                </label>
+                
+                <textarea class="party_input" id="party_description" name="data_party" placeholder="C'est quoi les nouveautés de ta soirée !?* </span>" rows="10" cols="60"><%= data_party.description %></textarea>
+
+
+            <%} else {%>
                 <h1>On va crée une soirée ensemble !</h1>
                 <input class="party_line" id="party_address" type="text" placeholder="Adresse*">
                 <input class="party_line" id="party_title" type="text" placeholder="Titre*">
@@ -18,19 +36,6 @@
                 </label>
 
                 <textarea class="party_input" id="party_description" name="data_party" placeholder="Donne nous une description de ta soirée !*" rows="10" cols="60"></textarea>
-            <%} else {%>
-                <h1>Tu souhaites modifier ta soirée ? Pas de problème !</h1>
-                <input class="party_line" id="party_address" type="text" placeholder="Adresse*" value="<%= data_party.address%>">
-                <input class="party_line" id="party_title" type="text" placeholder="Titre*" value="<%= data_party.title%>">
-                <!-- Mode Raid -->
-                
-                <label class="containerRaid"> Mode raid
-                    <input type="checkbox" id="party_raid" checked="checked">
-                    <span class="checkmark">: Ajoute votre soirée au tirage aléatoire de 19h pour attirer plus de fêtards chez vous.</span> 
-                </label>
-
-                
-                <textarea class="party_input" id="party_description" name="data_party" placeholder="Donne nous une description de ta soirée !*" rows="10" cols="60"><%= data_party.description %></textarea>
 
             <%}%>
 

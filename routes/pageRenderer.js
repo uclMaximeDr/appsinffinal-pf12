@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { ObjectId } = require("mongodb");
+const path = require('path');
+const sharp = require('sharp');
 
 // Middleware to check for first visit and captcha requirement
 router.use((req, res, next) => {
@@ -15,6 +17,9 @@ router.use((req, res, next) => {
     } else if(req.session && req.session.needCaptcha) { // Check if need captcha
         res.redirect(`/captcha?next=${encodeURIComponent(req.originalUrl)}`);
     } else {
+        if (!req.originalUrl.endsWith('/party/create')) {
+            req.session.id_saved = null;
+        }
         next();
     }
 });
@@ -31,7 +36,8 @@ router.get('/', async function(req, res){
             ...party,
             user: {
                 fullname: (await database.collection('users').findOne({_id : new ObjectId(party.user_id)})).fullname
-            }
+            },
+            image: (await database.collection('photos').findOne({partyId : party._id}))?._id || null
         };
     }));
     res.render("index", {parties : partiesNames});
@@ -97,16 +103,35 @@ router.get('/user/profile/:id', async (req, res) => {
     const connectedUser = await database.collection('users').findOne({ _id: new ObjectId(req.session.userid) });
     const isOwnProfile = connectedUser && connectedUser._id.equals(user._id);
 
-    const parties = await database.collection('party').find({user_id : user._id}).toArray();
+    const parties = await database.collection('party').find({user_id : user._id}).map(async party => {
+        return {
+            ...party,
+            images: await (database.collection('photos').find({partyId : new ObjectId(party._id)})).map(photo => photo._id).toArray()
+        };
+    }).toArray();
     const averageRating = parties.length > 0 ? (parties.reduce((sum, party) => sum + (party.rating || 0), 0) / parties.length).toFixed(1) : 0;
 
-    const isFriend = connectedUser && connectedUser.friends && connectedUser.friends.includes(user._id.toString());
+    // Infos about friendship with connected user
+    
+    
+    const friendsList = new Array().concat(await database.collection('friendship').find({ id_2 : new ObjectId(user._id) }).toArray(),
+                                        await database.collection('friendship').find({ id_1 : new ObjectId(user._id) }).toArray())
+
+    
+    const friends = friendsList.length;
+
+    const friendShip = [req.session.userid, id]
+    friendShip.sort();
+
+    const isFriend = await database.collection('friendship').findOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) }) != null;
+
     const isConnected = !!connectedUser;
 
     res.render("user/profile", {
         username: user.fullname,
         rating : averageRating,
         parties : parties,
+        friends : friends,
         isFriend : isFriend,
         isOwnProfile : isOwnProfile,
         id: user._id,
@@ -146,6 +171,7 @@ router.get('/party/:id', async function(req, res){
     const party = await database.collection('party').findOne({ _id: new ObjectId(req.params.id) });
     const user = await database.collection('users').findOne({ _id: new ObjectId(party.user_id) });
     const rating = await database.collection('rating').findOne({user_id: new ObjectId(req.session.userid), party_id: new ObjectId(req.params.id) });
+    const images = await database.collection('photos').find({ partyId: new ObjectId(req.params.id)}).map(photo => photo._id).toArray();
     
     // Counter total du nombre de like par nombre d'étoiles
     for (let i = 1; i < 6; i++){
@@ -167,8 +193,36 @@ router.get('/party/:id', async function(req, res){
     }));
     const connected = req.session ? (req.session.userid == party.user_id) : false;
 
-    res.render("party/party", {user:user, party: party, comments: comments_with_user, connected: connected, rating:rating, vote_tot, self_user_id: req.session.userid});
+    res.render("party/party", {user:user, party: party, comments: comments_with_user, connected: connected, rating:rating, vote_tot, self_user_id: req.session.userid, images: images});
 });
 
+// ### Affichage d'image uploadée ###
+router.get('/uploadedImages/:id', async (req, res) => {
+    res.redirect('/uploadedImages/' + req.params.id + '/500');
+});
+// ### Affichage d'icône uploadée au format icône (64x64) ###
+router.get('/uploadedImages/:id/:size', async (req, res) => {
+    const database = req.app.locals.db;
+    const photo = await database.collection('photos').findOne({ _id: new ObjectId(req.params.id) });
+    const size = parseInt(req.params.size);
+
+    if (!photo) {
+        return res.status(404).send('Image not found');
+    }
+
+    const originalPath = path.join(__dirname, '../uploads/', photo.filename);
+    try {
+        const buffer = await sharp(originalPath)
+            .resize(size, size)
+            .toFormat('png')
+            .toBuffer();
+
+        res.set('Content-Type', 'image/png');
+        res.send(buffer);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error processing image');
+    }
+});
 
 module.exports = router;

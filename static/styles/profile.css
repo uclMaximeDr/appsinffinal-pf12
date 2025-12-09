@@ -301,6 +301,7 @@ body {
     height: 120px;
 
     aspect-ratio: 1;
+    object-fit: cover;
 
     margin: 10px;
 

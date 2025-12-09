@@ -1,9 +1,33 @@
 // ### PARTY ### 
 
-
 $('#back').click(() => {
     window.location.href = '/';
 })
+
+//Obtenir position user - W3school tuto
+var x = document.getElementById("demo");
+let party_coord = null;
+function getLocation(){
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(setPosition);
+  } else { 
+    x.innerHTML = "Géolocalisation ne fonctionne pas.";
+  }
+}
+
+function setPosition(position) {
+  party_coord = {lat : position.coords.latitude,lon: position.coords.longitude }
+  x.innerHTML = "Latitude: " + position.coords.latitude + 
+  "<br>Longitude: " + position.coords.longitude;
+}
+
+
+// Soumettre une soirée
+$('#location').click(async () => {
+  party_coord = await getLocation();
+});
+
+
 
 // Soumettre une soirée
 $('#party_submit').click(async () => {
@@ -11,26 +35,40 @@ $('#party_submit').click(async () => {
   const title = $('#party_title').val();
   const description = $('#party_description').val();
   let raid = $('#party_raid').prop('checked');
-
-  if (address === "" || title === "" || description === "") {
+  let lat;
+  let lon;
+  
+  if ((address === "" && !party_coord) || title === "" || description === "") {
     showModal("Veuillez remplir tous les champs pour soumettre");
     return;
   }
 
   //Vérifie si l'adresse est valable
-  const party_coord = await geocode(address);
+  if (!party_coord){
+    party_coord = await geocode(address);
+    if (!party_coord) {
+      showModal("Adresse introuvable, veuillez insérer une adresse existante.");
+      return;
+    }
 
-  const lat = parseFloat(party_coord.lat);
-  const lon = parseFloat(party_coord.lon);
+    lat = parseFloat(party_coord.lat);
+    lon = parseFloat(party_coord.lon);
+  }
+  else{
 
+    lat = party_coord.lat;
+    lon = party_coord.lon;
+  }
+
+  party_coord = null;
   //Coordonnées limite Ottignies Louvain-la-Neuve
   if(lat > 50.67914 || lat < 50.65410 || lon > 4.63333 || lon < 4.59165){
-    showModal("Adresse introuvable, veuillez insérer une adresse existante.");
+    showModal("Adresse en dehors de Louvain-La-Neuve, veuillez insérer une adresse valide.");
     return;
   }
 
 
-  $.post("/api/create", { address: address, latitude : lat, longitude:lon, title: title, description: description, raid: raid }, function (data) {
+  $.post("/api/create", {address: address, latitude : lat, longitude:lon, title: title, description: description, raid: raid }, function (data) {
     if (data.success) {
       window.location.href = "/";
     } else {

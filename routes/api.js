@@ -40,7 +40,7 @@ router.post('/register', async function (req, res, next) {
 
     if (!existingUser) {
         const hashedPassword = await hashPassword(password);
-        await database.collection('users').insertOne({ fullname, email, password: hashedPassword, friends: [], admin: isFirstUser });
+        await database.collection('users').insertOne({ fullname, email, password: hashedPassword, admin: isFirstUser });
         res.send({ success: true })
     }
     else {
@@ -164,23 +164,23 @@ router.post('/user/addFriend', async function (req, res, next) {
     const db = req.app.locals.db;
     const id = req.body.id;
 
-    const user = await db.collection("users").findOne({ _id: new ObjectId(req.session.userid) });
-    let friendsList = user.friends;
-
     // Prevents us from adding ourselves as a friend
-    if (id.toString() == user._id.toString())
+    if (id.toString() == req.session.userid.toString())
     {
         throw new Error("Cannot be your own friend.")
     }
 
-    if (!friendsList.includes(id)) {
+    const friendShip = [req.session.userid, id];
+    friendShip.sort();
 
-        friendsList.push(id);
+    const alreadyFriend = await db.collection('friendship').findOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) }) != null;
+
+    if (!alreadyFriend) {
 
         // Updates the database with the new friends list
-        await db.collection("users").updateOne({_id: new ObjectId(req.session.userid)}, {$set: { friends: friendsList }});
+        await db.collection("friendship").insertOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) })
 
-        res.send({success : true});
+        res.send({success : true})
     }
     else {
 
@@ -194,23 +194,23 @@ router.post('/user/removeFriend', async function (req, res, next) {
     const db = req.app.locals.db;
     const id = req.body.id;
 
-    const user = await db.collection("users").findOne({ _id: new ObjectId(req.session.userid) });
-    let friendsList = user.friends;
-
-    // Prevents us from adding ourselves as a friend
-    if (id.toString() == user._id.toString())
-    {
+    // Prevents us from removing ourselves as a friend
+    if (id.toString() == req.session.userid.toString())
+    { 
         throw new Error("Cannot be your own friend.")
     }
 
-    if (friendsList.includes(id)) {
+    const friendShip = [req.session.userid, id];
+    friendShip.sort();
 
-        friendsList = friendsList.filter(elem => elem != id)
+    const alreadyFriend = await db.collection('friendship').findOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) }) != null;
+
+    if (alreadyFriend) {
 
         // Updates the database with the new friends list
-        await db.collection("users").updateOne({_id: new ObjectId(req.session.userid)}, {$set: { friends: friendsList }});
+        await db.collection("friendship").deleteOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) })
 
-        res.send({success : true});
+        res.send({success : true})
     }
     else {
 
@@ -260,10 +260,13 @@ router.post('/create', async function (req, res, next) {
 
     const {address, latitude, longitude, title, description, raid} = req.body;
     const username = (await database.collection('users').findOne({ _id: new ObjectId(req.session.userid) }))?.fullname;
+    //Conversion string bool vers bool
+    const raid_bool = (raid == 'true' ? true : false);
 
     // Soumettre nouvelle soirée
     if (req.session.userid != null && !req.session.id_saved){
-        const party = await database.collection('party').insertOne({address, latitude, longitude, title, description, user_id: new ObjectId(req.session.userid) });
+        
+        const party = await database.collection('party').insertOne({date: Date(), address, latitude, longitude, title, description, raid : raid_bool, user_id: new ObjectId(req.session.userid) });
         res.send({success : true, message : "Soirée crée !"});
 
         req.app.locals.io.emit("newParty", {
@@ -278,8 +281,7 @@ router.post('/create', async function (req, res, next) {
     }
     // Modifier soirée avec même identifiant
     else if (req.session.userid != null && req.session.id_saved){
-        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id)},{$set: {address, latitude, longitude, title, description, raid}});
-        req.session.id_saved = null; 
+        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id)},{$set: {date: new Date(), address, latitude, longitude, title, description, raid :raid_bool}});
         res.send({success : true,  message : "Soirée modifiée !"});
     }
     // Refus
@@ -332,7 +334,7 @@ router.post('/comment_create', async function (req, res, next) {
 
     // Soumettre commentaire
     if (req.session.userid != null){
-        await database.collection('comments').insertOne({party_id : new ObjectId(party_id), comment, user_id: new ObjectId(req.session.userid) });
+        await database.collection('comments').insertOne({date: Date(), party_id : new ObjectId(party_id), comment, user_id: new ObjectId(req.session.userid) });
         res.send({success : true, message : "Commentaire crée !"});
     }
     // Refus
@@ -414,13 +416,17 @@ function uploadImage(req, res, context) {
                 let lat = req.body.lat ? parseFloat(req.body.lat) : null;
                 let lng = req.body.lng ? parseFloat(req.body.lng) : null;
                 const location = (lat !== null && lng !== null) ? { type: "Point", coordinates: [lng, lat] } : null;
+
+                // Recherche de la soirée la plus proche si des coordonnées sont fournies
+                const nearestParty = location ? await findNearestParty(db, lat, lng) : null;
     
                 // On crée l'objet photo
                 const photoDoc = {
                     filename: req.file.filename,
-                    uploadedBy: email,
+                    uploadedBy: new ObjectId(id),
                     uploadedAt: new Date(),
-                    location: location
+                    location: location,
+                    partyId: nearestParty ? nearestParty._id : null
                 };
     
                 // On insère la photo dans la collection
@@ -437,6 +443,27 @@ async function hashPassword(plainPassword) {
 }
 async function verifyPassword(plainPassword, storedHash) {
   return await bcrypt.compare(plainPassword, storedHash);
+}
+async function findNearestParty(db, latitude, longitude) {
+    const parties = await db.collection('party').find().toArray();
+
+    const toRadians = (degrees) => degrees * (Math.PI / 180);
+    const earthRadiusKm = 6371;
+
+    const distance = (lat1, lon1, lat2, lon2) => {
+        const dLat = toRadians(lat2 - lat1);
+        const dLon = toRadians(lon2 - lon1);
+        const a = Math.sin(dLat / 2) ** 2 +
+                  Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+                  Math.sin(dLon / 2) ** 2;
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return earthRadiusKm * c * 1000; // Convert to meters
+    };
+
+    return parties.map(party => {
+        const dist = distance(latitude, longitude, party.latitude, party.longitude);
+        return { party, distance: dist };
+    }).sort((a, b) => a.distance - b.distance)[0].party;
 }
 
 module.exports = router;
