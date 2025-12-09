@@ -101,7 +101,7 @@
                 <% if (parties && parties.length !=0) { %>
                     <%parties.forEach(party =>{%>
                         <div class="header">
-                            <h1><%- party.date %></h1>
+                            <h1><%- party.formattedDate %></h1>
                             <% if( isOwnProfile ) { %>
                                 <div class="controls">
                                     <button class="party_edit" data-edit = "<%= party._id%>" > Modifier </button>

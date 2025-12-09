@@ -3,6 +3,7 @@ const router = express.Router();
 const { ObjectId } = require("mongodb");
 const path = require('path');
 const sharp = require('sharp');
+const { formatDate } = require('../utils');
 
 // Middleware to check for first visit and captcha requirement
 router.use((req, res, next) => {
@@ -34,6 +35,7 @@ router.get('/', async function(req, res){
     const partiesNames = await Promise.all(parties.map(async party => {
         return {
             ...party,
+            formattedDate: formatDate(party.date),
             user: {
                 fullname: (await database.collection('users').findOne({_id : new ObjectId(party.user_id)})).fullname
             },
@@ -106,6 +108,7 @@ router.get('/user/profile/:id', async (req, res) => {
     const parties = await database.collection('party').find({user_id : user._id}).map(async party => {
         return {
             ...party,
+            formattedDate: formatDate(party.date),
             images: await (database.collection('photos').find({partyId : new ObjectId(party._id)})).map(photo => photo._id).toArray(),
             ratings: await database.collection('rating').find({party_id : new ObjectId(party._id)}).map(rating => parseInt(rating.rate)).toArray()
         };
@@ -172,6 +175,7 @@ router.get('/party/:id', async function(req, res){
 
 
     const party = await database.collection('party').findOne({ _id: new ObjectId(req.params.id) });
+    const formattedDate = formatDate(party.date);
     const user = await database.collection('users').findOne({ _id: new ObjectId(party.user_id) });
     const rating = await database.collection('rating').findOne({user_id: new ObjectId(req.session.userid), party_id: new ObjectId(req.params.id) });
     const images = await database.collection('photos').find({ partyId: new ObjectId(req.params.id)}).map(photo => photo._id).toArray();
@@ -196,7 +200,7 @@ router.get('/party/:id', async function(req, res){
     }));
     const connected = req.session ? (req.session.userid == party.user_id) : false;
 
-    res.render("party/party", {user:user, party: party, comments: comments_with_user, connected: connected, rating:rating, vote_tot, self_user_id: req.session.userid, images: images});
+    res.render("party/party", {user:user, party: party, formattedDate: formattedDate, comments: comments_with_user, connected: connected, rating:rating, vote_tot, self_user_id: req.session.userid, images: images});
 });
 
 // ### Affichage d'image uploadée ###

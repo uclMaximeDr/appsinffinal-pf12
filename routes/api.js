@@ -266,7 +266,7 @@ router.post('/create', async function (req, res, next) {
     // Soumettre nouvelle soirée
     if (req.session.userid != null && !req.session.id_saved){
         
-        const party = await database.collection('party').insertOne({date: Date(), address, latitude, longitude, title, description, raid : raid_bool, user_id: new ObjectId(req.session.userid) });
+        const party = await database.collection('party').insertOne({date: new Date(), address, latitude, longitude, title, description, raid : raid_bool, user_id: new ObjectId(req.session.userid) });
         res.send({success : true, message : "Soirée crée !"});
 
         req.app.locals.io.emit("newParty", {

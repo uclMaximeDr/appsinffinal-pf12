@@ -19,8 +19,9 @@
         <%parties.forEach(party =>{%>
             <div class = "cardParty">
                 <h3><%= party.title %></h3>
-                <h4>Posté par <%= party.user.fullname %></h4>
+                <h4>Date : <%= party.formattedDate %></h4>
                 <h5>Lieu : <%= party.address %></h5>
+                <h5>Posté par <%= party.user.fullname %></h5>
                 <%if(party.raid){%>
                     <h6>Mode Raid activé %></h5>
                 <%}%>
