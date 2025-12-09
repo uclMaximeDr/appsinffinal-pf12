@@ -246,6 +246,15 @@ body {
     user-select: none;
 }
 
+.rightPanel .pendingInvites {
+
+    position: absolute;
+
+    right: 0;
+
+    padding: 20px;
+}
+
 .partyContainer {
 
     margin-top: 100px;

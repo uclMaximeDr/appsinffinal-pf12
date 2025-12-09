@@ -9,6 +9,10 @@ function showError(c) {
     $("." + c).show();
 }
 
+$('#back').click(() => {
+    window.location.href = '/';
+})
+
 async function requestAccess() {
     // Request camera access
     camera_stream = await navigator.mediaDevices.getUserMedia({ video: true }).catch((err) => {

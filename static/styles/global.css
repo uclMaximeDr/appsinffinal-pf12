@@ -4,6 +4,8 @@
 
   --button-blue: rgb(21, 65, 126);
   --hover-blue: rgb(32, 86, 168);
+
+  --dark-background : hsl(229, 41%, 18%);
 }
 
 body {

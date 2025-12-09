@@ -84,7 +84,7 @@ body{
 
     position: relative;
 
-    background-color: hsl(229, 41%, 18%);
+    background-color: var(--dark-background);
     border: 5px solid hsl(229, 42%, 42%) ;
     border-radius: 20px;
 

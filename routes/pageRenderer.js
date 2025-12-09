@@ -176,6 +176,17 @@ router.get('/user/profile/:id', async (req, res) => {
     });
 })
 
+router.get('/user/pendingInvites', (req, res) => {
+
+    if(!req.session || !req.session.userid) {
+        res.redirect("/user/login");
+        return;
+    }
+
+    res.render("user/pendingInvites");
+})
+    
+
 router.get('/user/edit', async (req, res) => {
 
     if(!req.session || !req.session.userid) {
