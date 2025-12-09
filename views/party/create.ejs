@@ -6,34 +6,60 @@
     <div class="content">
         
         <div class="data-box">
-            <span><button id = "location" onclick="getLocation()">Utiliser ma position</button></span>
             <p id="demo"></p>
             <% if (id_saved && data_party) {%>
                 <h1>Tu souhaites modifier ta soirée ? Pas de problème !</h1>
-                <input class="party_line" id="party_address" type="text" placeholder="Modification Adresse*" value="<%= data_party.address%>">
+                <div class="addressContainer">
+                    <input class="party_line" id="party_address" type="text" placeholder="Modification Adresse*" value="<%= data_party.address%>">
+                    <button id = "location">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                        </svg>
+                    </button>
+                </div>
 
                 <input class="party_line" id="party_title" type="text" placeholder="Modification Titre*" value="<%= data_party.title%>">
                 <!-- Mode Raid -->
                 
-                <label class="containerRaid"> Mode raid
-                    <!-- raid ? StackOverflow-->
+                <div class="checkBoxContainer">
                     <input type="checkbox" id="party_raid" <%= data_party.raid ? 'checked' : '' %>>
-                    <span class="checkmark">: Ajoute votre soirée au tirage aléatoire de 19h pour attirer plus de fêtards chez vous.</span> 
-                </label>
+                    <label class="containerRaid"> Mode raid</label>
+                    <p class="information">Ajoute votre soirée au tirage aléatoire de 19h pour attirer plus de fêtards chez vous.</p>
+                </div>
+                <!-- Amis seulement -->
+                <div class="checkBoxContainer">
+                    <input type="checkbox" id="party_friendOnly" <%= data_party.friendOnly ? 'checked' : '' %>>
+                    <label class="containerRaid"> Amis seulement</label>
+                    <p class="information">N'autorise que vos amis à voir cette soirée</p>
+                </div>
                 
                 <textarea class="party_input" id="party_description" name="data_party" placeholder="C'est quoi les nouveautés de ta soirée !?* </span>" rows="10" cols="60"><%= data_party.description %></textarea>
 
 
             <%} else {%>
                 <h1>On va crée une soirée ensemble !</h1>
-                <input class="party_line" id="party_address" type="text" placeholder="Adresse*">
+                <div class="addressContainer">
+                    <input class="party_line" id="party_address" type="text" placeholder="Adresse*">
+                    <button id = "location">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                        </svg>
+                    </button>
+                </div>
                 <input class="party_line" id="party_title" type="text" placeholder="Titre*">
 
                 <!-- Mode Raid -->
-                <label class="party_raid"> Mode raid 
+                <div class="checkBoxContainer">
                     <input type="checkbox" id="party_raid">
-                    <span class="checkmark">: Ajoute votre soirée au tirage aléatoire de 19h pour attirer plus de fêtards chez vous.</span> 
-                </label>
+                    <label class="containerRaid"> Mode raid</label>
+                    <p class="information">Ajoute votre soirée au tirage aléatoire de 19h pour attirer plus de fêtards chez vous.</p>
+                </div>
+                <!-- Amis seulement -->
+                <div class="checkBoxContainer">
+                    <input type="checkbox" id="party_friendOnly">
+                    <label class="containerRaid"> Amis seulement</label>
+                    <p class="information">N'autorise que vos amis à voir cette soirée</p>
+                </div>
 
                 <textarea class="party_input" id="party_description" name="data_party" placeholder="Donne nous une description de ta soirée !*" rows="10" cols="60"></textarea>
 

@@ -57,10 +57,67 @@ body {
     padding: 10px;
     margin-left: auto; /*Pas certain que c'est la bonne manière de*/
     border-radius: 20px;
-
 }
 
+.addressContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
 
+    width: 100%;
+}
+.addressContainer input {
+    width: calc(100% - 110px);
+}
+.addressContainer button {
+    width: 50px;
+    height: 50px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.checkBoxContainer {
+    position: relative;
+    width: fit-content;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 10px 0;
+}
+.checkBoxContainer:hover .information {
+    display: block;
+}
+.information {
+    display: none;
+    position: absolute;
+    left: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%);
+    
+    font-size: 12px;
+    width: max-content;
+    max-width: 500px;
+    margin: 0;
+    padding: 10px;
+
+    background-color: hsl(229, 41%, 18%);
+    border-radius: 10px;
+}
+.information::after {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent hsl(229, 41%, 18%) transparent transparent;
+}
 
 .rulesContainer {
     background-color: hsl(229, 41%, 18%);

@@ -5,20 +5,19 @@ $('#back').click(() => {
 })
 
 //Obtenir position user - W3school tuto
-var x = document.getElementById("demo");
+const addressInput = $('#party_address');
 let party_coord = null;
 function getLocation(){
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(setPosition);
   } else { 
-    x.innerHTML = "Géolocalisation ne fonctionne pas.";
+    addressInput.val("Géolocalisation ne fonctionne pas.");
   }
 }
 
 function setPosition(position) {
   party_coord = {lat : position.coords.latitude,lon: position.coords.longitude }
-  x.innerHTML = "Latitude: " + position.coords.latitude + 
-  "<br>Longitude: " + position.coords.longitude;
+  addressInput.val(position.coords.latitude + ", " + position.coords.longitude);
 }
 
 
