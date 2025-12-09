@@ -106,14 +106,17 @@ router.get('/user/profile/:id', async (req, res) => {
     const parties = await database.collection('party').find({user_id : user._id}).map(async party => {
         return {
             ...party,
-            images: await (database.collection('photos').find({partyId : new ObjectId(party._id)})).map(photo => photo._id).toArray()
+            images: await (database.collection('photos').find({partyId : new ObjectId(party._id)})).map(photo => photo._id).toArray(),
+            ratings: await database.collection('rating').find({party_id : new ObjectId(party._id)}).map(rating => parseInt(rating.rate)).toArray()
         };
     }).toArray();
-    const averageRating = parties.length > 0 ? (parties.reduce((sum, party) => sum + (party.rating || 0), 0) / parties.length).toFixed(1) : 0;
+    const averageRating = parties.map(party => {
+        if (party.ratings.length === 0) return 0;
+        const sum = party.ratings.reduce((a, b) => a + b, 0);
+        return sum / party.ratings.length;
+    }).reduce((a, b) => a + b, 0) / (parties.length || 1);
 
     // Infos about friendship with connected user
-    
-    
     const friendsList = new Array().concat(await database.collection('friendship').find({ id_2 : new ObjectId(user._id) }).toArray(),
                                         await database.collection('friendship').find({ id_1 : new ObjectId(user._id) }).toArray())
 
