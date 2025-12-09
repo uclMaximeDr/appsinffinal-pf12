@@ -106,15 +106,11 @@ document.querySelector("#takePicture").addEventListener("click", async () => {
         await fetch("/api/uploadPhoto", {
             method: "POST",
             body: formData
-        }).then(response => {
+        }).then(async (response) => {
             if (!response.ok) {
-                throw new Error("Erreur lors de l'envoi de la photo");
+                const error = await response.json();
+                showModal("Erreur : " + error.error);
             }
-            return response.json();
-        }).then(data => {
-            console.log("Photo envoyée avec succès :", data);
-        }).catch(err => {
-            console.error(err);
         }).finally(() => {
             takeOverlay.classList.remove("show");
         });
