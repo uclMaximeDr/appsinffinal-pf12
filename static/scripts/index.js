@@ -56,6 +56,20 @@ async function createCustomMarker(lat, lng, imageId) {
   return L.marker([lat, lng], { icon });
 }
 
+// Create markers for all parties and friend-only parties
+const allMarkers = [];
+const friendOnlyMarkers = [];
+async function createMarkers(parties) {
+  for(const party of parties) {
+    const marker = await createCustomMarker(party.lat, party.lng, party.img);
+    marker.bindPopup(`<a href="/party/${party.id}">Voir la soirée</a>`);
+    allMarkers.push(marker);
+    if(party.friend) {
+      friendOnlyMarkers.push(marker);
+    }
+  }
+}
+
 // initialize map without controls or attribution (background only)
 const map = L.map("map", {
   zoomControl: false,
@@ -66,9 +80,22 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
 }).addTo(map);
 
-markers.forEach(async (m) => {
-  (await createCustomMarker(m.lat, m.lng, m.img)).addTo(map);
-});
+// Add all markers to map
+let currentGroup = null;
+function showMarkers(markers) {
+  if (currentGroup) {
+    map.removeLayer(currentGroup);
+  }
+  
+  currentGroup = L.layerGroup(markers);
+  currentGroup.addTo(map);
+}
+
+// Show all markers by default
+(async () => {
+  await createMarkers(parties);
+  showMarkers(allMarkers);
+})();
 
 $("#searchSelector p").click((event) => {
   var target = event.target;
@@ -77,9 +104,21 @@ $("#searchSelector p").click((event) => {
   if (target == container.querySelector("p:first-child")) {
     selector.classList.remove("right");
     selector.classList.add("left");
+
+    $('.cardParty').show();
+
+    showMarkers(allMarkers);
   } else {
     selector.classList.remove("left");
     selector.classList.add("right");
+
+    $('.cardParty').each((index, element) => {
+      if(element.getAttribute('data-friend') === 'false') {
+        $(element).hide();
+      }
+    });
+
+    showMarkers(friendOnlyMarkers);
   }
 });
 

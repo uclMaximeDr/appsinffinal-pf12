@@ -37,12 +37,21 @@ router.get('/', async function(req, res){
             ...party,
             formattedDate: formatDate(party.date),
             user: {
-                fullname: (await database.collection('users').findOne({_id : new ObjectId(party.user_id)})).fullname
+                fullname: (await database.collection('users').findOne({_id : new ObjectId(party.user_id)})).fullname,
+                isFriend: req.session.userid ? (await database.collection('friendship').findOne({ id_1: { $in: [new ObjectId(req.session.userid), new ObjectId(party.user_id)] }, id_2: { $in: [new ObjectId(req.session.userid), new ObjectId(party.user_id)] } }) != null) : false
             },
             image: (await database.collection('photos').findOne({partyId : party._id}))?._id || null
         };
     }));
-    res.render("index", {parties : partiesNames});
+    // Filtrer les soirées ayant plus de 7 jours
+    const currentDate = new Date();
+    const filteredParties = partiesNames.filter(party => {
+        const partyDate = new Date(party.date);
+        const diffTime = Math.abs(currentDate - partyDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= 7;
+    });
+    res.render("index", {parties : filteredParties});
 });
 
 router.get('/start', (req, res) => {

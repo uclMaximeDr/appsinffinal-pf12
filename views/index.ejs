@@ -17,7 +17,7 @@
 
         <div class = "cardContainer">
         <%parties.forEach(party =>{%>
-            <div class = "cardParty">
+            <div class = "cardParty" data-friend="<%= party.user.isFriend %>">
                 <h3><%= party.title %></h3>
                 <h4>Date : <%= party.formattedDate %></h4>
                 <h5>Lieu : <%= party.address %></h5>
@@ -50,7 +50,7 @@
 <script>
 
 
-const markers = <%- JSON.stringify(parties.map(party => ({ lat: party.latitude, lng: party.longitude, img: party.image }))) %>;
+const parties = <%- JSON.stringify(parties.map(party => ({ lat: party.latitude, lng: party.longitude, img: party.image, id: party._id, friend: party.user.isFriend }))) %>;
 
 </script>
 <script src="/scripts/index.js"></script>
