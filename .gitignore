@@ -3,3 +3,4 @@ node_modules/
 temp/
 uploads/
 package-lock.json
+coverage/
