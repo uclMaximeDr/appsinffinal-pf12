@@ -32,6 +32,7 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+app.locals.upload = upload;
 
 // Middleware
 app.use(express.json({ limit: "50mb" }));
@@ -102,7 +103,6 @@ if (process.env.NODE_ENV !== "test") {
         await client.connect();
         database = client.db(process.env.DB_NAME || "prod_db");
         app.locals.db = database;
-        app.locals.upload = upload;
     }
 
     server.listen(PORT, '0.0.0.0', async () => {

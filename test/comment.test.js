@@ -19,6 +19,7 @@ describe("Profile test", () => {
         database = client.db(testDbName);
         await database.createCollection('users');
         await database.createCollection('party');
+        await database.createCollection('comments');
 
         // Injecter la DB dans l'application
         setDatabase(database);
@@ -37,77 +38,52 @@ describe("Profile test", () => {
             .send({ email: "test@gmail.com", password: "testPassword" })
     
         cookie = loginresponse.header['set-cookie'];
+
+        // Créer une fête de test
+        await database.collection('party').insertOne({
+            address: "initial",
+            latitude: 0,
+            longitude: 0,
+            title: "title",
+            description: "description",
+            raid: true,
+            creator_id: new ObjectId(1)
+        });
     });
     
-    it("Test add party", async () => {
+    it("Test create comment", async () => {
         await request(app)
-            .post("/api/create")
+            .post("/api/comment_create")
             .set("Content-Type", "application/json")
             .set("Cookie", cookie)
             .send({
-                address: "testadd",
-                latitude: 0,
-                longitude: 0,
-                title: "title",
-                description: "description",
-                raid: "true"
+                comment: "Hello world",
+                party_id: 1
             })
             .expect(200)
             .expect((res) => {
                 expect(res.body.success).toBe(true);
-                expect(res.body.message).toBe("Soirée crée !")
+                expect(res.body.message).toBe("Commentaire crée !")
             });
 
-        const parties = await database.collection('party').find({  address: "testadd" }).toArray();
-        expect(parties.length).toBe(1);
+        const comments = await database.collection('comments').find({  comment: "Hello world" }).toArray();
+        expect(comments.length).toBe(1);
     })
 
-    it("Test edit party", async () => {
-        const partyId = (await database.collection('party').findOne())._id;
+    it("Test delete comment", async () => {
+        const commentId = (await database.collection('comments').findOne())._id;
+
         await request(app)
-            .post('/api/edit')
+            .post('/api/comment_delete')
             .set('Cookie', cookie)
             .set("Content-Type", "application/json")
             .send({
-                edit_id: partyId
-            })
-
-        await request(app)
-            .post("/api/create")
-            .set("Content-Type", "application/json")
-            .set("Cookie", cookie)
-            .send({
-                address: "testedit",
-                latitude: 0,
-                longitude: 0,
-                title: "title",
-                description: "description",
-                raid: "true"
-            })
-            .expect(200)
-            .expect((res) => {
-                expect(res.body.success).toBe(true);
-                expect(res.body.message).toBe("Soirée modifiée !")
-            });
-
-        const newAddress = (await database.collection('party').findOne()).address;
-        expect(newAddress).toBe("testedit")
-    });
-
-    it("Test delete party", async () => {
-        const partyId = (await database.collection('party').findOne())._id;
-
-        await request(app)
-            .post('/api/delete')
-            .set('Cookie', cookie)
-            .set("Content-Type", "application/json")
-            .send({
-                delete_id: partyId
+                delcom_id: commentId
             })
 
 
-        const parties = await database.collection('party').find().toArray();
-        expect(parties.length).toBe(0);
+        const comments = await database.collection('comments').find().toArray();
+        expect(comments.length).toBe(0);
     });
 
     afterAll(async () => {
