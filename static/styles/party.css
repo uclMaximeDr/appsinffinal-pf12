@@ -125,7 +125,7 @@ body {
 }
 
 .imageContainer .image {
-    width: 33%;
+    width: calc(33% - 6px);
     aspect-ratio: 1;
     object-fit: cover;
     border-radius: 10px;

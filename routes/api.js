@@ -5,7 +5,7 @@ const { ObjectId } = require("mongodb");
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 12;
 const fs = require('fs');
-const { send } = require('process');
+const archiver = require('archiver');
 
 // Routes
 
@@ -321,7 +321,52 @@ router.post('/delete', async function (req, res, next) {
     }
 })
 
+// Téléchargement des images d'une soirée
+router.get('/downloadPartyPictures', async function (req, res, next) {
+    const database = req.app.locals.db;
+    const party_id = req.query.party_id;
 
+    // Récupération des images associées à la soirée
+    const images = await database.collection('photos').find({ partyId: new ObjectId(party_id)}).map(photo => photo.filename).toArray();
+    
+    // Vérification si des images existent pour cette soirée
+    if (images.length === 0) {
+        return res.status(404).send("Aucune image trouvée pour cette soirée.");
+    }
+
+    // Création d'un dossier temporaire pour stocker les images
+    const tempDir = `temp_${Date.now()}`;
+    fs.mkdirSync(tempDir);
+
+    // Copie des images dans le dossier temporaire
+    images.forEach(img => {
+        const srcPath = `uploads/${img}`;
+        const destPath = `${tempDir}/${img}`;
+        fs.copyFileSync(srcPath, destPath);
+    });
+
+    // Création d'une archive ZIP des images
+    const archive = archiver('zip', { zlib: { level: 9 } });
+    res.attachment('party_images.zip');
+
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', 'attachment; filename="party_images.zip"');
+
+    archive.pipe(res);
+    archive.directory(tempDir, false);
+    archive.finalize();
+
+    // Suppression du dossier temporaire après l'envoi
+    archive.on('end', () => {
+        fs.rmSync(tempDir, { recursive: true, force: true });
+    });
+
+    // Gestion des erreurs lors de la création de l'archive
+    archive.on('error', (err) => {
+        console.error('Erreur lors de la création de l\'archive ZIP :', err);
+        res.status(500).send("Erreur lors de la création de l'archive ZIP.");
+    });
+})
 
 // ### COMMENTAIRE ###
 
