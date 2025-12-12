@@ -198,7 +198,7 @@ router.post('/user/addFriend', async function (req, res, next) {
 
     if (!(await isFriend(db, req.session.user_id, id))) {
 
-        // Updates the database with the new friends list
+        // Adds a new friendship to the database
         await db.collection("friendship").insertOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) })
 
         res.send({success : true})
@@ -223,10 +223,16 @@ router.post('/user/removeFriend', async function (req, res, next) {
 
     if (await isFriend(db, req.session.userid, id)) {
 
-        // Updates the database with the new friends list
+        // Remove the friendship object from database
         await db.collection("friendship").deleteOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) })
 
-        res.send({success : true})
+        res.send({success: true})
+    }
+    else if (await hasSentRequest(db, req.session.userid, id)) {
+
+        await db.collection("friendRequest").deleteOne({ from_id: new ObjectId(req.session.userid), to_id: new ObjectId(id) });
+
+        res.send({ success: true });
     }
     else {
 

@@ -8,6 +8,12 @@
     
     <div class="inviteContainer">
 
+        <% if (requests.length <= 0) { %>
+
+            <h2>You have no friend requests.</h2>
+
+        <% } %>
+
         <% requests.forEach(request => { %>
 
             <div class="inviteElement">

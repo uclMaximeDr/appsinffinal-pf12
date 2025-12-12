@@ -159,7 +159,7 @@ router.get('/user/profile/:id', async (req, res) => {
 
     const isConnected = !!connectedUser;
 
-    const Friend = await isFriend(database, req.session.userid, id);
+    const Friend = await isFriend(database, req.session.userid, id) || await hasSentRequest(database, req.session.userid, id);
 
     res.render("user/profile", {
         username: user.fullname,
