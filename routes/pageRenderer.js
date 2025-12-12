@@ -212,6 +212,20 @@ router.get('/party/:id', async function(req, res){
     res.render("party/party", {user:user, party: party, formattedDate: formattedDate, comments: comments_with_user, connected: connected, rating:rating, vote_tot, self_user_id: req.session.userid, images: images});
 });
 
+// ### RAID ###
+router.get('/raid/:id', async function(req, res){
+    const database = req.app.locals.db;
+
+    const party = await database.collection('party').findOne({ _id: new ObjectId(req.params.id) });
+    if (!party) {
+        return res.status(404).json({ error: "Soirée non trouvée" });
+    }
+    const formattedDate = formatDate(party.date);
+    const user = await database.collection('users').findOne({ _id: new ObjectId(party.user_id) });
+
+    res.render("raid", {user:user, party: party});
+});
+
 // ### Affichage d'image uploadée ###
 router.get('/uploadedImages/:id', async (req, res) => {
     res.redirect('/uploadedImages/' + req.params.id + '/500');

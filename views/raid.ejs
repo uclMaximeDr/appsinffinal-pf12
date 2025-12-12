@@ -1,0 +1,21 @@
+<% styles=`
+<link rel="stylesheet" href="/styles/raid.css">
+` %>
+
+<section class="pageContainer flex">
+    <h1>RAID déclenché !</h1>
+    <p>Un raid a été déclenché dans une soirée !</p>
+
+    <div class="partyInfo">
+        <p><strong>Titre de la soirée :</strong> <%= party.title %></p>
+        <p><strong>Hôte :</strong> <%= user.fullname %></p>
+        <p><strong>Description :</strong> <%= party.description %></p>
+    </div>
+
+    <div class="actions">
+        <button id="backToLast">Retour</button>
+        <button id="view" data-raid-id="<%= party._id %>">Voir la soirée</button>
+    </div>
+
+    <script src="/scripts/raidpage.js"></script>
+</section>

@@ -122,9 +122,7 @@ $("#searchSelector p").click((event) => {
   }
 });
 
-// Socket.IO client setup
-const socket = io();
-
+// La variable socket est déjà définie dans raid.js
 const partyContainer = $(".cardContainer");
 socket.on("newParty", (data) => {
   console.log("New party received:", data);

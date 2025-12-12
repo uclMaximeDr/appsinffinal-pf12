@@ -7,6 +7,7 @@ const fs = require('fs');
 const multer = require('multer');
 const socketio = require('socket.io');
 const http = require('http');
+const cron = require('node-cron');
 
 const { MongoClient } = require('mongodb');
 
@@ -107,7 +108,24 @@ if (process.env.NODE_ENV !== "test") {
 
     server.listen(PORT, '0.0.0.0', async () => {
         console.log(`Example app listening on port ${PORT}`)
+        // Connection à la base de données
         await client.connect();
+
+        // Fonction exécutée tous les jours à 19h00
+        console.log('Configuration du cron job pour les raids...');
+        cron.schedule('0 19 * * *', async () => {
+            console.log('Vérification des raids à déclencher...');
+            const partiesWithRaids = await database.collection('party').find({
+                raid: true,                                    // Soirées avec raid activé
+                date: new Date().toISOString().slice(0, 10)    // Soirées prévues pour aujourd'hui
+            }).toArray();
+            if (partiesWithRaids.length === 0) { return; }
+            const randomIndex = Math.floor(Math.random() * partiesWithRaids.length); // Sélectionne une partie au hasard
+            const selectedParty = partiesWithRaids[randomIndex];
+            
+            io.emit('raidEvent', { partyId: selectedParty._id }); // Envoie l'événement à tous les clients connectés
+            console.log(`Raid event triggered for party ID: ${selectedParty._id}`);
+        });
     });
   })();
 }
