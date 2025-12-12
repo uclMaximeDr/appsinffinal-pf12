@@ -18,17 +18,20 @@ async function geocode(q) {
 
 // create marker
 async function createCustomMarker(lat, lng, imageId) {
-  const imageBase64 = await fetch("/uploadedImages/" + imageId + "/64")
-    .then((res) => res.blob())
-    .then(
-      (blob) =>
-        new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.readAsDataURL(blob);
-        })
-    );
-
+  let imageBase64 = null;
+  if(imageId) {
+    imageBase64 = await fetch("/uploadedImages/" + imageId + "/64")
+      .then((res) => res.blob())
+      .then(
+        (blob) =>
+          new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(blob);
+          })
+      );
+  }
+  
   const svgTemplate = `
         <svg width="80" height="109" viewBox="0 0 80 109" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
           <path d="M80 40.1189C80 62.276 40 109 40 109C40 109 0 62.276 0 40.1189C0 17.9618 17.9086 0 40 0C62.0914 0 80 17.9618 80 40.1189Z" fill="#FF0000"/>
