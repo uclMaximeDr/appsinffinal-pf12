@@ -43,6 +43,18 @@ router.get('/', async function(req, res){
     });
 
     const partiesInfo = await Promise.all(partiesSevenDays.map(async party => {
+        // aggregate source Mongodb Documentation
+        const totalRating = await database.collection('rating').aggregate([{ $match: { party_id : party._id } },{$group: {_id: null, totalSum: { $sum: { $toInt: "$rate"}}}}]).toArray();
+        console.log(totalRating);
+        const totalRatingDoc = await database.collection('rating').countDocuments({ party_id : party._id });
+        console.log(totalRatingDoc);
+        let total;
+        if (totalRatingDoc != 0 && totalRating != 0){
+            total = totalRating[0].totalSum/totalRatingDoc;
+        }else{
+            total = 0;
+        }
+        
         return {
             ...party,
             formattedDate: formatDate(party.date),
@@ -50,16 +62,22 @@ router.get('/', async function(req, res){
                 fullname: (await database.collection('users').findOne({_id : new ObjectId(party.user_id)})).fullname,
                 isFriend: req.session.userid ? (await database.collection('friendship').findOne({ id_1: { $in: [new ObjectId(req.session.userid), new ObjectId(party.user_id)] }, id_2: { $in: [new ObjectId(req.session.userid), new ObjectId(party.user_id)] } }) != null) : false
             },
-            image: (await database.collection('photos').findOne({partyId : party._id}))?._id || null
+            image: (await database.collection('photos').findOne({partyId : party._id}))?._id || null,
+            averageRating: total
         };
     }));
-    const filtered = partiesInfo.filter(party => {
-        return !party.isFriendOnly || party.user.isFriend;
+    const filteredFriend = partiesInfo.filter(party => {
+        return !party.friendOnly || party.user.isFriend || party.user_id == req.session.userid;
+    });
+
+    console.log(filteredFriend)
+
+    const filteredRating = filteredFriend.sort((a,b)=>{
+        return b.averageRating - a.averageRating;
     });
 
 
-
-    res.render("index", {parties : filtered});
+    res.render("index", {parties : filteredRating});
 });
 
 router.get('/start', (req, res) => {
