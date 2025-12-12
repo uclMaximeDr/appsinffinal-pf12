@@ -258,15 +258,16 @@ router.post("/uploadPhoto", (req, res) => {
 router.post('/create', async function (req, res, next) {
     const database = req.app.locals.db;
 
-    const {address, latitude, longitude, title, description, raid} = req.body;
+    const {address, latitude, longitude, title, description, raid, friendOnly} = req.body;
     const username = (await database.collection('users').findOne({ _id: new ObjectId(req.session.userid) }))?.fullname;
     //Conversion string bool vers bool
     const raid_bool = (raid == 'true' ? true : false);
+    const friendOnly_bool = (friendOnly == 'true' ? true : false);
 
     // Soumettre nouvelle soirée
     if (req.session.userid != null && !req.session.id_saved){
         
-        const party = await database.collection('party').insertOne({date: new Date(), address, latitude, longitude, title, description, raid : raid_bool, user_id: new ObjectId(req.session.userid) });
+        const party = await database.collection('party').insertOne({date: new Date(), address, latitude, longitude, title, description, raid : raid_bool, friendOnly: friendOnly_bool, user_id: new ObjectId(req.session.userid) });
         res.send({success : true, message : "Soirée crée !"});
 
         req.app.locals.io.emit("newParty", {
@@ -281,7 +282,7 @@ router.post('/create', async function (req, res, next) {
     }
     // Modifier soirée avec même identifiant
     else if (req.session.userid != null && req.session.id_saved){
-        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id)},{$set: {date: new Date(), address, latitude, longitude, title, description, raid :raid_bool}});
+        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id)},{$set: {date: new Date(), address, latitude, longitude, title, description, raid, friendOnly}});
         res.send({success : true,  message : "Soirée modifiée !"});
     }
     // Refus

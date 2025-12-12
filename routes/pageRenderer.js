@@ -32,7 +32,17 @@ router.get('/', async function(req, res){
     const database = req.app.locals.db;
 
     const parties = await database.collection('party').find().toArray();
-    const partiesNames = await Promise.all(parties.map(async party => {
+
+    // Filtrer les soirées ayant plus de 7 jours
+    const currentDate = new Date();
+    const partiesSevenDays = parties.filter(party => {
+        const partyDate = new Date(party.date);
+        const diffTime = Math.abs(currentDate - partyDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= 7;
+    });
+
+    const partiesInfo = await Promise.all(partiesSevenDays.map(async party => {
         return {
             ...party,
             formattedDate: formatDate(party.date),
@@ -43,15 +53,13 @@ router.get('/', async function(req, res){
             image: (await database.collection('photos').findOne({partyId : party._id}))?._id || null
         };
     }));
-    // Filtrer les soirées ayant plus de 7 jours
-    const currentDate = new Date();
-    const filteredParties = partiesNames.filter(party => {
-        const partyDate = new Date(party.date);
-        const diffTime = Math.abs(currentDate - partyDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays <= 7;
+    const filtered = partiesInfo.filter(party => {
+        return !party.isFriendOnly || party.user.isFriend;
     });
-    res.render("index", {parties : filteredParties});
+
+
+
+    res.render("index", {parties : filtered});
 });
 
 router.get('/start', (req, res) => {

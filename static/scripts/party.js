@@ -21,7 +21,7 @@ function setPosition(position) {
 }
 
 
-// Soumettre une soirée
+// Obtenir position gps de l'utilisateur
 $('#location').click(async () => {
   party_coord = await getLocation();
 });
@@ -34,6 +34,7 @@ $('#party_submit').click(async () => {
   const title = $('#party_title').val();
   const description = $('#party_description').val();
   let raid = $('#party_raid').prop('checked');
+  let friendOnly = $('#party_friendOnly').prop('checked');
   let lat;
   let lon;
   
@@ -67,7 +68,7 @@ $('#party_submit').click(async () => {
   }
 
 
-  $.post("/api/create", {address: address, latitude : lat, longitude:lon, title: title, description: description, raid: raid }, function (data) {
+  $.post("/api/create", {address: address, latitude : lat, longitude:lon, title: title, description: description, raid, friendOnly}, function (data) {
     if (data.success) {
       window.location.href = "/";
     } else {
@@ -100,8 +101,6 @@ $('.party_delete').click(function () {
   const delete_id = $(this).data("delete");
 
   
-
-
   $.post("/api/delete", { delete_id: delete_id }, function (data) {
     if (data.success) {
       showModal(data.message);
