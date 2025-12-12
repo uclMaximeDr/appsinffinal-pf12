@@ -45,9 +45,7 @@ router.get('/', async function(req, res){
     const partiesInfo = await Promise.all(partiesSevenDays.map(async party => {
         // aggregate source Mongodb Documentation
         const totalRating = await database.collection('rating').aggregate([{ $match: { party_id : party._id } },{$group: {_id: null, totalSum: { $sum: { $toInt: "$rate"}}}}]).toArray();
-        console.log(totalRating);
         const totalRatingDoc = await database.collection('rating').countDocuments({ party_id : party._id });
-        console.log(totalRatingDoc);
         let total;
         if (totalRatingDoc != 0 && totalRating != 0){
             total = totalRating[0].totalSum/totalRatingDoc;
@@ -69,8 +67,6 @@ router.get('/', async function(req, res){
     const filteredFriend = partiesInfo.filter(party => {
         return !party.friendOnly || party.user.isFriend || party.user_id == req.session.userid;
     });
-
-    console.log(filteredFriend)
 
     const filteredRating = filteredFriend.sort((a,b)=>{
         return b.averageRating - a.averageRating;
