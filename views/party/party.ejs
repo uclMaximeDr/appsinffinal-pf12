@@ -22,15 +22,16 @@
             <h2><strong></strong> <%= party.title %></h2>
             <p id = "description"><strong> <%= party.description %></strong></p>
 
-            <div class="imageContainer">
-                <% if (images && images.length > 0) { %>
+            <% if (images && images.length > 0) { %>
+                <button id="downloadPicture" data-party_id = "<%= party._id%>">Télécharger les images</button>
+                <div class="imageContainer">
                     <% images.forEach(imageId => { %>
                         <img src="/uploadedImages/<%= imageId %>" alt="Party Image" class="image">
                     <% }) %>
-                <% } else { %>
-                    <p>Aucune image disponible pour cette soirée.</p>
-                <% } %>
-            </div>
+                </div>
+            <% } else { %>
+                <p>Aucune image disponible pour cette soirée.</p>
+            <% } %>
             
     
             <textarea class="party_input" id="comment_data" placeholder="Poster ton avis" rows="2" cols="60"></textarea>

@@ -180,3 +180,8 @@ $('.rating span').click(function () {
 
 })
 
+// Download pictures
+$('#downloadPicture').click(function () {
+  const party_id = $(this).data("party_id");
+  window.location.href = "/api/downloadPartyPictures?party_id=" + party_id;
+});
