@@ -3,7 +3,7 @@ const router = express.Router();
 const { ObjectId } = require("mongodb");
 const path = require('path');
 const sharp = require('sharp');
-const { formatDate } = require('../utils');
+const { formatDate, isFriend, hasSentRequest } = require('../utils');
 
 // Middleware to check for first visit and captcha requirement
 router.use((req, res, next) => {
@@ -157,19 +157,16 @@ router.get('/user/profile/:id', async (req, res) => {
     
     const friends = friendsList.length;
 
-    const friendShip = [req.session.userid, id]
-    friendShip.sort();
-
-    const isFriend = await database.collection('friendship').findOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) }) != null;
-
     const isConnected = !!connectedUser;
+
+    const Friend = await isFriend(database, req.session.userid, id);
 
     res.render("user/profile", {
         username: user.fullname,
         rating : averageRating,
         parties : parties,
         friends : friends,
-        isFriend : isFriend,
+        isFriend : Friend,
         isOwnProfile : isOwnProfile,
         id: user._id,
         isConnected : isConnected

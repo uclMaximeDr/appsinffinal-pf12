@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 12;
 const fs = require('fs');
 const archiver = require('archiver');
+const { isFriend, hasSentRequest } = require('../utils')
 
 // Routes
 
@@ -170,17 +171,10 @@ router.post('/user/sendFriendRequest' , async function (req, res, next) {
         throw new Error("Cannot be your own friend.")
     }
 
-    const friendShip = [req.session.userid, id];
-    friendShip.sort();
-
-    const alreadyFriend = await db.collection('friendship').findOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) }) != null;
-    const requestAlreadyExist = await db.collection("friendRequest").findOne({ from_id: new ObjectId(req.session.userid), to_id: new ObjectId(id) }) != null
-                                || await db.collection("friendRequest").findOne({ from_id: new ObjectId(id), to_id: new ObjectId(req.session.userid) }) != null;
-
-    if (!alreadyFriend && !requestAlreadyExist) {
+    if (!(await isFriend(db, req.session.userid, id) && !hasSentRequest(db, req.session.userid, id))) {
 
         // Add a request to the friendRequest collection
-        await db.collection("friendRequest").insertOne({ from_id: new ObjectId(req.session.userid), from_username: username, to_id: new ObjectId(id) });
+        await db.collection("friendRequest").insertOne({ from_id: new ObjectId(req.session.userid), to_id: new ObjectId(id) });
 
         res.send({success : true});
     }
@@ -202,12 +196,7 @@ router.post('/user/addFriend', async function (req, res, next) {
         throw new Error("Cannot be your own friend.")
     }
 
-    const friendShip = [req.session.userid, id];
-    friendShip.sort();
-
-    const alreadyFriend = await db.collection('friendship').findOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) }) != null;
-
-    if (!alreadyFriend) {
+    if (!(await isFriend(db, req.session.user_id, id))) {
 
         // Updates the database with the new friends list
         await db.collection("friendship").insertOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) })
@@ -221,7 +210,7 @@ router.post('/user/addFriend', async function (req, res, next) {
 })
 
 router.post('/user/removeFriend', async function (req, res, next) {
-    // Function to remove an existing friend
+    // Function to remove an existing friend or cancel a friend request
     
     const db = req.app.locals.db;
     const id = req.body.id;
@@ -232,12 +221,7 @@ router.post('/user/removeFriend', async function (req, res, next) {
         throw new Error("Cannot be your own friend.")
     }
 
-    const friendShip = [req.session.userid, id];
-    friendShip.sort();
-
-    const alreadyFriend = await db.collection('friendship').findOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) }) != null;
-
-    if (alreadyFriend) {
+    if (await isFriend(db, req.session.userid, id)) {
 
         // Updates the database with the new friends list
         await db.collection("friendship").deleteOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) })
