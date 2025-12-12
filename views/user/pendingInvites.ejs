@@ -14,7 +14,7 @@
 
                 <img class="profilePicture" src="/api/user/profile-picture/<%= request.from_id %>" alt="Profile Picture">
                 
-                <span><% request.from_id %></span>
+                <span><%= request.user.fullname %></span>
                 
                 <div class="buttonContainer">
                     <button>Accept</button>

@@ -177,16 +177,10 @@ router.post('/user/sendFriendRequest' , async function (req, res, next) {
     const requestAlreadyExist = await db.collection("friendRequest").findOne({ from_id: new ObjectId(req.session.userid), to_id: new ObjectId(id) }) != null
                                 || await db.collection("friendRequest").findOne({ from_id: new ObjectId(id), to_id: new ObjectId(req.session.userid) }) != null;
 
-    console.log("Friend ? " + alreadyFriend)
-    console.log("Request ? " + requestAlreadyExist)
-
     if (!alreadyFriend && !requestAlreadyExist) {
 
         // Add a request to the friendRequest collection
-        await db.collection("friendRequest").insertOne({ from_id: new ObjectId(req.session.userid), to_id: new ObjectId(id) });
-
-        const collection = await db.collection("friendRequest").find().toArray();
-        console.log("COLLECTION : " + collection);
+        await db.collection("friendRequest").insertOne({ from_id: new ObjectId(req.session.userid), from_username: username, to_id: new ObjectId(id) });
 
         res.send({success : true});
     }

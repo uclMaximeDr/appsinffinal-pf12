@@ -187,7 +187,16 @@ router.get('/user/pendingInvites', async (req, res) => {
 
     const requests = await db.collection("friendRequest").find({ to_id: new ObjectId(req.session.userid) }).toArray();
 
-    res.render("user/pendingInvites", { requests: requests });
+    const requestsWithName = await Promise.all(requests.map(async request => {
+        return {
+            ...request,
+            user: {
+                fullname: (await db.collection('users').findOne({_id : new ObjectId( request.from_id )})).fullname
+            }
+        };
+    }));
+
+    res.render("user/pendingInvites", { requests: requestsWithName});
 })
     
 
