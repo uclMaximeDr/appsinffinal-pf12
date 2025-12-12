@@ -158,6 +158,44 @@ router.get('/user/search', async function(req, res, next) {
     }));
 })
 
+router.post('/user/sendFriendRequest' , async function (req, res, next) {
+    // Function to add a new friend
+    
+    const db = req.app.locals.db;
+    const id = req.body.id;
+
+    // Prevents us from adding ourselves as a friend
+    if (id.toString() == req.session.userid.toString())
+    {
+        throw new Error("Cannot be your own friend.")
+    }
+
+    const friendShip = [req.session.userid, id];
+    friendShip.sort();
+
+    const alreadyFriend = await db.collection('friendship').findOne({ id_1: new ObjectId(friendShip[0]), id_2: new ObjectId(friendShip[1]) }) != null;
+    const requestAlreadyExist = await db.collection("friendRequest").findOne({ from_id: new ObjectId(req.session.userid), to_id: new ObjectId(id) }) != null
+                                || await db.collection("friendRequest").findOne({ from_id: new ObjectId(id), to_id: new ObjectId(req.session.userid) }) != null;
+
+    console.log("Friend ? " + alreadyFriend)
+    console.log("Request ? " + requestAlreadyExist)
+
+    if (!alreadyFriend && !requestAlreadyExist) {
+
+        // Add a request to the friendRequest collection
+        await db.collection("friendRequest").insertOne({ from_id: new ObjectId(req.session.userid), to_id: new ObjectId(id) });
+
+        const collection = await db.collection("friendRequest").find().toArray();
+        console.log("COLLECTION : " + collection);
+
+        res.send({success : true});
+    }
+    else {
+
+        res.send({success : false, message: "This is already your friend."});
+    }
+})
+
 router.post('/user/addFriend', async function (req, res, next) {
     // Function to add a new friend
     

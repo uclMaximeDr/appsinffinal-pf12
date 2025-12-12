@@ -8,25 +8,21 @@
     
     <div class="inviteContainer">
 
-        <div class="inviteElement">
+        <% requests.forEach(request => { %>
 
-            <span>Bonjour je suis l'élément</span>
-            
-            <div class="buttonContainer">
-                <button>Accept</button>
-                <button>Decline</button>
+            <div class="inviteElement">
+
+                <img class="profilePicture" src="/api/user/profile-picture/<%= request.from_id %>" alt="Profile Picture">
+                
+                <span><% request.from_id %></span>
+                
+                <div class="buttonContainer">
+                    <button>Accept</button>
+                    <button>Decline</button>
+                </div>
             </div>
-        </div>
 
-        <div class="inviteElement">
-
-            <span>Bonjour je suis le deuxième élément</span>
-
-            <div class="buttonContainer">
-                <button>Accept</button>
-                <button>Decline</button>
-            </div>
-        </div>
+        <% }) %>
 
     </div>
 

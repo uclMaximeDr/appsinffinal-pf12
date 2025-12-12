@@ -176,14 +176,18 @@ router.get('/user/profile/:id', async (req, res) => {
     });
 })
 
-router.get('/user/pendingInvites', (req, res) => {
+router.get('/user/pendingInvites', async (req, res) => {
 
+    const db = req.app.locals.db;
+    
     if(!req.session || !req.session.userid) {
         res.redirect("/user/login");
         return;
     }
 
-    res.render("user/pendingInvites");
+    const requests = await db.collection("friendRequest").find({ to_id: new ObjectId(req.session.userid) }).toArray();
+
+    res.render("user/pendingInvites", { requests: requests });
 })
     
 

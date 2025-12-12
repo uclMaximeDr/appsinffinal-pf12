@@ -1,3 +1,3 @@
 $('#back').click(() => {
-    window.location.href = '/';
+    window.location.href = '/user/profile/me';
 })

@@ -4,6 +4,8 @@
 
     top: 60px;
 
+    align-items: center;
+
     flex-direction: column;
     
     gap: 20px
@@ -16,7 +18,7 @@
     
     align-content: center;
 
-    width: 900px;
+    width: 750px;
     height: 80px;
 
     padding: 10px;
@@ -26,8 +28,25 @@
     box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5);
 }
 
+.inviteContainer img {
+    position: absolute;
+
+    top: 50%;
+    transform: translateY(-50%);
+    left: 15px;
+
+    border-radius: 100%;
+
+    width: 50px;
+    aspect-ratio: 1;
+}
+
 .inviteElement span {
+    position: relative;
+    
     font-size: 1.3rem;
+
+    left: 70px;
 }
 
 .inviteElement .buttonContainer {

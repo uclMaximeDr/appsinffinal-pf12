@@ -12,11 +12,11 @@ $('#addFriend').click(() => {
 
     const id = window.location.pathname.split('/')[3];
 
-    $.post('/api/user/addFriend', {id: id}, function(data) {
+    $.post('/api/user/sendFriendRequest', {id: id}, function(data) {
 
         if(data.success) {
 
-            showModal("Successfully added new friend !");
+            showModal("Successfully sent request !");
 
             // Hide/show the other button
             $('#removeFriend').show();
