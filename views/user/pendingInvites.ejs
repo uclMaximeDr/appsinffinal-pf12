@@ -23,8 +23,8 @@
                 <span><%= request.user.fullname %></span>
                 
                 <div class="buttonContainer">
-                    <button>Accept</button>
-                    <button>Decline</button>
+                    <button id="accept" data-id="<%= request.from_id %>">Accepter</button>
+                    <button id="decline" data-id="<%= request.from_id %>">Refuser</button>
                 </div>
             </div>
 
