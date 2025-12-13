@@ -98,18 +98,21 @@ app.use((err, req, res, next) => {
 // Start the server
 if (process.env.NODE_ENV !== "test") {
   (async () => {
+    // Connection à la base de données
+    console.log('Connection à la base de données...');
     if (!database) {
         const mongoUrl = process.env.MONGO_URL || "mongodb://localhost:27017";
         client = new MongoClient(mongoUrl);
-        await client.connect();
-        database = client.db(process.env.DB_NAME || "prod_db");
-        app.locals.db = database;
     }
-
+    
+    await client.connect();
+    database = client.db(process.env.DB_NAME || "prod_db");
+    app.locals.db = database;
+    console.log('Connecté à la base de données.');
+    
+    // Démarrage du serveur
     server.listen(PORT, '0.0.0.0', async () => {
         console.log(`Example app listening on port ${PORT}`)
-        // Connection à la base de données
-        await client.connect();
 
         // Fonction exécutée tous les jours à 19h00
         console.log('Configuration du cron job pour les raids...');
