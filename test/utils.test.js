@@ -6,7 +6,7 @@ const { randomUUID } = require('crypto');
 const { MongoClient, ObjectId } = require('mongodb');
 
 const { app, setDatabase } = require("../app");
-const { isFriend } = require("../utils");
+const utils = require("../utils");
 
 describe("Utils test", () => {
     let user1Id;
@@ -21,6 +21,7 @@ describe("Utils test", () => {
         database = client.db(testDbName);
         await database.createCollection('users');
         await database.createCollection('friendship');
+        await database.collection("friendRequest");
 
         // Injecter la DB dans l'application
         setDatabase(database);
@@ -46,7 +47,7 @@ describe("Utils test", () => {
 
     it("Test isNotFriend", async () => {
 
-    const notFriends = await isFriend(database, user1Id._id, user2Id._id);
+    const notFriends = await utils.isFriend(database, user1Id._id, user2Id._id);
     expect(notFriends).toBe(false);
 
     })
@@ -55,8 +56,25 @@ describe("Utils test", () => {
 
     await database.collection("friendship").insertOne({ id_1: user1Id._id, id_2: user2Id._id});
 
-    const areFriends = await isFriend(database, user1Id._id, user2Id._id);
+    const areFriends = await utils.isFriend(database, user1Id._id, user2Id._id);
     expect(areFriends).toBe(true);
+
+    })
+
+
+    it("Test hasNotSentRequest", async () => {
+
+    const hsnr = await utils.hasSentRequest(database, user1Id._id, user2Id._id);
+    expect(hsnr).toBe(false);
+
+    })
+
+    it("Test hasSentRequest", async () => {
+
+    await database.collection("friendRequest").insertOne({ from_id: user1Id._id, to_id: user2Id._id});
+
+    const hsr = await utils.hasSentRequest(database, user1Id._id, user2Id._id);
+    expect(hsr).toBe(true);
 
     })
 
