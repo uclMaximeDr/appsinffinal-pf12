@@ -318,7 +318,7 @@ router.post('/create', async function (req, res, next) {
     }
     // Modifier soirée avec même identifiant
     else if (req.session.userid != null && req.session.id_saved){
-        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id)},{$set: {date: new Date(), address, latitude, longitude, title, description, raid, friendOnly}});
+        await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id)},{$set: {date: new Date(), address, latitude, longitude, title, description, raid: raid_bool, friendOnly: friendOnly_bool}});
         res.send({success : true,  message : "Soirée modifiée !"});
     }
     // Refus
