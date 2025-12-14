@@ -145,6 +145,9 @@ router.get('/user/profile/:id', async (req, res) => {
         return {
             ...party,
             formattedDate: formatDate(party.date),
+            user: {
+                isFriend: req.session.userid ? (await database.collection('friendship').findOne({ id_1: { $in: [new ObjectId(req.session.userid), new ObjectId(party.user_id)] }, id_2: { $in: [new ObjectId(req.session.userid), new ObjectId(party.user_id)] } }) != null) : false
+            },
             images: await (database.collection('photos').find({partyId : new ObjectId(party._id)})).map(photo => photo._id).toArray(),
             ratings: await database.collection('rating').find({party_id : new ObjectId(party._id)}).map(rating => parseInt(rating.rate)).toArray()
         };
@@ -166,10 +169,14 @@ router.get('/user/profile/:id', async (req, res) => {
 
     const Friend = await isFriend(database, req.session.userid, id) || await hasSentRequest(database, req.session.userid, id);
 
+    const filteredParties = parties.filter(party => {
+        return !party.friendOnly || party.user.isFriend || party.user_id == req.session.userid;
+    });
+
     res.render("user/profile", {
         username: user.fullname,
         rating : averageRating,
-        parties : parties,
+        parties : filteredParties,
         friends : friends,
         isFriend : Friend,
         isOwnProfile : isOwnProfile,
