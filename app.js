@@ -6,7 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const socketio = require('socket.io');
-const http = require('http');
+const https = require('https');
 const cron = require('node-cron');
 
 const { MongoClient } = require('mongodb');
@@ -70,8 +70,15 @@ function setDatabase(db) {
   app.locals.db = db;
 }
 
-// Socket.IO setup
-const server = http.createServer(app);
+// Socket.IO setup and https server creation
+if(!fs.existsSync('./certs/cert.pem') || !fs.existsSync('./certs/key.pem')) {
+    console.error("Certificats SSL non trouvés dans le dossier 'certs'. Veuillez les générer pour utiliser HTTPS.");
+    process.exit(1);
+}
+const server = https.createServer({
+    key: fs.readFileSync('./certs/key.pem'),
+    cert: fs.readFileSync('./certs/cert.pem')
+}, app);
 const io = new socketio.Server(server, {
     cors: {
         origin: '*',
