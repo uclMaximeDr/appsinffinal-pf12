@@ -51,71 +51,39 @@ describe("Profile test", () => {
         });
     });
 
-    it("Test create comment without being logged in", async () => {
+    it("Test add rating without being logged in", async () => {
         await request(app)
-            .post("/api/comment_create")
+            .post("/api/rating")
             .set("Content-Type", "application/json")
             .send({
-                comment: "Hello world",
+                rate: 5,
                 party_id: 1
             })
             .expect(200)
             .expect((res) => {
                 expect(res.body.success).toBe(false);
-                expect(res.body.message).toBe("Commentaire non crée, pas de compte connecté.")
+                expect(res.body.message).toBe("Pas de note, pas de compte connecté.")
             });
     })
     
-    it("Test create comment", async () => {
+    it("Test add rating", async () => {
         await request(app)
-            .post("/api/comment_create")
+            .post("/api/rating")
             .set("Content-Type", "application/json")
             .set("Cookie", cookie)
             .send({
-                comment: "Hello world",
+                rate: 5,
                 party_id: 1
             })
             .expect(200)
             .expect((res) => {
                 expect(res.body.success).toBe(true);
-                expect(res.body.message).toBe("Commentaire crée !")
+                expect(res.body.message).toBe("Noter !")
             });
 
-        const comments = await database.collection('comments').find({  comment: "Hello world" }).toArray();
-        expect(comments.length).toBe(1);
+        const rating = await database.collection('rating').find({  rate: 5 }).toArray();
+        expect(rating.length).toBe(1);
     })
-
-    it("Test delete comment without being logged in", async () => {
-        const commentId = (await database.collection('comments').findOne())._id;
-
-        await request(app)
-            .post('/api/comment_delete')
-            .set("Content-Type", "application/json")
-            .send({
-                delcom_id: commentId
-            })
-            .expect(200)
-            .expect((res) => {
-                expect(res.body.success).toBe(false);
-                expect(res.body.message).toBe("Commentaire non supprimée, pas de compte connecté.")
-            });
-    });
-
-    it("Test delete comment", async () => {
-        const commentId = (await database.collection('comments').findOne())._id;
-
-        await request(app)
-            .post('/api/comment_delete')
-            .set('Cookie', cookie)
-            .set("Content-Type", "application/json")
-            .send({
-                delcom_id: commentId
-            })
-
-
-        const comments = await database.collection('comments').find().toArray();
-        expect(comments.length).toBe(0);
-    });
 
     afterAll(async () => {
         // Supprimer la DB de test à la fin

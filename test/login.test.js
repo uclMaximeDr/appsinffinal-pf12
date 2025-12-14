@@ -20,6 +20,18 @@ describe("Profile test", () => {
         // Injecter la DB dans l'application
         setDatabase(database);
     });
+
+    it("Test load login page", async () => {
+        // First load start page to set session cookie
+        const startCookie = (await request(app)
+            .get("/")).header['set-cookie'];
+
+        // Then load login page
+        await request(app)
+        .get("/user/login")
+        .set("Cookie", startCookie)
+        .expect(200);
+    });
     
     it("Test register with missing infos", async () => {
         // Registering with missing infos
@@ -89,6 +101,20 @@ describe("Profile test", () => {
 
         cookie = response.header['set-cookie'];
     })
+
+    it("Test load login page when already logged in", async () => {
+        // First load start page to set session cookie
+        await request(app)
+        .get("/start")
+        .set("Cookie", cookie)
+
+        // Then load login page
+        await request(app)
+        .get("/user/login")
+        .set("Cookie", cookie)
+        .expect(302)
+        .expect('Location', '/user/profile/me');
+    });
 
     it("Test disconnect", async () => {
 

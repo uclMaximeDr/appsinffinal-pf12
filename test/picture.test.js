@@ -45,6 +45,20 @@ describe("Profile test", () => {
     
         cookie = loginresponse.header['set-cookie'];
 
+        // Créer une soirée de test
+        await request(app)
+            .post("/api/create")
+            .set("Content-Type", "application/json")
+            .set("Cookie", cookie)
+            .send({
+                address: "testadd",
+                latitude: 0,
+                longitude: 0,
+                title: "title",
+                description: "description",
+                raid: "true"
+            })
+
         // Load start page to avoid redirects on first upload
         await request(app)
             .get("/")
@@ -52,11 +66,36 @@ describe("Profile test", () => {
             .expect(302);
     });
 
-    it("Test upload picture", async () => {
+    it("test upload picture without being logged in", async () => {
+        // Essayer d'uploader une image de profil sans être connecté
+        await request(app)
+            .post('/api/uploadPhoto')
+            .attach("photo", DUMMY_IMAGE_BYTES, "photo.png") // Utilisation d'un buffer pour simuler un fichier
+            .expect(401)
+            .expect(res => {
+                expect(res.body.error).toBe("Utilisateur non connecté");
+            });
+    });
+
+    it("Test upload picture without metadatas", async () => {
         // Uploader une image de profil
         await request(app)
             .post('/api/uploadPhoto')
             .set("Cookie", cookie)
+            .attach("photo", DUMMY_IMAGE_BYTES, "photo.png") // Utilisation d'un buffer pour simuler un fichier
+            .expect(200)
+            .expect(res => {
+                expect(res.body.success).toBe(true);
+            });
+    });
+
+    it("Test upload picture with metadatas", async () => {
+        // Uploader une image de profil avec des métadonnées
+        await request(app)
+            .post('/api/uploadPhoto')
+            .set("Cookie", cookie)
+            .field("lat", "0")
+            .field("lng", "0")
             .attach("photo", DUMMY_IMAGE_BYTES, "photo.png") // Utilisation d'un buffer pour simuler un fichier
             .expect(200)
             .expect(res => {
