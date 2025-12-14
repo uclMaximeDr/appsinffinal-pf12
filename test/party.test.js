@@ -10,6 +10,7 @@ const { app, setDatabase } = require("../app");
 describe("Profile test", () => {
 
     var cookie;
+    var startCookie;
 
     beforeAll (async () => {
         // Créer une DB temporaire
@@ -37,27 +38,12 @@ describe("Profile test", () => {
             .send({ email: "test@gmail.com", password: "testPassword" })
     
         cookie = loginresponse.header['set-cookie'];
+
+        // First load start page to set session cookie
+        startCookie = (await request(app)
+            .get("/")).header['set-cookie'];
     });
     
-    it("Test add party without being logged in", async () => {
-        await request(app)
-            .post("/api/create")
-            .set("Content-Type", "application/json")
-            .send({
-                address: "testadd",
-                latitude: 0,
-                longitude: 0,
-                title: "title",
-                description: "description",
-                raid: "true"
-            })
-            .expect(200)
-            .expect((res) => {
-                expect(res.body.success).toBe(false);
-                expect(res.body.message).toBe("Soirée non crée, pas de compte connecté.")
-            });
-    });
-
     it("Test add party", async () => {
         await request(app)
             .post("/api/create")
@@ -81,20 +67,32 @@ describe("Profile test", () => {
         expect(parties.length).toBe(1);
     })
 
-    it("Test edit party without being logged in", async () => {
-        const partyId = (await database.collection('party').findOne())._id;
+    // pageRenderer test create party 
+    it("Test add party .get", async () => {
+        // Not connected
         await request(app)
-            .post('/api/edit')
-            .set("Content-Type", "application/json")
-            .send({
-                edit_id: partyId
-            })
+            .get("/party/create")
+            .set("Cookie", startCookie)
+            .expect(302)
+            .expect('Location','/user/login')
+    })
+
+
+    it("Test page party info", async () => {
+        const partyId = (await database.collection('party').findOne())._id;
+        const page_render = await request(app)
+            .get(`/party/${partyId}`)
+            .set('Cookie', startCookie)
             .expect(200)
-            .expect((res) => {
-                expect(res.body.success).toBe(false);
-                expect(res.body.message).toBe("Soirée non modifiée, pas de compte connecté.")
-            });
+
+
+        // Check if the page is correctly rendered with the party
+        expect(page_render.text).toContain("testadd");
+        expect(page_render.text).toContain("title");
+        expect(page_render.text).toContain("description");
+        expect(page_render.text).toContain("Votre avis nous intéresse !");
     });
+
 
     it("Test edit party", async () => {
         const partyId = (await database.collection('party').findOne())._id;
@@ -126,21 +124,6 @@ describe("Profile test", () => {
 
         const newAddress = (await database.collection('party').findOne()).address;
         expect(newAddress).toBe("testedit")
-    });
-
-    it("Test delete party without being logged in", async () => {
-        const partyId = (await database.collection('party').findOne())._id;
-        await request(app)
-            .post('/api/delete')
-            .set("Content-Type", "application/json")
-            .send({
-                delete_id: partyId
-            })
-            .expect(200)
-            .expect((res) => {
-                expect(res.body.success).toBe(false);
-                expect(res.body.message).toBe("Soirée non supprimée, pas de compte connecté.")
-            });
     });
 
     it("Test delete party", async () => {

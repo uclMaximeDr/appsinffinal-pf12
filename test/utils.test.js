@@ -77,5 +77,10 @@ describe("Utils test", () => {
     expect(hsr).toBe(true);
 
     })
+    afterAll(async () => {
+        // Supprimer la DB de test à la fin
+        await database.dropDatabase();
+        await client.close();
+    });
 
 });
