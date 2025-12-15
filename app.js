@@ -7,6 +7,7 @@ const fs = require('fs');
 const multer = require('multer');
 const socketio = require('socket.io');
 const https = require('https');
+const http = require('http');
 const cron = require('node-cron');
 
 const { MongoClient } = require('mongodb');
@@ -70,15 +71,23 @@ function setDatabase(db) {
   app.locals.db = db;
 }
 
-// Socket.IO setup and https server creation
-if(!fs.existsSync('./certs/cert.pem') || !fs.existsSync('./certs/key.pem')) {
-    console.error("Certificats SSL non trouvés dans le dossier 'certs'. Veuillez les générer pour utiliser HTTPS.");
-    process.exit(1);
+// HTTPS server setup
+let server;
+if(process.env.NO_HTTPS === "1") {
+    console.warn("Le HTTPS est désactivé. Utilisation du HTTP.");
+    server = http.createServer(app);
+} else {
+    if(!fs.existsSync('./certs/cert.pem') || !fs.existsSync('./certs/key.pem')) {
+        console.error("Certificats SSL non trouvés dans le dossier 'certs'. Veuillez les générer pour utiliser HTTPS.");
+        process.exit(1);
+    }
+    server = https.createServer({
+        key: fs.readFileSync('./certs/key.pem'),
+        cert: fs.readFileSync('./certs/cert.pem')
+    }, app);
 }
-const server = https.createServer({
-    key: fs.readFileSync('./certs/key.pem'),
-    cert: fs.readFileSync('./certs/cert.pem')
-}, app);
+
+// Socket.IO setup and https server creation
 const io = new socketio.Server(server, {
     cors: {
         origin: '*',
