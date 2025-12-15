@@ -62,7 +62,8 @@ async function createCustomMarker(lat, lng, imageId) {
 // Create markers for all parties and friend-only parties
 const allMarkers = [];
 const friendOnlyMarkers = [];
-async function createMarkers(parties) {
+async function createMarkers(parties) { 
+
   for(const party of parties) {
     const marker = await createCustomMarker(party.lat, party.lng, party.img);
     marker.bindPopup(`<a href="/party/${party.id}">Voir la soirée</a>`);

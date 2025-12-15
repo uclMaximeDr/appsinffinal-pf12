@@ -50,7 +50,7 @@
 <script>
 
 
-const parties = <%- JSON.stringify(parties.map(party => ({ lat: party.latitude, lng: party.longitude, img: party.image }))) %>;
+const parties = <%- JSON.stringify(parties.map(party => ({ id: party._id, lat: party.latitude, lng: party.longitude, img: party.image }))) %>;
 
 </script>
 <script src="/scripts/index.js"></script>
