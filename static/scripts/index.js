@@ -16,8 +16,8 @@ function onSearch(event) {
       resultsContainer.append(`
         <a href='/party/${party._id}' class="search-item">
             <h3>${party.title}</h3>
-            <p><span class='info'>Lieu: </span>${party.description}</p>
             <p><span class='info'>Lieu: </span>${party.address}</p>
+            <p><span class='info'>Description: </span>${party.description}</p>
         </a>`);
     });
   });
