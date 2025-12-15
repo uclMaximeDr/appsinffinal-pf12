@@ -113,6 +113,26 @@ $('.party_delete').click(function () {
 
 })
 
+// ### PARTAGE ###
+
+$('#share').click(function() {
+  const shareData = {
+    title: "Partage de soirée - FindMyParty",
+    url: window.location.href,
+  };
+
+  if (navigator.share) {
+    navigator
+      .share(shareData)
+      .then(() => console.log("Soirée partagée avec succès"))
+      .catch((error) =>
+        console.log("Erreur lors du partage de la soirée:", error)
+      );
+  } else {
+    navigator.clipboard.writeText(window.location.href)
+    showModal("Lien copié avec succès !")
+  }
+});
 
 // ### COMMENT ### 
 
