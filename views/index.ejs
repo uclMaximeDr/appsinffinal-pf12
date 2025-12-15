@@ -5,8 +5,14 @@
 
 <section class="pageContainer">
     <div class="sidebar">
+        
+        <div class="search">
+            <input type="search" placeholder="Rechercher..." oninput="onSearch(event)" />
+            <div class="search-results" id="search-results">
+            <!-- Search results will be displayed here -->
+            </div>
+        </div>
 
-        <input type="search" placeholder="Search...">
         <div class="selectorContainer" id="searchSelector">
             <div class="selector left"></div>
             <div class="options">

@@ -1,3 +1,28 @@
+// Searchbar
+function onSearch(event) {
+  const query = event.target.value;
+
+  if(query.length == 0) {
+    $('#search-results').empty();
+    return;
+  }
+
+  $.get('/search', { q: query }, function(data) {
+    const resultsContainer = $('#search-results');
+    resultsContainer.empty(); // Clear previous results
+
+    data.forEach(item => {
+      const party = item.party
+      resultsContainer.append(`
+        <a href='/party/${party._id}' class="search-item">
+            <h3>${party.title}</h3>
+            <p><span class='info'>Lieu: </span>${party.description}</p>
+            <p><span class='info'>Lieu: </span>${party.address}</p>
+        </a>`);
+    });
+  });
+}
+
 // Fonction utilitaire : géocoder via Nominatim (OpenStreetMap)
 async function geocode(q) {
   const url =

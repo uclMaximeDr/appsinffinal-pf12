@@ -21,6 +21,50 @@ body{
     max-height: 100vh;
 }
 
+/* Search bar */
+.search {
+  position: relative;
+  width: 100%;
+}
+
+.search input {
+  width: 100%;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid gray;
+  z-index: 10000;
+}
+
+.search-results a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: black;
+  text-decoration: none;
+  border-bottom: 1px solid lightgray;
+}
+
+.search-results a:hover {
+  background-color: lightgray;
+  color: black;
+}
+
+.search-item p {
+  margin: 0;
+  padding: 0;
+  font-size: 0.9rem;
+  color: black;
+}
+.search-item span {
+  color: rgba(0, 0, 0, 0.9);
+  font-size: 0.8rem;
+}
+
 #map {
     position: absolute;
     left: var(--sidebar-width);
