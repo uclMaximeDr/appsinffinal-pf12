@@ -1,32 +1,52 @@
-# Application "FindAParty"
+# LINFO1212 Groupe PF_12 - "FindMyParty"
 
-### Page d'accueil (1 page)
-- Carte de LLN en plein écran
-- Icons là ou y'a des soirées et des photos des copains (inspi : polarstep)
+Ce projet consiste à développer nos compétences dans la construction d’une application informatique de type web.
 
-### Gestion d'event (2 pages)
-- Ajout d'event avec position et date, heure de début et fin
-- List des évènements en cours que j'ai créer
-- Suppression d'event
+Notre site web permet aux étudiants de Louvain-la-Neuve de créer, modifier, supprimer et partager leurs meilleures soirées à la population ou à leurs amis chers.
 
-### FriendPicture (2 pages)
-- Partage de photo de soirée entre amis (attention : compression des photos) (video ?)
-- Photos afficher **en temps réel** sur la carte
-- Album photo par soirée quand on clique sur l'icon sur la carte => Bouton "Download all"
+## Prérequis
 
-### Accounts (3 pages)
-- Login / register
-- Page profil
-- Liste d'amis (avec ajout et suppression directement dans la liste)
+L'installation des dépendances :
 
-### Purge (raid de soirée) (1 page)
-- Une soirée est sélectionné, tout les autres user doivent raid la soirée. Une "soirée" peut être un évènements enregistré __ou__ un attroupement d'étudiants dans une zone. L'attroupement est défini sur base de la densité des photos dans une zone.
-- Une page qui s'ouvre automatiquement quand la purge est lancée, pour dire ou elle est, ou pour dire qu'on est sélectionner
+```sh
+npm install
+```
 
-### Objet trouvé (3 pages)
-Page à part du site
-- Liste des objets
-- Ajouter un objet (nom, image, position)
-- Modifier son status (trouvé, rendu aux propriétaire)
+Le lancement de la base de données :
+```sh
+(linux)
+sudo systemctl start mongod
 
-# Nombre de pages : 12
+(mac)
+brew services start mongodb-community
+```
+
+L'importation ou la création des données initiales.
+```sh
+mongorestore --db findaparty ./db
+```
+
+Variable d'environement à définir selon les besoins.
+
+Pour les utiliser, créer un fichier .env à la racine du projet et copier coller les lignes voulues.
+
+```sh
+// Obligatoire
+DB_NAME=findaparty
+
+// Optionnels
+PORT=3000
+SESSION_SECRET=a-production-secret
+MONGO_URL=mongodb://localhost:27017
+NO_HTTPS=0
+```
+
+L'URL d'accès locale : https://localhost:3000
+
+## Lancer le site web
+
+Le lancement du serveur web :
+
+```sh
+npm start
+```
