@@ -12,7 +12,7 @@ And Le commentaire est valide
 
 When L'utilisateur soumet son commentaire
 
-Then Le site publie lcommentaire en dessous de la soirée et la rend disponible aux autres utilisateurs
+Then Le site publie le commentaire en dessous de la soirée et le rend disponible aux autres utilisateurs
 
     Scenario: Commentaire refusé
 
@@ -23,3 +23,13 @@ And L'utilisateur essaye d'ajouter un commentaire
 When L'utilisateur soumet son commentaire
 
 Then Le site renvoie une alerte lui demandant de créer un compte.
+
+    Scenario: Commentaire vide
+
+Given L'utilisateur a un compte
+
+And Le commentaire est vide
+
+When L'utilisateur soumet son commentaire
+
+Then Le site renvoie une alerte lui demandant d'écrire un commentaire avant de le soumettre.
