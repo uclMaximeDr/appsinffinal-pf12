@@ -36,6 +36,12 @@
     
             <textarea class="party_input" id="comment_data" placeholder="Poster ton avis" rows="2" cols="60"></textarea>
             <div class = "subbar-input">
+                <% if( connected ) { %>
+                    <div class="controls">
+                        <button class="party_edit" data-edit = "<%= party._id%>" > Modifier </button>
+                        <button class="party_delete" data-delete = "<%= party._id%>" > X </button>
+                    </div>
+                <% } %>
                 <button class="button-comment" id ="share"> Partager </button>
                 <button class="button-comment" id="comment_post" data-party_id = "<%= party._id%>" > Poster </button>
     
@@ -48,7 +54,7 @@
                         <div class="comment">
                             <div class="user">
                                 <img src="/api/user/profile-picture/<%= user_comment.user._id %>" alt="user">
-                                <span><%= user_comment.user.fullname %></span>
+                                <p><span><%= user_comment.user.fullname %></span> <span><%- formattedDate %></span></p>
                                 <% if(user_comment.user_id == self_user_id){ %>
                                     <button class="delete-comment" data-comment_id = "<%= user_comment._id%>" > Supprimer </button>
                                 <% } %>
