@@ -7,6 +7,8 @@
         
         <div class="data-box">
             <p id="demo"></p>
+
+            <!-- Edit party -->
             <% if (id_saved && data_party) {%>
                 <h1>Tu souhaites modifier ta soirée ? Pas de problème !</h1>
                 <div class="addressContainer">
@@ -19,14 +21,14 @@
                 </div>
 
                 <input class="party_line" id="party_title" type="text" placeholder="Modification Titre*" value="<%= data_party.title%>">
+
                 <!-- Mode Raid -->
-                
                 <div class="checkBoxContainer">
                     <input type="checkbox" id="party_raid" <%= data_party.raid ? 'checked' : '' %>>
                     <label class="containerRaid"> Mode raid</label>
                     <p class="information">Ajoute votre soirée au tirage aléatoire de 19h pour attirer plus de fêtards chez vous.</p>
                 </div>
-                <!-- Amis seulement -->
+                <!-- Friends Only -->
                 <div class="checkBoxContainer">
                     <input type="checkbox" id="party_friendOnly" <%= data_party.friendOnly ? 'checked' : '' %>>
                     <label class="containerRaid"> Amis seulement</label>
@@ -37,6 +39,8 @@
 
 
             <%} else {%>
+
+                <!-- Create party -->
                 <h1>On va crée une soirée ensemble !</h1>
                 <div class="addressContainer">
                     <input class="party_line" id="party_address" type="text" placeholder="Adresse*">
@@ -69,6 +73,7 @@
 
         </div>
 
+        <!-- Rules party -->
         <div class="rulesContainer">
             <h2>FindMyParty - Règles</h2>
             <div class="rules">

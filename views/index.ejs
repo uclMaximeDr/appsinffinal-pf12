@@ -21,6 +21,7 @@
             </div>
         </div>
 
+        <!-- Party card info-->
         <div class = "cardContainer">
         <%parties.forEach(party =>{%>
             <div class = "cardParty" data-friend="<%= party.user.isFriend %>">
@@ -38,7 +39,10 @@
         </div>
     </div>
     
+    <!-- Display map with markers-->
     <div id="map"></div>
+
+    <!-- Display page button-->
     <div class="links">
         <a href="/user/login" title="Gestion du compte">
             <img src="/icons/user.svg" alt="User icon" />

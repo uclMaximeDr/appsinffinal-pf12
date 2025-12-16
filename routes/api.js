@@ -164,10 +164,16 @@ apiRouter.post('/user/sendFriendRequest' , async function (req, res, next) {
     const db = req.app.locals.db;
     const id = req.body.id;
 
-    // Prevents us from adding ourselves as a friend
-    if (id.toString() == req.session.userid.toString())
-    {
-        throw new Error("Cannot be your own friend.")
+    if (req.session.userid == null) {
+        res.status(401).send("Not logged in!");
+        return;
+    }
+    else {
+        // Prevents us from adding ourselves as a friend
+        if (id.toString() == req.session.userid.toString())
+        {
+            throw new Error("Cannot be your own friend.")
+        }
     }
 
     if (!(await isFriend(db, req.session.userid, id) && !hasSentRequest(db, req.session.userid, id))) {
@@ -189,13 +195,19 @@ apiRouter.post('/user/addFriend', async function (req, res, next) {
     const db = req.app.locals.db;
     const id = req.body.id;
 
-    // Prevents us from adding ourselves as a friend
-    if (id.toString() == req.session.userid.toString())
-    {
-        throw new Error("Cannot be your own friend.")
+    if (req.session.userid == null) {
+        res.status(401).send("Not logged in!");
+        return;
+    }
+    else {
+        // Prevents us from adding ourselves as a friend
+        if (id.toString() == req.session.userid.toString())
+        {
+            throw new Error("Cannot be your own friend.")
+        }
     }
 
-    if (!(await isFriend(db, req.session.user_id, id)) && await hasSentRequest(db, req.session.userid, id)) {
+    if (!(await isFriend(db, req.session.user_id, id)) && await hasSentRequest(db, req.session.userid, id) === true) {
 
         // Adds a new friendship to the database
         const friendShip = [req.session.userid, id];
@@ -220,10 +232,16 @@ apiRouter.post('/user/removeFriend', async function (req, res, next) {
     const db = req.app.locals.db;
     const id = req.body.id;
 
-    // Prevents us from removing ourselves as a friend
-    if (id.toString() == req.session.userid.toString())
-    { 
-        throw new Error("Cannot be your own friend.")
+    if (req.session.userid == null) {
+        res.status(401).send("Not logged in!");
+        return;
+    }
+    else {
+        // Prevents us from adding ourselves as a friend
+        if (id.toString() == req.session.userid.toString())
+        {
+            throw new Error("Cannot be your own friend.")
+        }
     }
 
     if (await isFriend(db, req.session.userid, id)) {
@@ -238,14 +256,14 @@ apiRouter.post('/user/removeFriend', async function (req, res, next) {
 
         res.send({success: true})
     }
-    else if (await hasSentRequest(db, req.session.userid, id)) {
+    else if ((await hasSentRequest(db, req.session.userid, id)) === true) {
 
         // Cancel sent request if exists
         await db.collection("friendRequest").deleteOne({ from_id: new ObjectId(req.session.userid), to_id: new ObjectId(id) });
         // Decline received request if exists
         await db.collection("friendRequest").deleteOne({ from_id: new ObjectId(id), to_id: new ObjectId(req.session.userid) });
 
-        res.send({ success: true });
+        res.send({ success: true, message: "Successfully canceled request" });
     }
     else {
 
@@ -289,17 +307,18 @@ apiRouter.post("/uploadPhoto", (req, res) => {
 
 // ### PARTY ###
 
-// Création soirée
+// Create a party
 apiRouter.post('/create', async function (req, res, next) {
     const database = req.app.locals.db;
 
     const {address, latitude, longitude, title, description, raid, friendOnly} = req.body;
     const username = (await database.collection('users').findOne({ _id: new ObjectId(req.session.userid) }))?.fullname;
-    //Conversion string bool vers bool
+
+    //Convert string to bool
     const raid_bool = (raid == 'true' ? true : false);
     const friendOnly_bool = (friendOnly == 'true' ? true : false);
 
-    // Soumettre nouvelle soirée
+    // Insert party in database
     if (req.session.userid != null && !req.session.id_saved){
         
         const party = await database.collection('party').insertOne({date: new Date(), address, latitude, longitude, title, description, raid : raid_bool, friendOnly: friendOnly_bool, user_id: new ObjectId(req.session.userid) });
@@ -315,25 +334,26 @@ apiRouter.post('/create', async function (req, res, next) {
             _id: party.insertedId
         });
     }
-    // Modifier soirée avec même identifiant
+    // Edit party in database
     else if (req.session.userid != null && req.session.id_saved){
         await database.collection('party').updateOne({_id: new ObjectId(req.session.data_party._id)},{$set: {date: new Date(), address, latitude, longitude, title, description, raid: raid_bool, friendOnly: friendOnly_bool}});
         res.send({success : true,  message : "Soirée modifiée !"});
     }
-    // Refus
+    // Denied
     else{
         res.send({success : false, message : "Soirée non crée, pas de compte connecté."});
     }
 })
 
-// Modification soirée
+// Edit a party
 apiRouter.post('/edit', async function (req, res, next) {
     const database = req.app.locals.db;
     const edit_id = req.body.edit_id;
+
     req.session.data_party = await database.collection('party').findOne({ _id: new ObjectId(edit_id) });
     req.session.id_saved = new ObjectId(edit_id);
 
-    // Vérification si identifiant reçu
+    // Check if user connected and no request for edit
     if (req.session.userid != null && req.session.id_saved != null){
         res.send({success : true,  message : "Soirée modifiée !"});
     }
@@ -342,12 +362,12 @@ apiRouter.post('/edit', async function (req, res, next) {
     }
 })
 
-// Suppression soirée
+// Delete a party
 apiRouter.post('/delete', async function (req, res, next) {
     const database = req.app.locals.db;
     const delete_id = req.body.delete_id;
     
-    // Vérification si identifiant reçu
+    // Check if user connected and request for edit
     if (req.session.userid != null && delete_id != null){
         await database.collection('party').deleteOne({_id: new ObjectId(delete_id)});
         res.send({success : true, message : "Soirée supprimée !"});
@@ -357,31 +377,31 @@ apiRouter.post('/delete', async function (req, res, next) {
     }
 })
 
-// Téléchargement des images d'une soirée
+// Download pictures of a party
 apiRouter.get('/downloadPartyPictures', async function (req, res, next) {
     const database = req.app.locals.db;
     const party_id = req.query.party_id;
 
-    // Récupération des images associées à la soirée
+    // Get pictures bound to the party
     const images = await database.collection('photos').find({ partyId: new ObjectId(party_id)}).map(photo => photo.filename).toArray();
     
-    // Vérification si des images existent pour cette soirée
+    // Check if there are existing pictures for this party
     if (images.length === 0) {
         return res.status(404).send("Aucune image trouvée pour cette soirée.");
     }
 
-    // Création d'un dossier temporaire pour stocker les images
+    // Create a temporary folder to store pictures
     const tempDir = `temp_${Date.now()}`;
     fs.mkdirSync(tempDir);
 
-    // Copie des images dans le dossier temporaire
+    // Copie those pictures to the temporary folder
     images.forEach(img => {
         const srcPath = `uploads/${img}`;
         const destPath = `${tempDir}/${img}`;
         fs.copyFileSync(srcPath, destPath);
     });
 
-    // Création d'une archive ZIP des images
+    // Create a ZIP archive for the pictures
     const archive = archiver('zip', { zlib: { level: 9 } });
     res.attachment('party_images.zip');
 
@@ -392,45 +412,45 @@ apiRouter.get('/downloadPartyPictures', async function (req, res, next) {
     archive.directory(tempDir, false);
     archive.finalize();
 
-    // Suppression du dossier temporaire après l'envoi
+    // Delete temporary folder after the archive was send
     archive.on('end', () => {
         fs.rmSync(tempDir, { recursive: true, force: true });
     });
 
-    // Gestion des erreurs lors de la création de l'archive
+    // Error display if there is a problem during archive creation
     archive.on('error', (err) => {
         console.error('Erreur lors de la création de l\'archive ZIP :', err);
         res.status(500).send("Erreur lors de la création de l'archive ZIP.");
     });
 })
 
-// ### COMMENTAIRE ###
+// ### COMMENT ###
 
-// Création commentaire
+// Create a comment
 apiRouter.post('/comment_create', async function (req, res, next) {
     const database = req.app.locals.db;
 
     const {comment} = req.body;
     const party_id = req.body.party_id;
 
-    // Soumettre commentaire
+    // Add comment to the database
     if (req.session.userid != null){
         await database.collection('comments').insertOne({date: Date(), party_id : new ObjectId(party_id), comment, user_id: new ObjectId(req.session.userid) });
         res.send({success : true, message : "Commentaire crée !"});
     }
-    // Refus
+
     else{
         res.send({success : false, message : "Commentaire non crée, pas de compte connecté."});
     }
 })
 
 
-// Suppression commentaire
+// Delete comment
 apiRouter.post('/comment_delete', async function (req, res, next) {
     const database = req.app.locals.db;
     const delcom_id = req.body.delcom_id;
     
-    // Vérification si identifiant reçu
+    // Check if delete id received 
     if (req.session.userid != null && delcom_id != null){
         await database.collection('comments').deleteOne({user_id: new ObjectId(req.session.userid), _id: new ObjectId(delcom_id)});
         res.send({success : true, message : "Commentaire supprimée !"});
@@ -440,16 +460,16 @@ apiRouter.post('/comment_delete', async function (req, res, next) {
     }
 })
 
-// ## Note ##
+// ## Rate ##
 
-// Donner une note
+// Give a rating
 apiRouter.post('/rating', async function (req, res, next) {
     const database = req.app.locals.db;
     const {rate, party_id} = req.body;
     
-    // Vérification si identifiant reçu
+    // Check if identification received
     if (req.session.userid != null){
-        // Crée doc si existe pas sinon update
+        // Submit rating in database if not in then create else edit
         await database.collection('rating').updateOne({user_id: new ObjectId(req.session.userid), party_id: new ObjectId(party_id)},{$set: {rate}}, { upsert: true });
         res.send({success : true, message : "Noter !"});
     }
@@ -482,26 +502,26 @@ function uploadImage(req, res, context) {
                 return resolve(null);
             }
 
-            // On récupère l'utilisateur
+            // Get user
             const id = req.session?.userid;
             if (!id) return res.status(401).json({ error: "Utilisateur non connecté" });
 
             if(context === 'profilePicture') {
-                // On met à jour la photo de profil de l'utilisateur
+                // Update user profile picture
                 await db.collection("users").updateOne(
                     { _id: new ObjectId(id) },
                     { $set: { profilePicture: req.file.filename } }
                 );
             } else if(context === 'photoUpload') {
-                // Coordonnées GPS (optionnelles)
+                // coordinates GPS (optional)
                 let lat = req.body.lat ? parseFloat(req.body.lat) : null;
                 let lng = req.body.lng ? parseFloat(req.body.lng) : null;
                 const location = (lat !== null && lng !== null) ? { type: "Point", coordinates: [lng, lat] } : null;
 
-                // Recherche de la soirée la plus proche si des coordonnées sont fournies
+                // Search nearest party
                 const nearestParty = location ? await findNearestParty(db, lat, lng) : null;
     
-                // On crée l'objet photo
+                // Create picture object
                 const photoDoc = {
                     filename: req.file.filename,
                     uploadedBy: new ObjectId(id),
@@ -510,7 +530,7 @@ function uploadImage(req, res, context) {
                     partyId: nearestParty ? nearestParty._id : null
                 };
     
-                // On insère la photo dans la collection
+                // Insert picture in the database
                 await db.collection("photos").insertOne(photoDoc);
             }
 
