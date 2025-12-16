@@ -164,10 +164,16 @@ apiRouter.post('/user/sendFriendRequest' , async function (req, res, next) {
     const db = req.app.locals.db;
     const id = req.body.id;
 
-    // Prevents us from adding ourselves as a friend
-    if (id.toString() == req.session.userid.toString())
-    {
-        throw new Error("Cannot be your own friend.")
+    if (req.session.userid == null) {
+        res.status(401).send("Not logged in!");
+        return;
+    }
+    else {
+        // Prevents us from adding ourselves as a friend
+        if (id.toString() == req.session.userid.toString())
+        {
+            throw new Error("Cannot be your own friend.")
+        }
     }
 
     if (!(await isFriend(db, req.session.userid, id) && !hasSentRequest(db, req.session.userid, id))) {
@@ -189,13 +195,19 @@ apiRouter.post('/user/addFriend', async function (req, res, next) {
     const db = req.app.locals.db;
     const id = req.body.id;
 
-    // Prevents us from adding ourselves as a friend
-    if (id.toString() == req.session.userid.toString())
-    {
-        throw new Error("Cannot be your own friend.")
+    if (req.session.userid == null) {
+        res.status(401).send("Not logged in!");
+        return;
+    }
+    else {
+        // Prevents us from adding ourselves as a friend
+        if (id.toString() == req.session.userid.toString())
+        {
+            throw new Error("Cannot be your own friend.")
+        }
     }
 
-    if (!(await isFriend(db, req.session.user_id, id)) && await hasSentRequest(db, req.session.userid, id)) {
+    if (!(await isFriend(db, req.session.user_id, id)) && await hasSentRequest(db, req.session.userid, id) === true) {
 
         // Adds a new friendship to the database
         const friendShip = [req.session.userid, id];
@@ -220,10 +232,16 @@ apiRouter.post('/user/removeFriend', async function (req, res, next) {
     const db = req.app.locals.db;
     const id = req.body.id;
 
-    // Prevents us from removing ourselves as a friend
-    if (id.toString() == req.session.userid.toString())
-    { 
-        throw new Error("Cannot be your own friend.")
+    if (req.session.userid == null) {
+        res.status(401).send("Not logged in!");
+        return;
+    }
+    else {
+        // Prevents us from adding ourselves as a friend
+        if (id.toString() == req.session.userid.toString())
+        {
+            throw new Error("Cannot be your own friend.")
+        }
     }
 
     if (await isFriend(db, req.session.userid, id)) {
@@ -238,14 +256,14 @@ apiRouter.post('/user/removeFriend', async function (req, res, next) {
 
         res.send({success: true})
     }
-    else if (await hasSentRequest(db, req.session.userid, id)) {
+    else if ((await hasSentRequest(db, req.session.userid, id)) === true) {
 
         // Cancel sent request if exists
         await db.collection("friendRequest").deleteOne({ from_id: new ObjectId(req.session.userid), to_id: new ObjectId(id) });
         // Decline received request if exists
         await db.collection("friendRequest").deleteOne({ from_id: new ObjectId(id), to_id: new ObjectId(req.session.userid) });
 
-        res.send({ success: true });
+        res.send({ success: true, message: "Successfully canceled request" });
     }
     else {
 
