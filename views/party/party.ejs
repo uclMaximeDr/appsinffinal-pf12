@@ -5,10 +5,9 @@
     <img src="/icons/leftarrow.svg" alt="Back icon" id="back" width="35px">
     <div class="content">
 
+         <!-- Display party info-->
         <div class="data-box">
-    
             <div class="user-info">
-    
                 <img src="/api/user/profile-picture/<%= user._id %>" alt="user">
                 <a href="/user/profile/<%= user._id %>"><%= user.fullname %></a>
 
@@ -16,12 +15,12 @@
                     <h6>Mode Raid activé %></h5>
                 <%}%>
                 <h4>Date : <span><%- formattedDate %></span><br>Lieu : <span id="party-address"><%= party.address %></span></h4>
-                
             </div>
     
             <h2><strong></strong> <%= party.title %></h2>
             <p id = "description"><strong> <%= party.description %></strong></p>
 
+            <!-- Show pictures party -->
             <% if (images && images.length > 0) { %>
                 <button id="downloadPicture" data-party_id = "<%= party._id%>">Télécharger les images</button>
                 <div class="imageContainer">
@@ -36,24 +35,28 @@
     
             <textarea class="party_input" id="comment_data" placeholder="Poster ton avis" rows="2" cols="60"></textarea>
             <div class = "subbar-input">
+
+                <!-- Owner modification and delete -->
                 <% if( connected ) { %>
                     <div class="controls">
                         <button class="party_edit" data-edit = "<%= party._id%>" > Modifier </button>
                         <button class="party_delete" data-delete = "<%= party._id%>" > X </button>
                     </div>
                 <% } %>
+
                 <button class="button-comment" id ="share"> Partager </button>
                 <button class="button-comment" id="comment_post" data-party_id = "<%= party._id%>" > Poster </button>
     
             </div>
     
-            <!-- Affichage des commentaire avex image, pseudo, commentaire-->
+            <!-- Display comments with pictures, pseudo, comments and date-->          
             <div class="comment">
                 <% if (comments && comments.length != 0) { %>
                     <% comments.forEach(user_comment =>{%>
                         <div class="comment">
                             <div class="user">
                                 <img src="/api/user/profile-picture/<%= user_comment.user._id %>" alt="user">
+                                <!-- Just for a single space -->
                                 <p><span><%= user_comment.user.fullname %></span> <span><%- formattedDate %></span></p>
                                 <% if(user_comment.user_id == self_user_id){ %>
                                     <button class="delete-comment" data-comment_id = "<%= user_comment._id%>" > Supprimer </button>
@@ -66,15 +69,12 @@
                     <p>Pas de commentaire.</p>
                 <%} %>
             </div>
-    
-            
-    
         </div>
-    
+
+
+        <!-- Display stars based on user rating-->
         <div class="rating" >
-    
             <p>Votre avis nous intéresse !</p>
-            <!-- Affichage des étoiles en fonction de la note de l'utilisateur-->
             <%for (let i = 1; i < 6; i++){ %>
                 <% if( rating != null && i <= rating.rate){%>
                     <button><span class="star" data-rate = "<%= i %>" data-party_id = "<%= party._id%>">★</span></button>
@@ -83,7 +83,8 @@
                 <%}%>
             <%}%>
             <br>
-            <!-- Création avec boucle de la note de soirée -->
+
+            <!-- Loop to display star-->
             <%for (let i = 1; i < 6; i++){ %>
                 <span>(<%= vote_tot[5-i] %>)</span>
                 <%for (let j = i; j < 6; j++){ %>
@@ -92,7 +93,7 @@
                 <br>
             <%}%>
             
-            <!-- Affiche note-->
+            <!-- Display rating-->
             <% if (rating != null) { %>
                 <h3 id="output">La note est : <span><%= rating.rate%></span>/5</h3>
             <%} else { %>

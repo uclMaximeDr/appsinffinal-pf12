@@ -235,7 +235,7 @@ router.get('/user/pendingInvites', async (req, res) => {
     
 
 router.get('/user/edit', async (req, res) => {
-
+    
     if(!req.session || !req.session.userid) {
         res.redirect("/user/login");
         return;
@@ -270,9 +270,10 @@ router.get('/party/:id', async function(req, res){
     const images = await database.collection('photos').find({ partyId: new ObjectId(req.params.id)}).map(photo => photo._id).toArray();
     const friends = await isFriend(database, new ObjectId(req.session.userid), new ObjectId(party.user_id));
     
-    // Counter total du nombre de like par nombre d'étoiles
+
+    // Count total of people for each rating
     for (let i = 1; i < 6; i++){
-        //Convertion en string sinon string et int pas les mêmes
+        // Convert to string else error string and int not the same
         star = await database.collection('rating').countDocuments({party_id: new ObjectId(req.params.id), rate: i.toString()});
         vote_tot.push(star);
     }
@@ -294,7 +295,7 @@ router.get('/party/:id', async function(req, res){
         res.render("party/party", {user:user, party: party, formattedDate: formattedDate, comments: comments_with_user, connected: connected, rating:rating, vote_tot, self_user_id: req.session.userid, images: images});
     }else{
         res.status(404).render("404");
-        // Problème de header sinon
+        // To prevent header error
         return;
     }
 });

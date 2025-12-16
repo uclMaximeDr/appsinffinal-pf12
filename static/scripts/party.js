@@ -4,7 +4,7 @@ $('#back').click(() => {
     window.location.href = '/';
 })
 
-//Obtenir position user - W3school tuto
+// Get GPS position - W3school tuto
 const addressInput = $('#party_address');
 let party_coord = null;
 function getLocation(){
@@ -15,20 +15,21 @@ function getLocation(){
   }
 }
 
+// Set lat and lon coordinates
 function setPosition(position) {
   party_coord = {lat : position.coords.latitude,lon: position.coords.longitude }
   addressInput.val(position.coords.latitude + ", " + position.coords.longitude);
 }
 
 
-// Obtenir position gps de l'utilisateur
+// Get location button
 $('#location').click(async () => {
   party_coord = await getLocation();
 });
 
 
 
-// Soumettre une soirée
+// Submit party
 $('#party_submit').click(async () => {
   const address = $('#party_address').val();
   const title = $('#party_title').val();
@@ -43,7 +44,7 @@ $('#party_submit').click(async () => {
     return;
   }
 
-  //Vérifie si l'adresse est valable
+  // Check if the address is valid
   if (!party_coord){
     party_coord = await geocode(address);
     if (!party_coord) {
@@ -51,6 +52,7 @@ $('#party_submit').click(async () => {
       return;
     }
 
+    // Convert string to float
     lat = parseFloat(party_coord.lat);
     lon = parseFloat(party_coord.lon);
   }
@@ -61,13 +63,13 @@ $('#party_submit').click(async () => {
   }
 
   party_coord = null;
-  //Coordonnées limite Ottignies Louvain-la-Neuve
+  // Geographical Restriction Ottignies Louvain-la-Neuve
   if(lat > 50.67914 || lat < 50.65410 || lon > 4.63333 || lon < 4.59165){
     showModal("Adresse en dehors de Louvain-La-Neuve, veuillez insérer une adresse valide.");
     return;
   }
 
-
+// Send request create party
   $.post("/api/create", {address: address, latitude : lat, longitude:lon, title: title, description: description, raid, friendOnly}, function (data) {
     if (data.success) {
       window.location.href = "/";
@@ -77,7 +79,7 @@ $('#party_submit').click(async () => {
   })
 })
 
-// Modifier une soirée
+// Send request edit party
 $('.party_edit').click(function () {
   const edit_id = $(this).data("edit");
 
@@ -92,7 +94,7 @@ $('.party_edit').click(function () {
 
 })
 
-// Supprimer une soirée
+// Send request delete party
 $('.party_delete').click(function () {
 
   if(!confirm("Tu es certain de vouloir supprimer cette soirée ?")){
@@ -113,8 +115,9 @@ $('.party_delete').click(function () {
 
 })
 
-// ### PARTAGE ###
+// ### SHARE ###
 
+// Send request share party
 $('#share').click(function() {
   const shareData = {
     title: "Partage de soirée - FindMyParty",
@@ -136,7 +139,7 @@ $('#share').click(function() {
 
 // ### COMMENT ### 
 
-// Poster un commentaire
+// Send request post comment
 $('#comment_post').click(function () {
   const comment = $('#comment_data').val();
   const party_id = $(this).data("party_id");
@@ -156,7 +159,7 @@ $('#comment_post').click(function () {
   })
 })
 
-// Supprimer son commentaire
+// Send request delete comment
 $('.delete-comment').click(function () {
 
   if(!confirm("Tu es certain de supprimer ce commentaire ?")){
@@ -178,7 +181,7 @@ $('.delete-comment').click(function () {
 })
 
 
-// Rating
+// Send request rating
 $('.rating span').click(function () {
 
   const rate_s = $(this).data("rate");
