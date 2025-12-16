@@ -63,7 +63,7 @@ router.get('/', async function(req, res){
             formattedDate: formatDate(party.date),
             user: {
                 fullname: (await database.collection('users').findOne({_id : new ObjectId(party.user_id)})).fullname,
-                isFriend: req.session.userid ? (await database.collection('friendship').findOne({ id_1: { $in: [new ObjectId(req.session.userid), new ObjectId(party.user_id)] }, id_2: { $in: [new ObjectId(req.session.userid), new ObjectId(party.user_id)] } }) != null) : false
+                isFriend: await isFriend(database, req.session.userid, party.user_id)
             },
             image: (await database.collection('photos').findOne({partyId : party._id}))?._id || null,
             averageRating: total
