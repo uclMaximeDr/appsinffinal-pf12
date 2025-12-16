@@ -41,8 +41,6 @@ MONGO_URL=mongodb://localhost:27017
 NO_HTTPS=0
 ```
 
-L'URL d'accès locale : https://localhost:3000
-
 ## Lancer le site web
 
 Le lancement du serveur web :
@@ -50,3 +48,5 @@ Le lancement du serveur web :
 ```sh
 npm start
 ```
+
+L'URL d'accès locale : https://localhost:3000
