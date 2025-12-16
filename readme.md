@@ -26,9 +26,9 @@ L'importation ou la création des données initiales.
 mongorestore --db findaparty ./db
 ```
 
-Variable d'environement à définir selon les besoins.
+Variable d'environnement à définir selon les besoins.
 
-Pour les utiliser, créer un fichier .env à la racine du projet et copier coller les lignes voulues.
+Pour les utiliser, créer un fichier .env à la racine du projet et copier-coller les lignes voulues.
 
 ```sh
 // Obligatoire
