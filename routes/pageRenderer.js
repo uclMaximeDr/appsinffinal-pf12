@@ -89,7 +89,21 @@ router.get('/search', async function (req, res, next) {
 
     const parties = await database.collection('party').find().toArray();
 
-    const partiesWithNames = await Promise.all(parties.map(async party => {
+    const partiesInfo = await Promise.all(parties.map(async party => {
+        return {
+            ...party,
+            user: {
+                isFriend: await isFriend(database, req.session.userid, party.user_id)
+            },
+        };
+    }));
+
+    // List without private parties
+    const filteredFriend = partiesInfo.filter(party => {
+        return !party.friendOnly || party.user.isFriend || party.user_id == req.session.userid;
+    });
+
+    const partiesWithNames = await Promise.all(filteredFriend.map(async party => {
             return {
                 ...party,
                 userFullname: await GetFullName(database, party.user_id)
@@ -171,7 +185,7 @@ router.get('/user/profile/:id', async (req, res) => {
             ...party,
             formattedDate: formatDate(party.date),
             user: {
-                isFriend: req.session.userid ? (await database.collection('friendship').findOne({ id_1: { $in: [new ObjectId(req.session.userid), new ObjectId(party.user_id)] }, id_2: { $in: [new ObjectId(req.session.userid), new ObjectId(party.user_id)] } }) != null) : false
+                isFriend: await isFriend(database, req.session.userid, party.user_id)
             },
             images: await (database.collection('photos').find({partyId : new ObjectId(party._id)})).map(photo => photo._id).toArray(),
             ratings: await database.collection('rating').find({party_id : new ObjectId(party._id)}).map(rating => parseInt(rating.rate)).toArray()
