@@ -4,3 +4,4 @@ temp/
 uploads/
 package-lock.json
 coverage/
+db/
