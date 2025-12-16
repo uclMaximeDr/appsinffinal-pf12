@@ -92,8 +92,8 @@ router.get('/search', async function (req, res, next) {
     const partiesInfo = await Promise.all(parties.map(async party => {
         return {
             ...party,
+            userFullname: await GetFullName(database, party.user_id),
             user: {
-                userFullname: await GetFullName(database, party.user_id),
                 isFriend: await isFriend(database, req.session.userid, party.user_id)
             },
         };
