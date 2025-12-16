@@ -82,5 +82,6 @@ module.exports = {
     formatDate,
     isFriend,
     hasSentRequest,
-    computeTFIDF
+    computeTFIDF,
+    countWordOccurrences
 };
