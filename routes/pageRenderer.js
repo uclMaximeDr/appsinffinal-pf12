@@ -290,7 +290,7 @@ router.get('/party/:id', async function(req, res){
     }));
     const connected = req.session ? (req.session.userid == party.user_id) : false;
     
-    if (friends || req.session.userid == party.user_id){
+    if (friends || req.session.userid == party.user_id || req.session.userid == null || party.friendOnly == false){
         res.render("party/party", {user:user, party: party, formattedDate: formattedDate, comments: comments_with_user, connected: connected, rating:rating, vote_tot, self_user_id: req.session.userid, images: images});
     }else{
         res.status(404).render("404");
