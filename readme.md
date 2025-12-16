@@ -50,3 +50,14 @@ npm start
 ```
 
 L'URL d'accès locale : https://localhost:3000
+
+## Lancer les tests unitaires
+
+```sh
+npm test
+```
+
+Avec le coverage :
+```sh
+npm test -- --coverage
+```
