@@ -113,7 +113,7 @@ apiRouter.post('/user/edit', async function (req, res, next) {
         const updateData = {};
         if (username) updateData.fullname = username;
         if (email) updateData.email = email;
-        if (password) updateData.password = password;
+        if (password) updateData.password = await hashPassword(password);;
 
         await database.collection('users').updateOne(
             { _id: new ObjectId(req.session.userid) },
