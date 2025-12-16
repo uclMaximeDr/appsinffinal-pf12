@@ -1,17 +1,17 @@
 const express = require('express');
-const router = express.Router();
+const apiRouter = express.Router();
 const multer = require('multer');
 const { ObjectId } = require("mongodb");
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 12;
 const fs = require('fs');
 const archiver = require('archiver');
-const { isFriend, hasSentRequest } = require('../utils')
+const { isFriend, hasSentRequest } = require('../utils');
 
 // Routes
 
 // ### LOGIN && REGISTER ###
-router.post('/login', async function (req, res, next) {
+apiRouter.post('/login', async function (req, res, next) {
     
     const database = req.app.locals.db;
     const { email, password } = req.body;
@@ -25,7 +25,7 @@ router.post('/login', async function (req, res, next) {
     }
 });
 
-router.post('/register', async function (req, res, next) {
+apiRouter.post('/register', async function (req, res, next) {
     
     const database = req.app.locals.db;
 
@@ -49,7 +49,7 @@ router.post('/register', async function (req, res, next) {
 
 })
 
-router.post('/disconnect', async function (req, res, next) {
+apiRouter.post('/disconnect', async function (req, res, next) {
 
     if (req.session.userid != null)
         {
@@ -63,7 +63,7 @@ router.post('/disconnect', async function (req, res, next) {
 })
 
 // ### USER INFO ###
-router.get('/user/profile-picture/me', async function (req, res, next) {
+apiRouter.get('/user/profile-picture/me', async function (req, res, next) {
     // Default function to return the profile picture of the currently connected user
 
     const database = req.app.locals.db;
@@ -81,7 +81,7 @@ router.get('/user/profile-picture/me', async function (req, res, next) {
     res.redirect(`/api/user/profile-picture/${user._id}`);
 });
 
-router.get('/user/profile-picture/:id', async function (req, res, next) {
+apiRouter.get('/user/profile-picture/:id', async function (req, res, next) {
     // Global function to send the profile picture of an id
 
     const database = req.app.locals.db;
@@ -105,7 +105,7 @@ router.get('/user/profile-picture/:id', async function (req, res, next) {
     res.sendFile(`uploads/${filename}`, { root: '.' })
 });
 
-router.post('/user/edit', async function (req, res, next) {
+apiRouter.post('/user/edit', async function (req, res, next) {
     const database = req.app.locals.db;
     
     uploadImage(req, res, "profilePicture").then(async (filename) => {
@@ -128,7 +128,7 @@ router.post('/user/edit', async function (req, res, next) {
     });
 });
 
-router.post('/user/delete', async function (req, res, next) {
+apiRouter.post('/user/delete', async function (req, res, next) {
     const database = req.app.locals.db;
 
     await database.collection('users').updateOne({ _id: new ObjectId(req.session.userid) }, { $set: {
@@ -142,7 +142,7 @@ router.post('/user/delete', async function (req, res, next) {
     res.send({ success: true });
 });
 
-router.get('/user/search', async function(req, res, next) {
+apiRouter.get('/user/search', async function(req, res, next) {
     
     const db = req.app.locals.db;
     const query = req.query.q.toLowerCase().trim(); // Get the text from the request
@@ -158,7 +158,7 @@ router.get('/user/search', async function(req, res, next) {
     }));
 })
 
-router.post('/user/sendFriendRequest' , async function (req, res, next) {
+apiRouter.post('/user/sendFriendRequest' , async function (req, res, next) {
     // Function to add a new friend
     
     const db = req.app.locals.db;
@@ -183,7 +183,7 @@ router.post('/user/sendFriendRequest' , async function (req, res, next) {
     }
 })
 
-router.post('/user/addFriend', async function (req, res, next) {
+apiRouter.post('/user/addFriend', async function (req, res, next) {
     // Function to add a new friend
     
     const db = req.app.locals.db;
@@ -214,7 +214,7 @@ router.post('/user/addFriend', async function (req, res, next) {
     }
 })
 
-router.post('/user/removeFriend', async function (req, res, next) {
+apiRouter.post('/user/removeFriend', async function (req, res, next) {
     // Function to remove an existing friend or cancel a friend request
     
     const db = req.app.locals.db;
@@ -254,7 +254,7 @@ router.post('/user/removeFriend', async function (req, res, next) {
 })
 
 // ### CAPTCHA ###
-router.post('/validate-captcha', function (req, res, next) {
+apiRouter.post('/validate-captcha', function (req, res, next) {
     const parts = JSON.parse(req.body.parts);
     const correctParts = ['1-1', '2-2', '2-3', '1-3', '2-1'];
     
@@ -276,7 +276,7 @@ router.post('/validate-captcha', function (req, res, next) {
 
 
 // ### CAMERA ###
-router.post("/uploadPhoto", (req, res) => {
+apiRouter.post("/uploadPhoto", (req, res) => {
     uploadImage(req, res, 'photoUpload')
         .then(async (filename) => {
             res.send({ success: true, filename: filename });
@@ -290,7 +290,7 @@ router.post("/uploadPhoto", (req, res) => {
 // ### PARTY ###
 
 // Création soirée
-router.post('/create', async function (req, res, next) {
+apiRouter.post('/create', async function (req, res, next) {
     const database = req.app.locals.db;
 
     const {address, latitude, longitude, title, description, raid, friendOnly} = req.body;
@@ -327,7 +327,7 @@ router.post('/create', async function (req, res, next) {
 })
 
 // Modification soirée
-router.post('/edit', async function (req, res, next) {
+apiRouter.post('/edit', async function (req, res, next) {
     const database = req.app.locals.db;
     const edit_id = req.body.edit_id;
     req.session.data_party = await database.collection('party').findOne({ _id: new ObjectId(edit_id) });
@@ -343,7 +343,7 @@ router.post('/edit', async function (req, res, next) {
 })
 
 // Suppression soirée
-router.post('/delete', async function (req, res, next) {
+apiRouter.post('/delete', async function (req, res, next) {
     const database = req.app.locals.db;
     const delete_id = req.body.delete_id;
     
@@ -358,7 +358,7 @@ router.post('/delete', async function (req, res, next) {
 })
 
 // Téléchargement des images d'une soirée
-router.get('/downloadPartyPictures', async function (req, res, next) {
+apiRouter.get('/downloadPartyPictures', async function (req, res, next) {
     const database = req.app.locals.db;
     const party_id = req.query.party_id;
 
@@ -407,7 +407,7 @@ router.get('/downloadPartyPictures', async function (req, res, next) {
 // ### COMMENTAIRE ###
 
 // Création commentaire
-router.post('/comment_create', async function (req, res, next) {
+apiRouter.post('/comment_create', async function (req, res, next) {
     const database = req.app.locals.db;
 
     const {comment} = req.body;
@@ -426,7 +426,7 @@ router.post('/comment_create', async function (req, res, next) {
 
 
 // Suppression commentaire
-router.post('/comment_delete', async function (req, res, next) {
+apiRouter.post('/comment_delete', async function (req, res, next) {
     const database = req.app.locals.db;
     const delcom_id = req.body.delcom_id;
     
@@ -443,7 +443,7 @@ router.post('/comment_delete', async function (req, res, next) {
 // ## Note ##
 
 // Donner une note
-router.post('/rating', async function (req, res, next) {
+apiRouter.post('/rating', async function (req, res, next) {
     const database = req.app.locals.db;
     const {rate, party_id} = req.body;
     
@@ -547,4 +547,6 @@ async function findNearestParty(db, latitude, longitude) {
     }).sort((a, b) => a.distance - b.distance)[0].party;
 }
 
-module.exports = router;
+module.exports = {
+    apiRouter
+};

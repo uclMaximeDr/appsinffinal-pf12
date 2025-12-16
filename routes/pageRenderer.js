@@ -3,7 +3,7 @@ const router = express.Router();
 const { ObjectId } = require("mongodb");
 const path = require('path');
 const sharp = require('sharp');
-const { formatDate, isFriend, hasSentRequest } = require('../utils');
+const { formatDate, isFriend, hasSentRequest, computeTFIDF } = require('../utils');
 
 // Middleware to check for first visit and captcha requirement
 router.use((req, res, next) => {
@@ -80,6 +80,31 @@ router.get('/', async function(req, res){
 
     res.render("index", {parties : filteredRating});
 });
+
+// Searchbar
+router.get('/search', async function (req, res, next) {
+    const database = req.app.locals.db;
+    const query = req.query.q.toLowerCase().trim();
+    const words = query.split(' ');
+
+    const parties = await database.collection('party').find().toArray();
+
+    const partiesWithNames = await Promise.all(parties.map(async party => {
+            return {
+                ...party,
+                userFullname: await GetFullName(database, party.user_id)
+            }; 
+        }));
+    const fiveFirst = computeTFIDF(partiesWithNames, words).slice(0, 4);
+
+    res.send(fiveFirst);
+});
+
+async function GetFullName (database, id) {
+    const user = await database.collection("users").findOne({ _id : new ObjectId(id) })
+    if (!user) return null;
+    return user.fullname;
+}
 
 router.get('/start', (req, res) => {
     res.render("start");

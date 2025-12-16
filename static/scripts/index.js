@@ -1,3 +1,28 @@
+// Searchbar
+function onSearch(event) {
+  const query = event.target.value;
+
+  if(query.length == 0) {
+    $('#search-results').empty();
+    return;
+  }
+
+  $.get('/search', { q: query }, function(data) {
+    const resultsContainer = $('#search-results');
+    resultsContainer.empty(); // Clear previous results
+
+    data.forEach(item => {
+      const party = item.party
+      resultsContainer.append(`
+        <a href='/party/${party._id}' class="search-item">
+            <h3>${party.title}</h3>
+            <p><span class='info'>Lieu: </span>${party.address}</p>
+            <p><span class='info'>Description: </span>${party.description}</p>
+        </a>`);
+    });
+  });
+}
+
 // Fonction utilitaire : géocoder via Nominatim (OpenStreetMap)
 async function geocode(q) {
   const url =
@@ -62,7 +87,8 @@ async function createCustomMarker(lat, lng, imageId) {
 // Create markers for all parties and friend-only parties
 const allMarkers = [];
 const friendOnlyMarkers = [];
-async function createMarkers(parties) {
+async function createMarkers(parties) { 
+
   for(const party of parties) {
     const marker = await createCustomMarker(party.lat, party.lng, party.img);
     marker.bindPopup(`<a href="/party/${party.id}">Voir la soirée</a>`);

@@ -13,7 +13,7 @@ const cron = require('node-cron');
 const { MongoClient } = require('mongodb');
 
 const pageRenderer = require('./routes/pageRenderer');
-const apiRouter = require('./routes/api');
+const { apiRouter } = require('./routes/api');
 
 // Load environment variables from .env file
 dotenv.config();
