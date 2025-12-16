@@ -93,6 +93,7 @@ router.get('/search', async function (req, res, next) {
         return {
             ...party,
             user: {
+                userFullname: await GetFullName(database, party.user_id),
                 isFriend: await isFriend(database, req.session.userid, party.user_id)
             },
         };
@@ -103,13 +104,7 @@ router.get('/search', async function (req, res, next) {
         return !party.friendOnly || party.user.isFriend || party.user_id == req.session.userid;
     });
 
-    const partiesWithNames = await Promise.all(filteredFriend.map(async party => {
-            return {
-                ...party,
-                userFullname: await GetFullName(database, party.user_id)
-            }; 
-        }));
-    const fiveFirst = computeTFIDF(partiesWithNames, words).slice(0, 4);
+    const fiveFirst = computeTFIDF(filteredFriend, words).slice(0, 4);
 
     res.send(fiveFirst);
 });
