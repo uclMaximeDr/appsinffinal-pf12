@@ -37,11 +37,10 @@ router.post('/register', async function (req, res, next) {
     }
 
     const existingUser = await database.collection('users').findOne({ email });
-    const isFirstUser = (await database.collection('users').countDocuments({})) === 0;
 
     if (!existingUser) {
         const hashedPassword = await hashPassword(password);
-        await database.collection('users').insertOne({ fullname, email, password: hashedPassword, admin: isFirstUser });
+        await database.collection('users').insertOne({ fullname, email, password: hashedPassword });
         res.send({ success: true })
     }
     else {
